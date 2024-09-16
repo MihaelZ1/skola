@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int prvi;
+            int drugi;
+            int rezultat=0;
+            char operacija;
+            Console.WriteLine("Unesite prvi broj");
+            prvi = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Unesite drugi broj");
+            drugi = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Unesite operaciju broj");
+            operacija = char.Parse(Console.ReadLine());
+
+            if (operacija == '+')
+                rezultat = prvi + drugi;
+
+            if (operacija == '-')
+                rezultat = prvi - drugi;
+
+            if (operacija == '*')
+                rezultat = prvi * drugi;
+
+            if (operacija == '/')
+                if(drugi!=0)
+                rezultat = prvi / drugi;
+            else
+                {
+                    Console.WriteLine("Nepoznata operacija");
+                }
+
+            Console.WriteLine("Rezultat je: "+ rezultat);
+        }
+    }
+}
