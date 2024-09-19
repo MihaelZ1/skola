@@ -10,18 +10,47 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            int rezultat = 0;
             int prvi;
             int drugi;
-            int rezultat=0;
             char operacija;
+            
             Console.WriteLine("Unesite prvi broj");
-            prvi = int.Parse(Console.ReadLine());
+            string prvi1 =Console.ReadLine();
+            try
+            {
+                prvi = Int32.Parse(prvi1);
+            }
+            catch
+            {
+                Console.WriteLine("Ne mogu pretvoriti podatak");
+                prvi = 0;
+            }
 
             Console.WriteLine("Unesite drugi broj");
-            drugi = int.Parse(Console.ReadLine());
+            string drugi1 = Console.ReadLine();
+            try
+            {
+                drugi = Int32.Parse(drugi1);
+            }
+            catch
+            {
+                Console.WriteLine("Ne mogu pretvoriti podatak");
+                drugi = 0;
+            }
 
-            Console.WriteLine("Unesite operaciju broj");
-            operacija = char.Parse(Console.ReadLine());
+            Console.WriteLine("Unesite operaciju");
+            string operacija1 = Console.ReadLine();
+            try
+            {
+                operacija = Char.Parse(operacija1);
+            }
+            catch
+            {
+                Console.WriteLine("Nepoznata operacija");
+                operacija = ' ';
+            }
+
 
             if (operacija == '+')
                 rezultat = prvi + drugi;
@@ -33,14 +62,11 @@ namespace ConsoleApp1
                 rezultat = prvi * drugi;
 
             if (operacija == '/')
-                if(drugi!=0)
-                rezultat = prvi / drugi;
-            else
-                {
-                    Console.WriteLine("Nepoznata operacija");
-                }
+                if (drugi != 0)
+                    rezultat = prvi / drugi;
+                
 
-            Console.WriteLine("Rezultat je: "+ rezultat);
+            Console.WriteLine("Rezultat je: " + rezultat);
         }
     }
 }
