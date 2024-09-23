@@ -1,0 +1,29 @@
+import java.util.Random;
+
+public class Main {
+    public static void main(String[] args) {
+    Random ran = new Random();
+
+    int  a = ran.nextInt(100);
+    int b = ran.nextInt(100);
+
+    System.out.println("a = "+a);
+    System.out.println("b = "+ b);
+
+    int  c;
+    c=((a*a)+(b*b));
+    System.out.println("c = "+Math.sqrt(c));
+
+    int p;
+    p=(a*b)/2;
+    System.out.println("P = "+p);
+
+
+
+
+
+    }
+
+
+
+    }
