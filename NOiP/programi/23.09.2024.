@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+
+            Random rnd = new Random();
+
+            List <int> ocjene = new List<int>();
+
+            for(int i = 0; i < 15; i++)
+            {            
+            ocjene.Add(i);
+            }
+             
+            Console.WriteLine(ocjene.Contains(rnd.Next(15)));
+
+
+
+            foreach (int i in ocjene)
+            {
+                Console.Write(i+", ");
+            }
+
+            for(int i = 0; i < 15; i++)
+            {
+            
+                ocjene.Remove(rnd.Next(15));
+
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            foreach (int i in ocjene)
+            {
+                Console.Write(i+", ");
+            }   
+            
+            Console.WriteLine(ocjene.Contains(rnd.Next(15)));
+
+        }
+    }
+}
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+
+            Random rnd = new Random();
+            List<string> meseci = new List<string>();
+            meseci.Add("Siječanj");
+            meseci.Add("Veljača");
+            meseci.Add("Ožujak");
+            meseci.Add("Travanj");
+            meseci.Add("Svibanj");
+            meseci.Add("Lipanj");
+            meseci.Add("Srpanj");
+            meseci.Add("Kolovoz");
+            meseci.Add("Rujan");
+            meseci.Add("Listopad");
+            meseci.Add("Studeni");
+            meseci.Add("Prosinac");
+
+            foreach (string s in meseci)
+            {
+                Console.WriteLine(s);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Učitaj mjesec: ");
+            string učitani =Console.ReadLine();
+            Console.WriteLine();
+
+            meseci.Remove(učitani); 
+            foreach(string F in meseci)
+            {
+                Console.WriteLine(F);
+            }
+
+        }
+    }
+}
+
+
+
+
