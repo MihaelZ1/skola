@@ -1,0 +1,23 @@
+int kliker=7;
+int brojac=0;
+bool stanje=0;
+bool proslostanje=0;
+void setup() {
+  pinMode(kliker, INPUT_PULLUP);
+  pinMode(8, OUTPUT);
+  digitalWrite(8, LOW);
+}
+
+void loop() {
+   stanje=digitalRead(kliker);
+  if(stanje!=proslostanje){
+  if(stanje==LOW){
+    brojac++;
+    Serial.println(brojac);
+}
+}
+proslostanje=stanje;
+    int modul=brojac%5;
+    int z=map(modul, 0, 5, 0, 255);
+    analogWrite(8, z);
+}
