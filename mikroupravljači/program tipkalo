@@ -1,0 +1,22 @@
+  int brojac=0;
+int tipkalo =7;
+bool proslostanje=0;
+bool stanje=0;
+void setup() {
+pinMode(tipkalo,INPUT_PULLUP);
+Serial.begin(9600);
+}
+
+void loop() {
+ stanje=digitalRead(tipkalo);
+  if(stanje!=proslostanje){
+  if(stanje==LOW){
+    brojac++;
+    Serial.println(brojac);
+}
+}
+proslostanje=stanje;
+
+
+
+}
