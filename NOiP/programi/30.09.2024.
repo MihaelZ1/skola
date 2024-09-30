@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int bzvbv = random.Next(355);
+            Console.WriteLine(bzvbv);
+            string st1;
+            Console.WriteLine();
+
+            st1 = "Ja se necu izblamirat', svoju armiju formirat'\r\nmogu samo garantirat' da cu disstrack demolirat'\r\novaj diss ce lako da te ostavi na podu\r\ndok ti snimas propalu Minecraft epizodu\r\n\r\nSamo si me smar'o i na skajpu si me cim'o\r\nposl'o neki klip, fazon, vidi sta sam snim'o\r\nrek'o sam mu - dobar si mali, malo ga hvalio\r\nu sebi razmisljam - samo si mi ti falio";
+            Console.WriteLine(st1);
+            Console.WriteLine();    
+            int brojajba = 0;
+
+            brojajba = st1.Count();
+            Console.WriteLine(brojajba); 
+            Console.WriteLine();    
+            
+
+            st1 = st1.Remove(bzvbv);
+            Console.WriteLine(st1);
+
+            string[] l;
+            l = st1.Split(" ");
+           string prvi= l.First();
+            Console.WriteLine(prvi);
+        }
+    }
+}
