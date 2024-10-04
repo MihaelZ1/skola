@@ -1,0 +1,49 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 4.10.2024. 10:14:17
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :      
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                 
+00001000  303C 007B                  9      MOVE #123, d0
+00001004  323C FFFF                 10      MOVE #65535, d1
+00001008  243C 00010000             11      MOVE.l #65536, d2
+0000100E  76FF                      12      MOVE.l #4294967295, d3
+00001010  383C 04C3                 13      MOVE #$4c3, d4
+00001014  3A3C FFFF                 14      MOVE #$ffff,d5
+00001018  7CFF                      15      MOVE.L #$ffffffff, d6
+0000101A  1004                      16      MOVE.B D4, D0
+0000101C                            17      
+0000101C                            18      
+0000101C  203C 01234567             19      MOVE.L #$01234567, D0
+00001022  227C FFFFFFFF             20      MOVE.L #$ffffffff, a1
+00001028  2240                      21      MOVE.L D0, A1
+0000102A                            22      
+0000102A                            23      
+0000102A                            24      
+0000102A  203C 00008191             25      MOVE.L #$008191, D0
+00001030  227C 00000000             26      MOVE.L #$00000000,A1
+00001036                            27      
+00001036  3240                      28      MOVE.W D0,A1
+00001038                            29      
+00001038                            30      
+00001038                            31      
+00001038  FFFF FFFF                 32      SIMHALT            
+0000103C                            33  
+0000103C                            34     
+0000103C                            35  
+0000103C                            36      END    START        
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+START               1000
