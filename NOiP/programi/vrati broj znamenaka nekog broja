@@ -16,9 +16,10 @@ namespace MyApp
         }
         static int broj_znamenaka(int a)
         {
-            if (a == 0)
-                return 0;
-                return a%10 +broj_znamenaka (a / 10);
+                    if (a == 0)
+                    return 0;
+                    int zbroj=a%10 +broj_znamenaka(a/10);
+                   return zbroj;
         }
 
     }
