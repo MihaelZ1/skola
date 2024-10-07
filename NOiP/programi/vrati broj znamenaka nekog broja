@@ -1,0 +1,25 @@
+using System;
+using System.Collections.Specialized;
+
+namespace MyApp
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int z=1235;
+            Console.WriteLine(broj_znamenaka(z).ToString());
+            
+
+
+
+        }
+        static int broj_znamenaka(int a)
+        {
+            if (a == 0)
+                return 0;
+                return a%10 +broj_znamenaka (a / 10);
+        }
+
+    }
+}
