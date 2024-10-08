@@ -1,0 +1,97 @@
+int a=2;
+int b=3;
+int c=4;
+int d=5;
+int e=6;
+int f=7;
+int g=8;
+int p=9;
+int tipkalo_set = 10;
+int tipkalo_deset = 11;
+bool stanje = 0;
+bool proslostanje;
+int brojac=0;
+
+void setup() {
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(c, OUTPUT);
+  pinMode(d, OUTPUT);
+  pinMode(e, OUTPUT);
+  pinMode(f, OUTPUT);
+  pinMode(g, OUTPUT);
+  pinMode(p, OUTPUT);
+  pinMode(tipkalo_set, INPUT_PULLUP);
+  pinMode(tipkalo_deset, INPUT_PULLUP);
+  digitalWrite(p, LOW);
+  digitalWrite(a,LOW);
+  digitalWrite(b,LOW);
+  digitalWrite(c,LOW);
+  digitalWrite(d,LOW);
+  digitalWrite(e,LOW);
+  digitalWrite(f,LOW);
+  digitalWrite(g,HIGH);
+  Serial.begin(9600);
+}
+
+void prikazbroja(int broj){
+  if(broj!=1 && broj!=4){
+    digitalWrite(a, LOW);
+  }
+  if(broj!=5 && broj!=6){
+    digitalWrite(b, LOW);
+  }
+  if(broj!=2){
+    digitalWrite(c, LOW);
+  }
+  if(broj!=1 && broj!=4 && broj!=7){
+    digitalWrite(d, LOW);
+  }
+  if(broj==0 || broj==2 || broj==6 || broj==8 ){
+    digitalWrite(e, LOW);
+  }
+  if(broj !=1 && broj!=2 && broj!=3 && broj!=7){
+    digitalWrite(f, LOW);
+  }
+  if(broj !=0 && broj!=1 && broj!=7){
+    digitalWrite(g, LOW);
+  }
+}
+
+void gasi(){
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+
+void loop() {
+
+ stanje=digitalRead(tipkalo_set);
+  if(stanje!=proslostanje){
+  if(stanje==LOW){
+    brojac++;
+    gasi();
+    prikazbroja(brojac);
+    Serial.println(brojac);
+}
+}
+proslostanje=stanje;
+
+stanje=digitalRead(tipkalo_deset);
+  if(stanje!=proslostanje){
+  if(stanje==LOW){
+    brojac--;
+    gasi();
+    prikazbroja(brojac);
+    Serial.println(brojac);
+}
+}
+proslostanje=stanje;
+
+}
+
