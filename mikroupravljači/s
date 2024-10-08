@@ -1,0 +1,166 @@
+int a=2;
+int b=3;
+int c=4;
+int d=5;
+int e=6;
+int f=7;
+int g=8;
+int d1=9;
+int d2=10;
+int d3=11;
+int d4=12;
+
+
+void setup() {
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(c, OUTPUT);
+  pinMode(d, OUTPUT);
+  pinMode(e, OUTPUT);
+  pinMode(f, OUTPUT);
+  pinMode(g, OUTPUT);
+  pinMode(d1, OUTPUT);
+  pinMode(d2, OUTPUT);
+  pinMode(d3, OUTPUT);
+  pinMode(d4, OUTPUT);
+}
+
+void prikazbroja(int zn1, int zn2, int zn3, int zn4){
+  for(int i=0;i<4;i++){
+  if(i==0){
+    digitalWrite(d1, LOW);
+    digitalWrite(d4, HIGH);
+    if(zn1!=1 && zn1!=4){
+    digitalWrite(a, HIGH);
+  }
+  if(zn1!=5 && zn1!=6){
+    digitalWrite(b, HIGH);
+  }
+  if(zn1!=2){
+    digitalWrite(c, HIGH);
+  }
+  if(zn1!=1 && zn1!=4 && zn1!=7){
+    digitalWrite(d, HIGH);
+  }
+  if(zn1==0 || zn1==2 || zn1==6 || zn1==8 ){
+    digitalWrite(e, HIGH);
+  }
+  if(zn1 !=1 && zn1!=2 && zn1!=3 && zn1!=7){
+    digitalWrite(f, HIGH);
+  }
+  if(zn1 !=0 && zn1!=1 && zn1!=7){
+    digitalWrite(g, HIGH);
+  }
+  }
+
+  if(i==1){
+    digitalWrite(d4, LOW);
+    digitalWrite(d3, HIGH);
+    if(zn2!=1 && zn2!=4){
+    digitalWrite(a, HIGH);
+  }
+  if(zn2!=5 && zn2!=6){
+    digitalWrite(b, HIGH);
+  }
+  if(zn2!=2){
+    digitalWrite(c, HIGH);
+  }
+  if(zn2!=1 && zn2!=4 && zn2!=7){
+    digitalWrite(d, HIGH);
+  }
+  if(zn2==0 || zn2==2 || zn2==6 || zn2==8 ){
+    digitalWrite(e, HIGH);
+  }
+  if(zn2 !=1 && zn2!=2 && zn2!=3 && zn2!=7){
+    digitalWrite(f, HIGH);
+  }
+  if(zn2 !=0 && zn2!=1 && zn2!=7){
+    digitalWrite(g, HIGH);
+  }
+  }
+
+  if(i==2){
+    digitalWrite(d3, LOW);
+    digitalWrite(d2, HIGH);
+    if(zn3!=1 && zn3!=4){
+    digitalWrite(a, HIGH);
+  }
+  if(zn3!=5 && zn3!=6){
+    digitalWrite(b, HIGH);
+  }
+  if(zn3!=2){
+    digitalWrite(c, HIGH);
+  }
+  if(zn3!=1 && zn3!=4 && zn3!=7){
+    digitalWrite(d, HIGH);
+  }
+  if(zn3==0 || zn3==2 || zn3==6 || zn3==8 ){
+    digitalWrite(e, HIGH);
+  }
+  if(zn3 !=1 && zn3!=2 && zn3!=3 && zn3!=7){
+    digitalWrite(f, HIGH);
+  }
+  if(zn3 !=0 && zn3!=1 && zn3!=7){
+    digitalWrite(g, HIGH);
+  }
+  }
+  
+  if(i==3){
+    digitalWrite(d2, LOW);
+    digitalWrite(d1, HIGH);
+    if(zn4!=1 && zn4!=4){
+    digitalWrite(a, HIGH);
+  }
+  if(zn4!=5 && zn4!=6){
+    digitalWrite(b, HIGH);
+  }
+  if(zn4!=2){
+    digitalWrite(c, HIGH);
+  }
+  if(zn4!=1 && zn4!=4 && zn4!=7){
+    digitalWrite(d, HIGH);
+  }
+  if(zn4==0 || zn4==2 || zn4==6 || zn4==8 ){
+    digitalWrite(e, HIGH);
+  }
+  if(zn4 !=1 && zn4!=2 && zn4!=3 && zn4!=7){
+    digitalWrite(f, HIGH);
+  }
+  if(zn4 !=0 && zn4!=1 && zn4!=7){
+    digitalWrite(g, HIGH);
+  }
+  }
+
+
+
+  }
+}
+
+void gasi(){
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, LOW);
+  digitalWrite(e, LOW);
+  digitalWrite(f, LOW);
+  digitalWrite(g, LOW);
+  digitalWrite(d1, LOW);
+  digitalWrite(d2, LOW);
+  digitalWrite(d3, LOW);
+  digitalWrite(d4, LOW);
+}
+
+
+void loop() {
+  for(int i=0;i<10;i++){
+    for(int j=0;j<10;j++){
+      for(int h=0;h<10;h++){
+        for(int g=0;g<10;g++){
+         prikazbroja(i, j, h, g);
+         delay(1000);
+         gasi();
+       }
+      }
+    }
+  }
+}
