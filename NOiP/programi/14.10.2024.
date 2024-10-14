@@ -59,3 +59,89 @@ namespace WindowsFormsApp1
         }
     }
 }
+
+
+
+
+
+// drugi zadatak 
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        int a = 0;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            /*
+            if (a % 3 == 0)
+            {
+                this.BackColor = Color.Red;
+                MessageBox.Show(tb_ime.Text);
+            }
+            else if (a % 2 == 0)
+            {
+                this.BackColor = Color.Blue;
+                MessageBox.Show(tb_ime.Text);
+            }
+            else if(a%1==0)
+            {
+                this.BackColor = Color.White;
+                MessageBox.Show(tb_ime.Text);
+            }
+            a++;
+            */
+            string l = tb_ime.Text;
+            string l2=tb_provjera.Text;
+            if (l.Contains(l2))
+            {
+                MessageBox.Show("postoji");
+            }
+            else
+            {
+                MessageBox.Show("ne postoji");
+            }
+
+
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tb_ime_TextChanged(object sender, EventArgs e)
+        {
+            
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+//teci zadatak
+
+
+
