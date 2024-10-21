@@ -1,0 +1,141 @@
+//bez try catcha
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+
+
+        }
+
+        private void bt_izvrsi_Click(object sender, EventArgs e)
+        {
+            int a = int.Parse(tb_op1.Text);
+            int b = int.Parse(tb_op2.Text);
+            string rj;
+
+            if (rb_zbroji.Checked)
+            {
+                rj = (a + b).ToString();
+                MessageBox.Show(rj);
+            }
+            else if (rb_oduzmi.Checked)
+            {
+                rj = (a - b).ToString();
+                MessageBox.Show(rj);
+            }
+            else if (rb_pomnozi.Checked)
+            {
+                rj = (a * b).ToString();
+                MessageBox.Show(rj);
+
+            }
+            else if (rb_podijeli.Checked)
+            {
+                if (b == 0)
+                {
+                    MessageBox.Show("S nulom se ne dijeli");
+                }
+                else
+                {
+                    rj = (a / b).ToString();
+                    MessageBox.Show(rj);
+                }
+            }
+        }
+    }
+}
+
+
+//s try catchom
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+
+
+        }
+
+        private void bt_izvrsi_Click(object sender, EventArgs e)
+        {
+            int a = int.Parse(tb_op1.Text);
+            int b = int.Parse(tb_op2.Text);
+            string rj;
+
+            if (rb_zbroji.Checked)
+            {
+                rj = (a + b).ToString();
+                lb_rjesenje.Text=(rj);
+            }
+            else if (rb_oduzmi.Checked)
+            {
+                rj = (a - b).ToString();
+                lb_rjesenje.Text=(rj);
+            }
+            else if (rb_pomnozi.Checked)
+            {
+                rj = (a * b).ToString();
+                lb_rjesenje.Text=(rj);
+
+            }
+            else if (rb_podijeli.Checked)
+            {
+                try
+                {
+                    int k = a / b;
+                    rj=k.ToString();
+                    lb_rjesenje.Text=(rj);
+                   
+                   
+                }
+                catch
+                {
+                    MessageBox.Show("S NULOM SE NE DIJELI!");
+                }
+                
+            }
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
