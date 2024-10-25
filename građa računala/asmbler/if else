@@ -1,0 +1,32 @@
+START ORG $1000
+    
+LOOP
+    
+    MOVE #14,D0
+    LEA UNOS,A1
+    TRAP #15
+    
+    MOVE #4,D0
+    TRAP #15
+    
+    CMP #23,D1
+    BLT X1
+    
+    MOVE #14,D0
+    LEA DOBRO,A1
+    TRAP #15
+    JMP KRAJ
+    
+X1  MOVE #14,D0
+    LEA LOSE,A1
+    TRAP #15
+
+KRAJ    MOVE.B #9,D0
+        TRAP #15
+        
+UNOS DC.B 'UNESI BROJ: ',$D,$A,0            
+DOBRO DC.B 'SUPER',$D,$A,0
+LOSE DC.B 'LOSE' $D,$A,0
+
+
+    END START
