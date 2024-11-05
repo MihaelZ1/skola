@@ -1,0 +1,74 @@
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char hexaKeys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'}, 
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte rowPins[ROWS] = {2, 3, 4, 5};
+byte colPins[COLS] = {6, 7, 8, 9};
+
+int PIN[4];
+int CORRECT_PIN[4] = {'1','9','9','1'};
+int correctCount = 0;
+int enteredCount = 0;
+
+Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  digitalWrite(10, HIGH);
+  digitalWrite(11, HIGH);
+}
+
+void loop() {
+  char key = customKeypad.getKey();
+  if (key) {
+    Serial.println(key);
+  }
+  if (enteredCount == 4 && key>='0' && key<='9') {
+    PIN[0] = PIN[1];
+    PIN[1] = PIN[2];
+    PIN[2] = PIN[3];
+    PIN[3] = key;
+  } else if(key>='0' && key<='9'){
+    PIN[enteredCount] = key;
+    enteredCount++;
+  }
+
+  if (key == 'A') {
+    resetPIN();
+  }
+
+  if (key == 'D') {
+    for (int i = 0; i < 4; i++) {
+      if (PIN[i] == CORRECT_PIN[i]) {
+        correctCount++;
+      } 
+    }
+    enteredCount = 0;
+    if (correctCount == 3) {
+      Serial.println("DORO JE");
+      digitalWrite(11, HIGH);
+    } else {
+      digitalWrite(10, HIGH);
+      Serial.println(" NEJE DORO");
+    }
+    correctCount = 0;
+    resetPIN();
+  }
+}
+
+void resetPIN() {
+  for (int i = 0; i < 4; i++) {
+    PIN[i] = 0;
+  }
+  enteredCount = 0;
+}
