@@ -1,0 +1,204 @@
+namespace WinFormsApp3
+{
+    public partial class Obrazac : Form
+    {
+        public Obrazac()
+        {
+            InitializeComponent();
+
+            radioButton1.Checked = true;
+            listBox1.Items.Add("Slika1");
+            listBox1.Items.Add("Slika2");
+            listBox1.Items.Add("Slika3");
+
+            comboBox1.Items.Add("Slika1");
+            comboBox1.Items.Add("Slika2");
+            comboBox1.Items.Add("Slika3");
+        }
+
+        private void zatvoriToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void oDatoteciToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Ovo je izradio Mihael Želežnjak");
+        }
+
+        private TextBox GetTextBox1()
+        {
+            return textBox1;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string s = textBox1.Text;
+            listBox1.Items.Add(s);
+
+
+
+        }
+
+        private void datumToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(DateTime.Now.ToString());
+        }
+
+        private void izbrišiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tsItem = (ToolStripMenuItem)sender;
+            var cms = (ContextMenuStrip)tsItem.Owner;
+
+            if (cms.SourceControl is ListBox)
+            {
+                ((ListBox)cms.SourceControl).Items.Clear();
+            }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                listBox1.Visible = false;
+            }
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                listBox1.Visible = true;
+            }
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (radioButton3.Checked)
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
+            }
+            if (radioButton4.Checked)
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            }
+            if (radioButton5.Checked)
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            }
+            if (radioButton6.Checked)
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+            }
+            if (radioButton7.Checked)
+            {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            }
+
+            if (listBox1.SelectedIndex == 0)
+            {
+                pictureBox1.ImageLocation = "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg";
+
+            }
+            if (listBox1.SelectedIndex == 1)
+            {
+                pictureBox1.ImageLocation = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUPIfiGgUML8G3ZqsNLHfaCnZK3I5g4tJabQ&s";
+            }
+            if (listBox1.SelectedIndex == 3)
+            {
+                pictureBox1.ImageLocation = textBox2.Text;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string reza;
+            int a;
+            int b;
+            try
+            {
+                a = int.Parse(textBox3.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Nije broj");
+                a = 1;
+            }
+            try
+            {
+                b = int.Parse(textBox4.Text);
+
+            }
+            catch
+            {
+                MessageBox.Show("Nije broj");
+                b = 1;
+            }
+
+
+            if (checkBox1.Checked)
+            {
+                reza = (a * b).ToString();
+                MessageBox.Show(reza);
+            }
+            if (checkBox2.Checked)
+            {
+                try
+                {
+                    string rte = (a / b).ToString();
+                    MessageBox.Show(rte);
+                }
+
+                catch
+                {
+                    MessageBox.Show("S nulom se ne dijeli");
+                }
+            }
+            if (checkBox3.Checked)
+            {
+                reza = (a + b).ToString();
+                MessageBox.Show(reza);
+            }
+            if (checkBox4.Checked)
+            {
+                reza = (a - b).ToString();
+                MessageBox.Show(reza);
+            }
+
+        }
+
+        private void radioButton10_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton10.Checked)
+            {
+                this.BackColor = Color.Red;
+            }
+        }
+
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton8.Checked)
+            {
+                this.BackColor = Color.White;
+            }
+        }
+
+        private void radioButton9_CheckedChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void radioButton9_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton9.Checked)
+            {
+                this.BackColor = Color.Blue;
+            }
+        }
+    }
+}
