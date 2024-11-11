@@ -1,0 +1,38 @@
+public class PravokutniTrokut(){
+public float a,b,c;
+}
+
+class PravokutniTrokut()
+{
+  this.a=0;
+  this.b=0;
+  this.c=0;
+}
+
+class PravokutniTrokut(float a, float b)
+{
+this.a=a;
+this.b=b;
+}
+
+public int cstr(float c){
+c=Math.sqrt((a*a)+(b*b));
+}
+
+public static int povrsina(){
+ return (a*b)/2;
+}
+
+
+
+main..
+public class Main{
+public static void main(String[] args){
+
+PravokutniTrokut pt1 = new PravokutniTrokut();
+PravokutniTrokut pt2= new PravokutniTrokut();
+PravokutniTrokut pt3 = new PravokutniTrokut;
+}
+}
+
+
