@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp4
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string a = textBox1.Text;
+            
+            MessageBox.Show(a);
+            try
+            {
+                foreach (string datoteka in System.IO.Directory.GetFiles(@a))
+                {
+                    String imeDatoteke = Path.GetFileName(datoteka);
+                    listBox1.Items.Add(Path.Combine(a, imeDatoteke));
+                }
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            DirectoryInfo di = new DirectoryInfo(@a);
+
+            foreach(DirectoryInfo d in di.GetDirectories())
+            {
+                
+             }       
+            
+                    foreach (FileInfo f in di.GetFiles())
+                    {
+                if (f.CreationTime.AddMinutes(1).CompareTo(DateTime.Now) > 0)
+                {
+                    f.CopyTo(Path.Combine("d:\\bekap", f.Name));
+                }
+                    }
+            
+            foreach (string datoteka in System.IO.Directory.GetFiles("D:\\bekap"))
+            {
+                String imeDatoteke = Path.GetFileName(datoteka);
+                listBox2.Items.Add(Path.Combine("D:\\bekap", imeDatoteke));
+            }
+        }
+        }
+    }
+
