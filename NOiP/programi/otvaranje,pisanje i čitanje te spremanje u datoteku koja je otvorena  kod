@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string a = textBox2.Text;
+
+            try
+            {
+                foreach (string datoteka in System.IO.Directory.GetFiles(@a))
+                {
+                    String imeDatoteke = Path.GetFileName(datoteka);
+                    listBox1.Items.Add(datoteka);
+                }
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string sa = listBox1.Text;
+            textBox1.Text=File.ReadAllText(sa);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+           string pomoc = listBox1.Text;
+            File.WriteAllText(pomoc, textBox1.Text);
+        }
+    }
+}
