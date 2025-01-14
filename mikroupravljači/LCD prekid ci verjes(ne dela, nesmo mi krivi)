@@ -1,0 +1,32 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+int a = 13;
+int gumb = 2;
+int brojac = 0; 
+
+void setup() {
+  pinMode(a, OUTPUT);
+  pinMode(gumb, INPUT_PULLUP);
+  lcd.init();
+  lcd.display();
+  lcd.backlight();
+  attachInterrupt(digitalPinToInterrupt(gumb), pinek, FALLING);
+  lcd.print("susa");
+}
+
+void loop() {
+  digitalWrite(a, HIGH);
+  delay(10000);
+  digitalWrite(a, LOW);
+  delay(10000);
+}
+
+void pinek(){
+    brojac++;
+    Serial.println(brojac);
+    lcd.clear();
+    lcd.setCursor(0, 0);  
+    lcd.print(brojac);
+  }
