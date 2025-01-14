@@ -1,0 +1,24 @@
+int a=5;
+int b=4;
+int gumb=3;
+bool stanje=HIGH;
+
+void setup() {
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(gumb, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(gumb),pinek, FALLING);
+}
+
+void loop() {
+  digitalWrite(a, HIGH);
+  delay(3000);
+  digitalWrite(a, LOW);
+  delay(3000);
+}
+
+void pinek(){
+  stanje=!stanje;
+  digitalWrite(b, stanje);
+}
+   
