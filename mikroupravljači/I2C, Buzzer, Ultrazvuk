@@ -1,0 +1,43 @@
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+#define trigger 3
+#define echo 4
+#define buzzer 5
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(trigger, OUTPUT);
+  pinMode(echo, INPUT);
+  pinMode(buzzer, OUTPUT);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(3,0);
+}
+
+void loop(){
+  long duration, distance;
+  digitalWrite(trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+  duration=pulseIn(echo, HIGH);
+  distance=(duration/2)/29.1;
+  if(distance>=200||distance<=0){
+    Serial.println("Preblizu ili predalko");
+  }
+  else{
+    Serial.print(distance);
+    Serial.println("cm");
+    if(distance<=100){
+        tone(buzzer, (50*distance));
+    }
+    lcd.clear();
+    lcd.print(distance);
+  }
+  delay(100);
+  noTone(buzzer);
+}
