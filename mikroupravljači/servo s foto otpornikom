@@ -1,0 +1,15 @@
+#include <Servo.h>
+Servo myservo; 
+int stanje=0;
+int mapstanje=0;
+int pos = 0;   
+void setup() {
+  myservo.attach(9);  
+}
+void loop() {
+  stanje=analogRead(0);
+  mapstanje=map(stanje,0,1023,0,180);
+  myservo.write(mapstanje);
+  delay(15);
+
+}
