@@ -1,0 +1,26 @@
+#include <IRremote.h>
+
+IRsend irsend;
+
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(9, INPUT_PULLUP);
+    pinMode(3, OUTPUT);
+    irsend.begin(3);
+     
+ // SW3 connected to pin 4
+  // The IR LED is connected to pin 3 (PWM ~) on the Arduino
+}
+
+void loop() {
+  
+  if (digitalRead(9) == LOW) { // When SW1 is pressed
+    irsend.sendNEC(0xE172E817, 32);  // Replace with your own unique code
+    Serial.println("Code sent!");
+    delay(500);
+  } 
+
+
+  delay(100);
+}
