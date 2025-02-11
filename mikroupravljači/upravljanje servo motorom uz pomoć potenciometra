@@ -1,0 +1,18 @@
+int motorek=5;
+int stanje=0;
+int mapstanje=0;
+
+void setup() {
+pinMode(motorek,OUTPUT);
+}
+
+void loop() {
+stanje=analogRead(0);
+mapstanje=map(stanje,0,1023,1000,2000);
+digitalWrite(5,LOW);
+delayMicroseconds(1000);
+digitalWrite(5,HIGH);
+delayMicroseconds(mapstanje);
+digitalWrite(5,LOW);
+delayMicroseconds(20000-mapstanje);
+}
