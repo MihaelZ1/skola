@@ -1,0 +1,14 @@
+#include <IRremote.h>
+
+const int irPin = 12;  
+IRsend irsend(irPin);     
+
+void setup() {
+  pinMode(irPin, OUTPUT); 
+  Serial.begin(9600); 
+}
+
+void loop() {
+  irsend.sendNEC(toAscii(Serial.read()), 32);  
+  delay(100);
+}
