@@ -1,0 +1,17 @@
+.slika {
+	background-position: -47px 0px;
+	width: 43px;
+	height: 44px;	
+	background-image: url("vise_slika.gif");
+}
+
+.slika:HOVER {
+	background-position: -47px -45px; 
+	width: 43px;
+	height: 44px;	
+	background-image: url("vise_slika.gif");
+}
+
+
+
+za drugu i tretju strelicu se ide v minus ne plus nacrtana ti je još strelica desno kaj je obrnuta x os retard
