@@ -1,0 +1,18 @@
+.container {
+    position: relative;
+    height: 200px;
+    width: 400px;
+    
+    border: dotted;
+}
+.divSlika{
+    position: absolute;
+height: 100%;
+width: 100%;
+}
+
+.divTekst{
+position: absolute;
+color: red;
+font-size: 30px;
+} 
