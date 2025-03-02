@@ -1,0 +1,35 @@
+table{
+    font-family: arial;
+}
+
+th{
+    background-color: maroon;
+    color: green;
+    text-align: center;    
+
+}
+
+tr{
+    text-align: left;
+    
+}
+
+.tr1{  
+    background-color: silver;
+
+}
+
+.tr2{
+    background-color: rgb(200, 250, 250);
+}
+
+tr{
+    background-color: transparent;
+    color:green;
+}
+
+tr:hover{
+   
+       background-color: rgb(220, 30, 250);
+    
+}
