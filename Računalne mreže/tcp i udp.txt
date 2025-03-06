@@ -1,0 +1,106 @@
+kako se naziva jedinica na transportnom sloju naziva se PAKET
+-- na fizičkome je bit
+-- na drugom sloju je bit
+
+za što je odgovoran transportni sloj
+-transportni sloj odgovoran je za segmentaciju podataka sa viših razina, za njihovo ponovno spajanje
+-za praćenje i kontrolu komunikacije između pojedinih aplikacija,
+
+port ili vrata što predstavlja
+-- koliko minimalni broj vrata odnosno koji je maksimalni 
+-- MAX 65536, MIN 1
+
+može li računalo u svakom trenutku imati više programa koji paralelno komuniciraju s mrežom ako da zašto ako ne zašto
+-- može ako koristi različite protokole
+
+zašto je još zadužen transportni sloj (tiče se segmenata) -- zadužen je za segmentaciju podataka
+
+na temelju kojeg parametra mogu dva računala komunicirati - MAC adrese, IP adrese, TCP i UDP protokoli
+
+koji su dva protokola transportnog sloja - tcp i udp
+
+koji od ta dva predstavljaju manje opterećenje za mrežu
+-- UDP obično predstavlja manje opterećenje za mrežu jer ne zahtijeva dodatne pakete za rukovanje vezom i potvrde, što smanjuje ukupni promet u mreži
+
+kada je udp koristan
+-- UDP je idealan za aplikacije koje zahtijevaju nisku latenciju i brzinu prijenosa, kao što su online igranje, live streaming, VoIP 
+-- Multicasting i broadcast
+-- kod DNS upita
+-- kod aplikacija koje zahtjevaju veliku propusnost 
+-- real time komunikacije
+-----------------------------------------------------------------------------------------
+UDP, User Datagram Protocol
+
+dali je to spojni ili nespojni protokol zašto
+-- nespojni je protokol. To znači da ne zahtijeva uspostavu stalne veze između pošiljatelja i primatelja prije slanja podataka. 
+
+zašto je povoljan udp za koje sadržaje
+-- UDP je povoljan za sadržaje koji zahtijevaju brzinu i nisku latenciju, a mogu tolerirati gubitak paketa
+
+format udp paketa
+-- Izvorišna IP adresa (16 bita), odredišna IP adresa (16 bita), duljina (16 bita), checksum (16 bita), podaci (varijabalna duljina)
+-----------------------------------------------------------------------------------------
+TCP, Transmission Control Protocol
+
+o čemu brine tcp
+-- Pouzdanosti: Garantira isporuku i redoslijed paketa.
+-- Kontrolom veze: Uspostavlja vezu prije razmjene podataka.
+-- Kontrolom protoka: Regulira brzinu prijenosa.
+-- Kontrolom zagušenja: Izbjegava preopterećenje mreže.
+
+što napravi za svaki paket koji prime
+-- Provjerava greške: TCP provjerava integritet paketa pomoću kontrolnog zbroja u zaglavlju.
+-- Potvrđuje primanje: TCP šalje potvrdu (ACK) pošiljatelju za svaki primljeni paket. Ova potvrda sadrži broj bajta koji se očekuje u sljedećem paketu.
+-- Redoslijed paketa: TCP osigurava da paketi budu obrađeni u ispravnom redoslijedu. Ako paket nije primljen u redoslijedu, TCP će ga spremiti i čekati da se prethodni paketi isporuče.
+-- Ponovno slanje: Ako paket nije primljen ili je oštećen, TCP će ga ponovno poslati nakon određenog vremena čekanja.
+-- Kontrola protoka: TCP prilagođava brzinu slanja na temelju potvrda koje primi od primatelja, kako bi se izbjeglo preopterećenje mreže i sprečilo odbacivanje paketa.
+-- Kontrola zagušenja: TCP prilagođava veličinu prozora zagušenja na temelju uspješnosti prijenosa i gubitka paketa, kako bi se optimalno iskoristio kapacitet mreže.
+
+jeli spojni ili nespojni protokol
+-- spojni je protokol. To znači da uspostavlja virtualnu vezu između pošiljatelja i primatelja prije razmjene podataka.
+
+što je retransmisija i kad se dešava
+-- Retransmisija je ponovno slanje paketa koji nisu primljeni ili su oštećeni tokom prijenosa. 
+-- dešava se kod nedostatka potvrde, gubitka paketa te kašnjenja u mreži
+
+proučiti prozor kod tcp-a
+
+dali tcp radi opčenito u duplex ili simplex načinu rada
+-- TCP radi u (full) duplex načinu rada (istovremeno prima i šalje podatke)
+
+otvaranje/zatvaranje veze kod tcpa se dešava algoritmom trostrukog rukovanja
+--koje su poruke kod tog rukovanja sink ank fin ...
+
+-- Otvaranje veze u TCP-u se odvija pomoću trostrukog rukovanja:
+- SYN (klijent)
+- SYN-ACK (server)
+- ACK (klijent)
+
+-- Zatvaranje veze se odvija pomoću četverostukog rukovanja:
+- FIN (jedna strana)
+- ACK (druga strana)
+- FIN (druga strana)
+- ACK (prva strana)
+
+na temelju čega se identificira veza
+-- Izvorišna IP adresa
+-- Odredišna IP adresa
+-- Izvorišni portovi
+-- Odredišni portovi 
+
+sekvenca kod tcp-a što predstavlja
+-- Brojevi sekvenca se koriste sa potvrdama za praćenje uspješnog prijenosa paketa
+
+format tcp-a
+-- Izvorišni port
+-- Odredišni port
+-- Broj sekvence
+-- Broj potvrde
+-- Pomak zaglavlja
+-- Rezervirano
+-- Zastavice (URG, ACK, PSH, RST, SYN, FIN)
+-- Veličina prozora
+-- Kontrolni zbroj
+-- Pokazivač urgentnih podataka
+-- Opcije (opcionalno)
+-- Padding
