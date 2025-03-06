@@ -1,4 +1,4 @@
-kako se naziva jedinica na transportnom sloju naziva se PAKET
+kako se naziva jedinica na transportnom sloju naziva se segment
 -- na fizičkome je bit
 -- na drugom sloju je bit
 
@@ -31,6 +31,8 @@ kada je udp koristan
 -----------------------------------------------------------------------------------------
 UDP, User Datagram Protocol
 
+-ne osigurava redoslijed
+
 dali je to spojni ili nespojni protokol zašto
 -- nespojni je protokol. To znači da ne zahtijeva uspostavu stalne veze između pošiljatelja i primatelja prije slanja podataka. 
 
@@ -41,6 +43,8 @@ format udp paketa
 -- Izvorišna IP adresa (16 bita), odredišna IP adresa (16 bita), duljina (16 bita), checksum (16 bita), podaci (varijabalna duljina)
 -----------------------------------------------------------------------------------------
 TCP, Transmission Control Protocol
+
+-osigurava da sve dođe u dobro redoslijedu
 
 o čemu brine tcp
 -- Pouzdanosti: Garantira isporuku i redoslijed paketa.
