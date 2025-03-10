@@ -1,0 +1,114 @@
+#include <Stepper.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+#define KORAK 200  
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+
+Stepper stepper1(KORAK, 8, 9, 10, 11);
+Stepper stepper2(KORAK, 12, 5, 6, 4);  
+
+#define trigger 2
+#define echo 3
+#define buzzer 7
+#define gumb A0 
+#define crlena A1    
+#define zuta A2  
+#define zelena A3   
+
+bool nazad = false;
+
+void setup() {
+  stepper1.setSpeed(50); 
+  stepper2.setSpeed(50);  
+  Serial.begin(9600);
+  
+  pinMode(trigger, OUTPUT);
+  pinMode(echo, INPUT);
+  pinMode(buzzer, OUTPUT);
+  pinMode(gumb, INPUT_PULLUP);  
+  pinMode(crlena, OUTPUT);
+  pinMode(zuta, OUTPUT);
+  pinMode(zelena, OUTPUT);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(3, 0);
+}
+
+void loop() {
+  long duration, udaljenost;
+  if (digitalRead(gumb) == LOW) {
+    nazad = !nazad;
+    delay(300);
+  }
+  digitalWrite(trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+  duration = pulseIn(echo, HIGH);
+  udaljenost = (duration / 2) / 29.1; 
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Udaljenost:");
+  lcd.print(udaljenost);
+  lcd.print(" cm");
+
+  if (udaljenost < 10) {
+    stepper1.step(0);
+    stepper2.step(0);
+    digitalWrite(crlena, HIGH);
+    digitalWrite(zuta, HIGH);
+    digitalWrite(zelena, HIGH);
+    int stepAmount = 30;
+    tone(buzzer, 5000);
+  }
+  else if (udaljenost >=10 && udaljenost < 20) {
+    digitalWrite(crlena, HIGH);
+    digitalWrite(zuta, LOW);
+    digitalWrite(zelena, LOW);
+    lcd.setCursor(0,1);
+    lcd.print("Alo, stoj, policija");
+    tone(buzzer, 5000);
+    int stepAmount = 30;
+    if (nazad) {
+      stepper1.step(-stepAmount);
+      stepper2.step(-stepAmount);
+    } 
+    else {
+      stepper1.step(stepAmount);
+      stepper2.step(stepAmount);
+    }
+  } 
+  else if (udaljenost >= 20 && udaljenost <= 40) {
+    digitalWrite(crlena, LOW);
+    digitalWrite(zuta, HIGH);
+    digitalWrite(zelena, LOW);
+    noTone(buzzer);
+    int stepAmount = 30;
+    if (nazad) {
+      stepper1.step(-stepAmount);
+      stepper2.step(-stepAmount);
+    } 
+    else {
+      stepper1.step(stepAmount);
+      stepper2.step(stepAmount);
+    }
+  } 
+  else{
+    digitalWrite(crlena, LOW);
+    digitalWrite(zuta, LOW);
+    digitalWrite(zelena, HIGH);
+    noTone(buzzer);
+    int stepAmount = 30;
+    if (nazad) {
+      stepper1.step(-stepAmount);
+      stepper2.step(-stepAmount);
+    } 
+    else {
+      stepper1.step(stepAmount);
+      stepper2.step(stepAmount);
+    }
+  } 
+}
