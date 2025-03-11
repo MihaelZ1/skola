@@ -61,6 +61,8 @@ void loop() {
     digitalWrite(crlena, HIGH);
     digitalWrite(zuta, HIGH);
     digitalWrite(zelena, HIGH);
+    lcd.setCursor(0,1);
+    lcd.print("Oprez");
     tone(buzzer, 6000);
   }
   else if (udaljenost >=10 && udaljenost < 20) {
@@ -93,6 +95,10 @@ void loop() {
       stepper2.step(stepAmount);
     }
   } 
+  else if(distance>=200||distance<=0){
+    lcd.setCursor(0,1);
+    lcd.print("Krivo mjerenje");
+  }
   else{
     digitalWrite(crlena, LOW);
     digitalWrite(zuta, LOW);
