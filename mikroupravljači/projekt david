@@ -54,15 +54,14 @@ void loop() {
   lcd.print("Udaljenost:");
   lcd.print(udaljenost);
   lcd.print(" cm");
-
+  int stepAmount = 30;
   if (udaljenost < 10) {
     stepper1.step(0);
     stepper2.step(0);
     digitalWrite(crlena, HIGH);
     digitalWrite(zuta, HIGH);
     digitalWrite(zelena, HIGH);
-    int stepAmount = 30;
-    tone(buzzer, 5000);
+    tone(buzzer, 6000);
   }
   else if (udaljenost >=10 && udaljenost < 20) {
     digitalWrite(crlena, HIGH);
@@ -70,8 +69,7 @@ void loop() {
     digitalWrite(zelena, LOW);
     lcd.setCursor(0,1);
     lcd.print("Alo, stoj, policija");
-    tone(buzzer, 5000);
-    int stepAmount = 30;
+    tone(buzzer, 3000);
     if (nazad) {
       stepper1.step(-stepAmount);
       stepper2.step(-stepAmount);
@@ -86,7 +84,6 @@ void loop() {
     digitalWrite(zuta, HIGH);
     digitalWrite(zelena, LOW);
     noTone(buzzer);
-    int stepAmount = 30;
     if (nazad) {
       stepper1.step(-stepAmount);
       stepper2.step(-stepAmount);
@@ -101,7 +98,6 @@ void loop() {
     digitalWrite(zuta, LOW);
     digitalWrite(zelena, HIGH);
     noTone(buzzer);
-    int stepAmount = 30;
     if (nazad) {
       stepper1.step(-stepAmount);
       stepper2.step(-stepAmount);
