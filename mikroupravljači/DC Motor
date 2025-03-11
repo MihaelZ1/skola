@@ -1,0 +1,27 @@
+#include <Stepper.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+int motorA1=5;
+int motorA2=6;
+
+void setup() {
+ pinMode(motorA1, OUTPUT);
+ pinMode(motorA2, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(motorA1, HIGH);
+  digitalWrite(motorA2, LOW);
+  delay(2000);
+    digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+  delay(2000);
+    digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, HIGH);
+  delay(2000);
+    digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+  delay(2000);
+  
+}
