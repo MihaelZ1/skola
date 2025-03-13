@@ -1,0 +1,7 @@
+cmd naredba za destnation adress je nslookup tsck.eu
+
+wireshark za filtriranje u gornju traku se upisuje npr. tcp ili udp za samo tcp i udp pakete
+
+za filtriranje po destination adresi se piše ip.dst == 192.198.42.10 
+
+za višestruku filtriranje se piše ip.dst == 192.198.42.10 && npr. tcp
