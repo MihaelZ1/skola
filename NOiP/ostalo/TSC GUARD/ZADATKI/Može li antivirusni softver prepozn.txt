@@ -1,0 +1,20 @@
+Može li antivirusni softver prepoznati sve vrste malwarea?       NE
+Koji od navedenih nije primjer sigurnosne prijetnje?       Phishing, Ransomware, SSL/TLS(DA), Worm
+Koji od navedenih protokola koristi šifriranje za sigurnost web stranica?         HTTP, FTP, HTTPS(da), SMTP
+Je li lozinka 123456 sigurna?       NE
+Postoje li sigurnosni problemi u korištenju iste lozinke na više računa?      DA
+Koji alat omogućuje skeniranje računala na malware?     VPN, Antivirus(da), Proxy, IDS
+Koja od navedenih metoda je najsigurniji način pohrane lozinki?    Pohrana u tekstualnu datoteku, Korištenje password managera(DA), Započeti svaki novi račun s admin lozinkom, Pohrana lozinki u vašem e-mailu
+Firewall može pomoći u zaštiti računala od neovlaštenih pristupa s interneta?         DA
+Koji je tip napada kada napadač pokušava preopteretiti poslužitelj s velikim brojem zahtjeva?    Brute-force napad, Man-in-the-middle napad, DDoS napad(DA), Cross-site scripting (XSS)
+Može li malware koristiti šifriranje za skrivanje svojih aktivnosti na računalu?         DA
+Koja od navedenih opcija najbolje definira ransomware?     Malware koji šifrira datoteke i traži otkupninu za dešifriranje(DA), Malware koji koristi e-mailove za pristup računima, Malware koji krade podatke iz memorije računala, Malware koji koristi backdoor za pristup računima
+Koji su načini zaštite podataka na internetu?    Korištenje VPN-a(DA), Redovito ažuriranje softvera(DA), Korištenje šifriranja(DA), Ignoriranje sigurnosnih upozorenja
+Koji je cilj napada "Man-in-the-Middle" (MitM)?        Preuzimanje kontrole nad računom, Proširivanje mreže napadača, Presretanje komunikacije između dviju strana(DA), Oštećenje ili uništavanje podataka
+Koji je glavni cilj napadača u "Cross-Site Scripting" (XSS) napadu?   Šifriranje podataka žrtve, Preuzimanje privilegija žrtve, Unos zlonamjernog koda u web stranicu(da), Isključivanje poslužitelja žrtve
+Koji od sljedećih napada koristi lažno predstavljanje identiteta za pristup podacima?       Phishing(DA), SQL Injection, Cross-Site Request Forgery (CSRF), DNS Spoofing
+Koji je jedan od najčešćih ciljeva SQL Injection napada?  Pristup web serveru, Izbor podataka iz baze podataka(DA), Šifriranje baze podataka,Sprečavanje izvršavanja skripti
+Koji je glavni cilj Denial of Service(DoS) napada?      Korištenje šifriranja za zaštitu podataka, Isključivanje korisnika s mreže(DA), Oštećenje hardverskih uređaja, Preuzimanje kontrole nad računalima korisnika
+Što znači termin Zero-Day u kontekstu cyber sigurnosti?   Sigurnosna ranjivost koja je već poznata i zakrpljena, Sigurnosna ranjivost koja je postala poznata nakon napada(DA), Sigurnosna ranjivost koja je otkrivena, ali nije još objavljena, Sigurnosna ranjivost koja je odmah ispravljena
+Koji od sljedećih alata je najprikladniji za napad na šifrirani promet?    Wireshark(DA), Metasploit, Nmap, Aircrack-ng
+
