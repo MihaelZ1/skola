@@ -1,0 +1,32 @@
+Može li nas antivirusni softver zaštititi od svih vrsta napada?     NE
+Je li 2FA koristan za zaštitu?    DA
+Koji je cilj ransomwarea?      Krađa podataka, Šifriranje podataka i traženje otkupnine(DA), Praćenje korisnika
+Gdje se od ponuđenih vrsta napada koristi Brute-Force?            Otkrivanje lozinki(DA), trojanski virus, Distributed Denial-Of-Service(DDoS)
+Koji je najsigurniji način pohrane lozinki?       Papir, Password manager(DA), .txt datoteka
+Koji je protokol za sigurno pregledavanje web stranica?             HTTP, HTTPS(DA), FTP
+Za što je skraćenica DDoS?       Data Deletion of System, Digital Defense over Security, Distributed Denial of Service(DA)
+Koji od alata se koriste za mrežno skeniranje?      Nmap(DA), Wireshark(DA), Adobe Photoshop
+Što od ponuđenog ima veze s Phishingom?         Lažne web-stranice(DA), Social-Engineering(DA), snimanje zaslona
+Koje od ponuđenih vrsta napada su oblik social engineeringa=            Phishing(DA), Diversion Theft(DA), SQL Injection
+Blokira li firewall i dolazni i odlazni promet?       DA
+Jesu li svi trojanski virusi zlonamjerni? 	DA
+Je li hashing dvostrani proces?            NE
+Zero-day vulnerability je ranjivost gdje programer zna za nju i radi na tome da ju zakrpa?          NE
+Što se koristi kao zaštita od SQL injectiona?            deaktivacija antivirusa, onemogućavanje kolačića, sanitizacija unosa(DA)
+Što se koristi za identifikaciju sumnjivih aktivnosti na mreži?         IDS(DA), VPN, Firewall
+Koje su vrste autentifikacije?         Biometrijska autentifikacija(DA), 2FA(DA), SQL
+Oblici opasnog softvera su:     Rootkit(DA), Ransomware(DA), Vishing
+Oblici enkripcije podataka su:          AES(DA), RSA(DA), HTTPS
+Što nam pruža sigurno kodiranje?      provjera ulaza(DA), hardcoding, korištenje najmanjih privilegija(DA)
+Može li RAM sadržavati osjetljive podatake nakon gašenja računala?           DA
+Koji od navedenih protokola osigurava najjaču zaštitu bežične mreže?         Wired Equivalent Privacy(WEP), TKIP(Temporal Key Integrity Protocol), WPA2(Wi-FI Protected Access 2), WPA3(DA)
+Koje metode koristi fileless malware?         PowerShell skripte(DA), In-memory execution(DA), ZIP Datoteke
+Koji je najčešći drugi faktor autentifikacije uz lozinku?        SMS kod(DA), IP adresa, datum rođenja
+Može li napadač zaobići 2FA pomoću phishinga?       DA
+Koji od faktora autentifikacije mogu biti dio 2FA?     Biometrija(DA), jednokratni kod(DA), ime
+Koja metoda uvijek osigurava otpornost 2FA na phishing napade?       SMS kod, TOTP, Backup kod                   nema točnog
+Koji od ponuđenih je najsigurniji način prijave u online bankarstvo na javnom mjestu?    VPN(DA), ethernet spajanje, Incognito mode
+Što treba učiniti ako je na tvoju Wi-Fi mrežu spojen nepoznat uređaj?          Blokirati ga(DA), isključiti internet, poslati poruku uređaju
+Što treba učiniti ako se na ekranu pišu stvari, a vi ništa ne dirate?        Maknuti računalo s mreže(DA), isključiti računalo, Restartati računalo
+Što treba učiniti ako dobijete obavijest o prijavi na vaš račun s nepoznate lokacije?         Promijeniti lozinku(DA), provjeriti postavke sigurnosti(DA),  zanemariti grešku, poslati e-mail podršci
+
