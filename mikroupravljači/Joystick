@@ -1,0 +1,16 @@
+#define joyX A0
+#define joyY A1
+
+int xValue=0;
+int yValue=0;
+
+void setup(){
+  Serial.begin(9000);
+}
+void loop(){
+  xValue=analogRead(joyX);
+  yValue=analogRead(joyY);
+  Serial.print(xValue);
+  Serial.println(yValue);
+  delay(200);
+}
