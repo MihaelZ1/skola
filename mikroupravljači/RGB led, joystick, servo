@@ -1,0 +1,44 @@
+#include <Servo.h>
+
+#define joyX A0
+#define joyY A1
+
+Servo myservo;
+
+int xValue = 0; 
+int yValue = 0; 
+int pos = 0;   
+int redPin = 11;
+int greenPin = 10;
+int bluePin = 9;
+
+void setup() {
+  Serial.begin(9600);           // Corrected baud rate
+  myservo.attach(5);            // Attach servo to pin 5
+  pinMode(redPin,  OUTPUT);     // Set RGB LED pins to output
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+}
+
+void loop() {
+  xValue = analogRead(joyX);  
+  yValue = analogRead(joyY);   
+  Serial.print("X: ");
+  Serial.print(xValue);
+  Serial.print(" Y: ");
+  Serial.println(yValue);
+  pos = map(xValue, 0, 1023, 0, 180);
+  myservo.write(pos);          
+  delay(100);
+  if (yValue > 513) {
+    setColor(((yValue - 513) / 2), 0, 0); 
+  } else {
+    setColor(0, (yValue / 2), 0);      
+  }
+}
+void setColor(int redValue, int greenValue, int blueValue) {
+  analogWrite(redPin, redValue);
+  analogWrite(greenPin, greenValue);
+  analogWrite(bluePin, blueValue); 
+}
+
