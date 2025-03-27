@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <!-- Prikaz rezultata -->
+    <TextView
+        android:id="@+id/textViewIspis"
+        android:text="0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:padding="8dp"/>
+
+    <!-- Gumb za List dialog -->
+    <Button
+        android:id="@+id/buttonList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GUMB LIST"
+        android:onClick="tipkaPritisnutalist"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Gumb za Radio dialog -->
+    <Button
+        android:id="@+id/buttonRadio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GUMB RADIO"
+        android:onClick="tipkaPritisnutaradio"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Gumb za Check dialog -->
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GUMB CHECK"
+        android:onClick="tipkaPritisnutacheck"
+        android:layout_marginTop="10dp"/>
+
+</LinearLayout>
