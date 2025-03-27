@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+    <string-array name="odabir_boja">
+        <item>-1</item>
+        <item>+1</item>
+        <item>+2</item>
+    </string-array>
+
+</resources>
