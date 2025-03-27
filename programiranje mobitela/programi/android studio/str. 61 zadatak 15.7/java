@@ -1,0 +1,99 @@
+package com.example.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView textViewIspis;
+    int text = 0;
+    int sel = 0;
+    final CharSequence poljeNazivi[] = {"-1", "+1", "+2"};
+    boolean odabrano[] = {true, false, false};
+    final CharSequence poljeNazivi1[] = {"-1", "+1", "+2"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewIspis = findViewById(R.id.textViewIspis);
+
+        // Safely parse text value
+        try {
+            text = Integer.parseInt(textViewIspis.getText().toString());
+        } catch (NumberFormatException e) {
+            text = 0;
+        }
+    }
+
+    public void tipkaPritisnutaradio(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberi:");
+
+        builder.setSingleChoiceItems(poljeNazivi, sel, (dialog, id) -> {
+            sel = id; // Sprema odabranu opciju
+        });
+
+        builder.setPositiveButton("Fire", (dialog, id) -> {
+            if (sel >= 0) {
+                text += Integer.parseInt(poljeNazivi[sel].toString().replace("+", ""));
+                textViewIspis.setText(String.valueOf(text));
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+
+    public void tipkaPritisnutalist(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberi boju:");
+
+        builder.setItems(getResources().getStringArray(R.array.odabir_boja), (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    text -= 1;
+                    break;
+                case 1:
+                    text += 1;
+                    break;
+                case 2:
+                    text += 2;
+                    break;
+            }
+            textViewIspis.setText(String.valueOf(text));
+        });
+
+        builder.show();
+    }
+
+    public void tipkaPritisnutacheck(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberi:");
+
+        builder.setMultiChoiceItems(poljeNazivi1, odabrano, (dialog, id, b) -> {
+
+        });
+
+        builder.setPositiveButton("Fire", (dialog, id) -> {
+            for (int i = 0; i < odabrano.length; i++) {
+                if (odabrano[i]) {
+                    text += Integer.parseInt(poljeNazivi1[i].toString().replace("+", ""));
+                }
+            }
+            textViewIspis.setText(String.valueOf(text));
+
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+}
