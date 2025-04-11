@@ -1,0 +1,29 @@
+1.
+CREATE database spojRM;
+
+2.
+create table Zaposlenici( ID_Zaposlenika integer(4), Ime varchar (15), Prezime varchar(15), PRIMARY KEY(ID_Zaposlenika) );
+CREATE table Narudzbe( Id_Narudzbe integer(3), Proizvod varchar(15), Zaposlenik integer(4), PRIMARY KEY(ID_Narudzbe), FOREIGN KEY (Zaposlenik) REFERENCES zaposlenici(ID_Zaposlenika) );
+insert into zaposlenici VALUES (0111,'Jura','Jurić'),(0112,'Pero','Perić'),(0113,'Štef','Štefić'),(0114,'Pajo','Pajić');
+insert into narudzbe VALUES (234,'Prineter',0111),(657,'Stol',0113),(865,'Ormar',0113);
+
+3.
+SELECT Zaposlenici.ime, narudzbe.Proizvod 
+from zaposlenici 
+inner join narudzbe 
+on zaposlenici.ID_Zaposlenika=narudzbe.Zaposlenik;
+
+4.
+SELECT Zaposlenici.ime, narudzbe.Proizvod 
+from zaposlenici 
+left join narudzbe 
+on zaposlenici.ID_Zaposlenika=narudzbe.Zaposlenik;
+
+5.
+SELECT zaposlenici.Ime, narudzbe.ID_narudzbe 
+FROM narudzbe 
+LEFT JOIN zaposlenici 
+ON zaposlenici.ID_zaposlenika=narudzbe.Zaposlenik;
+
+6.
+UPDATE zaposlenici SET Ime = "Pedro", Prezime = ("Pedrić") WHERE ID_Zaposlenika = 0112;
