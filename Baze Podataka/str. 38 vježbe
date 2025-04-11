@@ -1,0 +1,10 @@
+CREATE database baz25a;
+CREATE TABLE mjesta(
+  pbr int(5),
+  naziv varchar(25))
+
+  LOAD DATA INFILE 'D:/3.rm/mjesta1.txt' INTO TABLE mjesta
+COLUMNS TERMINATED BY ';' ENCLOSED BY ''
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
