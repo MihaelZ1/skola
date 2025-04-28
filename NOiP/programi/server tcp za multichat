@@ -1,0 +1,209 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Tcp_server
+{
+    public partial class Form1 : Form
+    {
+        private TcpListener tcpListener;
+        private bool running = false;
+        private List<ClientInfo> clients = new List<ClientInfo>();
+        private object clientsLock = new object();
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_start_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int port = Convert.ToInt32(textBox_port.Text);
+                tcpListener = new TcpListener(IPAddress.Any, port);
+                tcpListener.Start();
+                running = true;
+
+                txtLog.AppendText($"Server pokrenut na portu: {port}{Environment.NewLine}");
+
+                Thread listenerThread = new Thread(ListenForClients);
+                listenerThread.IsBackground = true;
+                listenerThread.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greška!" + ex.Message);
+            }
+        }
+        private void ListenForClients()
+        {
+            while (running)
+            {
+                try
+                {
+                    TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                    Thread clientThread = new Thread(HandleClientComm);
+                    clientThread.IsBackground = true;
+                    clientThread.Start(tcpClient);
+                }
+                catch { }
+            }
+        }
+
+        private void HandleClientComm(object clientObj)
+        {
+            TcpClient tcpClient = (TcpClient)clientObj;
+            string clientEndPoint = tcpClient.Client.RemoteEndPoint.ToString();
+
+            try
+            {
+                NetworkStream stream = tcpClient.GetStream();
+                StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                StreamWriter writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true };
+
+                // Klijent prvo šalje svoj ID
+                string clientId = reader.ReadLine();
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    tcpClient.Close();
+                    return;
+                }
+
+                ClientInfo clientInfo = new ClientInfo
+                {
+                    TcpClient = tcpClient,
+                    Reader = reader,
+                    Writer = writer,
+                    Id = clientId,
+                    IPAddress = clientEndPoint
+                };
+
+                lock (clientsLock)
+                {
+                    clients.Add(clientInfo);
+                }
+
+                this.BeginInvoke((MethodInvoker)delegate
+                {
+                    txtLog.AppendText($"Novi korisnik je došao: {clientId} ({clientEndPoint}){Environment.NewLine}");
+                });
+
+                while (running && tcpClient.Connected)
+                {
+                    string message = reader.ReadLine();
+                    if (message == null) break;
+
+                    BroadcastMessage($"{clientId}: {message}");
+
+                    this.BeginInvoke((MethodInvoker)delegate
+                    {
+                        txtLog.AppendText($"[{clientId} - {clientEndPoint}] {message}{Environment.NewLine}");
+                    });
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                lock (clientsLock)
+                {
+                    clients.RemoveAll(c => c.TcpClient == tcpClient);
+                }
+                tcpClient.Close();
+
+                this.BeginInvoke((MethodInvoker)delegate
+                {
+                    txtLog.AppendText($"Klijent odspojen: {clientEndPoint}{Environment.NewLine}");
+                });
+            }
+        }
+
+        private void BroadcastMessage(string message)
+        {
+            lock (clientsLock)
+            {
+                foreach (var client in clients)
+                {
+                    try
+                    {
+                        client.Writer.WriteLine(message);
+                    }
+                    catch
+                    {
+                        // ignore broken clients
+                    }
+                }
+            }
+        }
+
+        private void button_stop_Click(object sender, EventArgs e)
+        {
+            running = false;
+            tcpListener?.Stop();
+
+            lock (clientsLock)
+            {
+                foreach (var client in clients)
+                {
+                    client.TcpClient.Close();
+                }
+                clients.Clear();
+            }
+
+            txtLog.AppendText("Server ugašen" + Environment.NewLine);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            running = false;
+            tcpListener?.Stop();
+        }
+
+        private void button_send_Click(object sender, EventArgs e)
+        {
+            string message = textBox_send.Text.Trim();
+            if (!string.IsNullOrEmpty(message))
+            {
+                BroadcastMessage($"[SERVER]: {message}");
+
+                this.BeginInvoke((MethodInvoker)delegate
+                {
+                    txtLog.AppendText($"[SERVER]: {message}{Environment.NewLine}");
+                    textBox_send.Clear();
+                });
+            }
+
+        }
+
+        private class ClientInfo
+        {
+            public TcpClient TcpClient { get; set; }
+            public StreamReader Reader { get; set; }
+            public StreamWriter Writer { get; set; }
+            public string Id { get; set; }
+            public string IPAddress { get; set; }
+        }
+
+        private void button_ocisti_Click(object sender, EventArgs e)
+        {
+            txtLog.Clear();
+        }
+    }
+    
+}
