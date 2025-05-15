@@ -1,0 +1,3 @@
+napraviti c# aplikaciju s GUI-om (koristi TCP i UDP) za prijenos podataka datoteka nekih sadržaja 
+
+implementirati serijalizacija dodati unutar aplikacije nekakve hardkodirane korisnike (za prijenos sadržaja kao provjeru) 
