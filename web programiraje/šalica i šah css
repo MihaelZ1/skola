@@ -1,0 +1,206 @@
+.main{
+    max-width: 150px;
+    max-height: 150px;
+    position:relative;
+    top: s0px;
+}
+
+.crna1{
+    position: relative;
+    background: black;
+    height: 50px;
+    width: 50px;
+    left: 50px;
+
+}
+
+.crna3{
+    position: relative;
+    background: black;
+    height: 50px;
+    width: 50px;
+    left: 150px;
+    top: -100px;
+
+}
+.žuta2{
+    background: yellow;
+    height: 50px;
+    width: 50px;
+    position: relative;
+    left: 100px;
+    top: -50px;
+}
+
+.žuta4{
+        background: yellow;
+    height: 50px;
+    width: 50px;
+    position: relative;
+    left: 50px;
+    top: -100px;
+}
+
+.crna5{
+       position: relative;
+    background: black;
+    height: 50px;
+    width: 50px;
+    left: 100px;
+    top: -150px;
+}
+
+.žuta6{
+    background: yellow;
+    height: 50px;
+    width: 50px;
+    position: relative;
+    left: 150px;
+    top: -200px;
+}
+
+.crna7{
+       position: relative;
+    background: black;
+    height: 50px;
+    width: 50px;
+    left: 50px;
+    top: -200px;
+}
+
+.žuta8{
+    background: yellow;
+    height: 50px;
+    width: 50px;
+    position: relative;
+    left: 100px;
+    top: -250px;
+}
+
+.crna9{
+       position: relative;
+    background: black;
+    height: 50px;
+    width: 50px;
+    left: 150px;
+    top: -300px;
+}
+
+.divKonj{
+color: green;
+position: relative;
+top: -460px;
+left: 100px;
+font-size: 50px;
+animation-name: animacijaKonj;
+animation-fill-mode:forwards ;
+animation-duration: 5s ;
+}
+
+.divTop{
+    color: blue;
+position: relative;
+top: -425px;
+left: 50px;
+font-size: 50px;
+animation-name: animacijaTop;
+animation-delay: 4s;
+animation-duration: 3s ;
+animation-fill-mode:forwards ;
+}
+
+.divIks{
+color: red;
+opacity: 0;
+position: relative;
+top: -492px;
+left: 157px;
+font-size: 50px;
+animation-name: animacijaIks;
+animation-delay: 7s;
+animation-duration: 7s ;
+}
+
+@keyframes animacijaKonj {
+   0%{color: blue;}
+   25%{transform: translate(50px, 0px);}
+   50%{transform: translate(50px, 50px);}
+   75%{transform: translate(50px, 100px);}
+ 100%{transform: translate(50px, 100px);}
+}
+
+
+@keyframes animacijaIks {
+   0%{opacity: 1;}
+  50%{opacity: 1;}
+ 100%{opacity: 1;}
+}
+
+@keyframes animacijaTop {
+   0%{color: blue;}
+   50%{transform: translate(50px, 0px);}
+ 100%{transform: translate(100px, 0px);}
+}
+
+.šolja{
+    z-index: 1;
+position: relative;
+left: 500px;
+background:brown;
+width: 100px;
+height: 100px;
+border-bottom-left-radius: 15px;
+border-bottom-right-radius: 15px;
+}
+
+.murkovašolja{
+position: relative;
+left: 560px;
+top: -90px;
+border-style:solid;
+border-width: 7px;
+border-color: brown;
+width: 70px;
+height: 50px;
+border-radius: 50%;
+}
+
+.dim{    
+position: relative;
+opacity: 0.3;
+left: 510px;
+top: -130px;
+background: grey;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+animation-name: animacijaDim1;
+animation-duration: 3s ;
+animation-iteration-count:infinite ;
+}
+
+.dim2{
+animation-name: animacijaDim2;
+animation-delay: 1s;
+animation-duration: 3s ;
+position: relative;
+opacity: 0.3;
+left: 540px;
+top: -200px;
+background: grey;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+animation-iteration-count:infinite ;
+}
+
+
+@keyframes animacijaDim1 {
+   0%{opacity: 0.4;}
+ 100%{transform: translate(0px, -100px);}
+}
+
+@keyframes animacijaDim2 {
+   0%{opacity: 0.3;}
+ 100%{transform: translate(0px, -100px);}
+}
