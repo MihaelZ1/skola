@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="cssha.css">
+</head>
+<body>
+    <div class="main">
+        <div class="crna1"></div>
+        <div class="žuta2"></div>
+        <div class="crna3"></div>
+
+        <div class="žuta4"></div>
+        <div class="crna5"></div>
+        <div class="žuta6"></div>
+    
+        <div class="crna7"></div>
+        <div class="žuta8"></div>
+        <div class="crna9"></div>
+
+        <div class="divKonj"> &#9816; </div>
+        <div class="divTop"> &#9820; </div>
+        <div class="divIks"> &#9747; </div>
+       
+    </div>
+
+    <div class="šolja"></div>
+    <div class="murkovašolja"></div>
+
+    <div class="dim"></div>
+    <div class="dim2"></div>
+</body>
+</html>
