@@ -1,0 +1,66 @@
+#include <Servo.h>
+#include <Stepper.h>
+
+#define STEPS_PER_REV 200
+
+
+Stepper stepper(STEPS_PER_REV, 10, 12, 11, 13);
+Servo myServo;
+
+String inputString = "";
+bool stringComplete = false;
+
+void setup() {
+  Serial.begin(9600);
+  myServo.attach(9);
+  stepper.setSpeed(60);
+}
+
+void loop() {
+
+
+  if (stringComplete) {
+    int value = inputString.toInt();
+    Serial.print("Primljeno: ");
+   Serial.println(value); 
+    if (value >= 0 && value <= 180) {
+
+      myServo.write(value);
+    } 
+    else if (value >= 9999 && value <= 15000) {
+ 
+
+      int steps = value - 10000;
+      Serial.print("lijevo vrijednost: " );
+      Serial.print(steps);
+      Serial.println(" od 200");
+      int rjesenje=steps-steps-steps;
+      Serial.println(rjesenje);
+      stepper.step(rjesenje);
+    } 
+    else if (value >= 19999 && value <= 25000) {
+
+      int steps = value - 20000;
+      Serial.print("desno vrijednost: " );
+      Serial.print(steps);
+      Serial.println(" od 200");
+      stepper.step(steps);
+    }
+
+
+    inputString = "";
+    stringComplete = false;
+  }
+}
+
+
+void serialEvent() {
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      stringComplete = true;
+    } else {
+      inputString += inChar;
+    }
+  }
+}
