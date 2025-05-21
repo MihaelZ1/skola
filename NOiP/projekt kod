@@ -1,0 +1,416 @@
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
+namespace projekt
+{
+    public partial class Form1 : Form
+    {
+
+        private TcpListener? server;
+        private string ipRangeStart = "127.0.0.1";
+        private string ipRangeEnd = "127.0.0.1";
+        private bool prijavljen = false;
+        private string? _odabranaDatoteka;
+
+        private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+        private OpenFileDialog openFileDialog = new OpenFileDialog();
+
+        public Form1()
+        {
+            InitializeComponent();
+            btnPosalji.Enabled = false;
+           
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            txtPoruka.Enabled = false;
+            btnPrijenosPodataka.Enabled = false;
+            btnPosalji.Enabled = false;
+
+            StartServer();
+            StartScanning();
+        }
+
+        public void EnableControls()
+        {
+            prijavljen = true;
+            txtPoruka.Enabled = true;
+            btnPrijenosPodataka.Enabled = true;
+            btnPosalji.Enabled = true;  
+        }
+
+        private void prijavaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 novaForma = new Form2(this); 
+            novaForma.ShowDialog();
+        }
+
+        private void urediToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string unos = Microsoft.VisualBasic.Interaction.InputBox(
+              "Unesite IP range (npr. 192.168.1.100-192.168.1.200):",
+              "Uredi IP Range",
+              $"{ipRangeStart}-{ipRangeEnd}"
+          );
+
+            if (!string.IsNullOrEmpty(unos) && unos.Contains('-'))
+            {
+                string[] parts = unos.Split('-');
+                ipRangeStart = parts[0].Trim();
+                ipRangeEnd = parts[1].Trim();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            contextMenuStrip1.Show(button1, new Point(0, button1.Height));
+        }
+        private void StartServer()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    server = new TcpListener(IPAddress.Any, 9000);
+                    server.Start();
+
+                    while (!cancelTokenSource.IsCancellationRequested)
+                    {
+                        TcpClient client = server.AcceptTcpClient();
+
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                using NetworkStream stream = client.GetStream();
+
+                                while (stream.CanRead)
+                                {
+                                    int tip = stream.ReadByte();
+                                    if (tip == -1)
+                                        break;
+
+                                    if (tip == 0) // tekstualna poruka
+                                    {
+                                        using MemoryStream ms = new MemoryStream();
+                                        byte[] buffer = new byte[1024];
+                                        int bytesRead;
+
+                                        stream.ReadTimeout = 5000;
+                                        try
+                                        {
+                                            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                                            {
+                                                ms.Write(buffer, 0, bytesRead);
+                                                if (!stream.DataAvailable)
+                                                    break;
+                                            }
+                                        }
+                                        catch (IOException ex)
+                                        {
+                                            LogAndIgnoreExpectedIOException(ex);
+                                        }
+
+                                        string primljenaPoruka = Encoding.UTF8.GetString(ms.ToArray());
+
+                                        Invoke(() =>
+                                        {
+                                            if (!string.IsNullOrEmpty(lstPrimljenePoruke.Text))
+                                                lstPrimljenePoruke.AppendText(Environment.NewLine);
+                                            lstPrimljenePoruke.AppendText(primljenaPoruka);
+                                        });
+                                    }
+                                    else if (tip == 1) // datoteka
+                                    {
+                                        // Pročita ime datoteke (256 bajtova)
+                                        byte[] imeBytes = new byte[256];
+                                        int totalRead = 0;
+                                        while (totalRead < 256)
+                                        {
+                                            int read = stream.Read(imeBytes, totalRead, 256 - totalRead);
+                                            if (read == 0) throw new IOException("Veza prekinuta prije nego što je primljeno ime datoteke");
+                                            totalRead += read;
+                                        }
+                                        string imeDatoteke = Encoding.UTF8.GetString(imeBytes).TrimEnd('\0');
+
+                                        // Pročita veličinu datoteke (8 bajtova)
+                                        byte[] lengthBytes = new byte[8];
+                                        totalRead = 0;
+                                        while (totalRead < 8)
+                                        {
+                                            int read = stream.Read(lengthBytes, totalRead, 8 - totalRead);
+                                            if (read == 0) throw new IOException("Veza prekinuta prije nego što je primljena veličina datoteke");
+                                            totalRead += read;
+                                        }
+                                        long fileLength = BitConverter.ToInt64(lengthBytes, 0);
+
+                                        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                                        string savePath = Directory.Exists(desktopPath) && HasWriteAccess(desktopPath)
+                                            ? desktopPath
+                                            : @"C:\Temp";
+
+                                        if (!Directory.Exists(savePath))
+                                            Directory.CreateDirectory(savePath);
+
+                                        string fullSavePath = Path.Combine(savePath, imeDatoteke);
+
+                                        using FileStream fs = new FileStream(fullSavePath, FileMode.Create, FileAccess.Write);
+                                        byte[] buffer = new byte[8192];
+                                        long bytesReceived = 0;
+
+                                        stream.ReadTimeout = 30000; // 30 sekundi timeout
+
+                                        try
+                                        {
+                                            while (bytesReceived < fileLength)
+                                            {
+                                                int bytesToRead = (int)Math.Min(buffer.Length, fileLength - bytesReceived);
+                                                int bytesRead = stream.Read(buffer, 0, bytesToRead);
+                                                if (bytesRead == 0)
+                                                    throw new IOException("Veza prekinuta tijekom prijenosa datoteke");
+                                                fs.Write(buffer, 0, bytesRead);
+                                                bytesReceived += bytesRead;
+                                            }
+                                        }
+                                        catch (IOException ex)
+                                        {
+                                            LogAndIgnoreExpectedIOException(ex);
+                                        }
+
+                                        Invoke(() =>
+                                        {
+                                            MessageBox.Show($"Primljena datoteka spremljena na: {fullSavePath}", "Info");
+                                        });
+                                    }
+                                }
+
+                                client.Close();
+                            }
+                            catch (Exception ex)
+                            {
+                                Invoke(() =>
+                                {
+                                    MessageBox.Show("Greška prilikom primanja podataka: " + ex.Message, "Greška");
+                                });
+                            }
+                        });
+                    }
+                }
+                catch (ObjectDisposedException) { }
+                catch (Exception) { }
+            });
+        }
+
+        private void LogAndIgnoreExpectedIOException(IOException ex)
+        {
+            File.AppendAllText("log.txt", $"{DateTime.Now}: IOException - {ex.Message}{Environment.NewLine}");
+
+            string msg = ex.Message.ToLower();
+            if (msg.Contains("unable to read data from the transport connection") ||
+                msg.Contains("an existing connection was forcibly closed") ||
+                msg.Contains("the remote host forcibly closed the connection") ||
+                msg.Contains("connection reset by peer"))
+            {
+              
+            }
+            else
+            {
+                throw ex;
+            }
+        }
+
+
+
+
+        private bool HasWriteAccess(string folderPath)
+        {
+            try
+            {
+                string testFile = Path.Combine(folderPath, Path.GetRandomFileName());
+                using (FileStream fs = File.Create(testFile, 1, FileOptions.DeleteOnClose)) { }
+                return true;
+            }
+            catch { return false; }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            cancelTokenSource.Cancel();
+            server?.Stop();
+            base.OnFormClosing(e);
+        }
+
+        private void StartScanning()
+        {
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var dostupni = new List<string>();
+
+                    try
+                    {
+                        var startIP = IPAddress.Parse(ipRangeStart).GetAddressBytes();
+                        var endIP = IPAddress.Parse(ipRangeEnd).GetAddressBytes();
+
+                        for (int i = startIP[3]; i <= endIP[3]; i++)
+                        {
+                            string ip = $"{startIP[0]}.{startIP[1]}.{startIP[2]}.{i}";
+
+                            try
+                            {
+                                using TcpClient tcp = new TcpClient();
+                                var result = tcp.BeginConnect(ip, 9000, null, null);
+                                bool success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(1000));
+                                if (success)
+                                {
+                                    dostupni.Add(ip);
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(() =>
+                        {
+                            MessageBox.Show("Greška u IP rasponu: " + ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        });
+                    }
+
+                    Invoke(() =>
+                    {
+                        lstDostupniKorisnici.Items.Clear();
+                        foreach (var ip in dostupni)
+                        {
+                            if (!string.IsNullOrWhiteSpace(ip))
+                            {
+                                lstDostupniKorisnici.Items.Add(ip);
+                            }
+                        }
+                    });
+
+                    Thread.Sleep(5000);
+                }
+            });
+        }
+
+        private void btnPrijenosPodataka_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(txtPoruka.Text))
+            {
+                MessageBox.Show("Ne možete slati poruku i datoteku istovremeno. Očistite poruku prije slanja datoteke.", "Upozorenje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            openFileDialog.Title = "Odaberite datoteku";
+            openFileDialog.Filter = "Sve datoteke (*.*)|*.*";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                _odabranaDatoteka = openFileDialog.FileName;
+                lblOdabranaDatoteka.Text = Path.GetFileName(_odabranaDatoteka);
+            }
+        }
+
+        private void btnPosalji_Click(object sender, EventArgs e)
+        {
+            if (!prijavljen)
+            {
+                MessageBox.Show("Morate se prijaviti prije slanja poruke.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (lstDostupniKorisnici.SelectedItem == null)
+            {
+                MessageBox.Show("Molimo odaberite korisnika kojem šaljete podatke.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(txtPoruka.Text) && !string.IsNullOrWhiteSpace(_odabranaDatoteka))
+            {
+                MessageBox.Show("Možete poslati samo poruku ili datoteku – ne oboje istovremeno.", "Upozorenje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string? targetIP = lstDostupniKorisnici.SelectedItem as string;
+            if (string.IsNullOrWhiteSpace(targetIP))
+            {
+                MessageBox.Show("Molimo odaberite korisnika.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                using TcpClient client = new TcpClient();
+                var connectResult = client.BeginConnect(targetIP, 9000, null, null);
+                bool connected = connectResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5));
+                if (!connected)
+                {
+                    MessageBox.Show("Nije moguće uspostaviti vezu s korisnikom.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                using NetworkStream stream = client.GetStream();
+
+                // Pošalje poruku ako postoji
+                string poruka = txtPoruka.Text;
+                if (!string.IsNullOrWhiteSpace(poruka))
+                {
+                    stream.WriteByte(0); // tip 0 = poruka
+                    byte[] msgBytes = Encoding.UTF8.GetBytes(poruka);
+                    stream.Write(msgBytes, 0, msgBytes.Length);
+                }
+                // Pošalje datoteku ako je odabrana
+                else if (!string.IsNullOrWhiteSpace(_odabranaDatoteka))
+                {
+                    stream.WriteByte(1); // tip 1 = datoteka
+
+                    // Pošalje ime datoteke (256 bajtova, UTF8, padding s nulama)
+                    string fileName = Path.GetFileName(_odabranaDatoteka);
+                    byte[] imeBytes = new byte[256];
+                    byte[] fileNameBytes = Encoding.UTF8.GetBytes(fileName);
+                    Array.Copy(fileNameBytes, imeBytes, Math.Min(fileNameBytes.Length, imeBytes.Length));
+                    stream.Write(imeBytes, 0, imeBytes.Length);
+
+                    // Pošalje veličinu datoteke (8 bajtova)
+                    long fileLength = new FileInfo(_odabranaDatoteka).Length;
+                    byte[] lengthBytes = BitConverter.GetBytes(fileLength);
+                    stream.Write(lengthBytes, 0, lengthBytes.Length);
+
+                    // Pošalje sadržaj datoteke u bufferima
+                    byte[] buffer = new byte[8192];
+                    using FileStream fs = new FileStream(_odabranaDatoteka, FileMode.Open, FileAccess.Read);
+                    int bytesRead;
+                    while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        stream.Write(buffer, 0, bytesRead);
+                    }
+                }
+
+               
+                Thread.Sleep(100);
+
+                stream.Close();
+                client.Close();
+
+                // Očisti polja nakon slanja
+                txtPoruka.Clear();
+                _odabranaDatoteka = null;
+                lblOdabranaDatoteka.Text = "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greška prilikom slanja podataka: " + ex.Message);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            contextMenuStrip2.Show(button3, new Point(0, button3.Height));
+        }
+    }
+}
