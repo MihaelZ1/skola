@@ -1,0 +1,124 @@
+xml: 
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+  <ImageView
+      android:id="@+id/imageview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+
+
+
+
+
+</LinearLayout>
+
+
+java:
+package com.example.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.widget.ImageView;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                1080,
+                1800, // Height
+                Bitmap.Config.ARGB_8888 // Config
+        );
+        Canvas canvas = new Canvas(bitmap);
+
+        canvas.drawColor(Color.LTGRAY);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(8);
+        paint.setAntiAlias(true);
+
+        for(int i=0;i<8;i++){
+            canvas.drawPoint((i*(canvas.getWidth()/8)), (2*(canvas.getHeight()/8)), paint);
+        }
+        for(int i=0;i<8;i++){
+            canvas.drawPoint((canvas.getWidth()/8),(i*(canvas.getHeight()/8)) , paint);
+        }
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setColor(Color.YELLOW);
+        canvas.drawCircle((canvas.getWidth()/2), (canvas.getHeight()/8), (canvas.getHeight()/8), paint);
+
+        paint.setStrokeWidth(10);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.RED);
+        canvas.drawCircle((canvas.getWidth()/4), (canvas.getHeight()/8), (canvas.getWidth()/8), paint);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.GREEN);
+        canvas.drawCircle(6*(canvas.getWidth()/8), (canvas.getHeight()/8), (canvas.getWidth()/8), paint);
+
+        paint.setStyle(Paint.Style.FILL_AND_STROKE); // oboje
+        paint.setStrokeWidth(15);
+        paint.setColor(Color.RED);
+        canvas.drawRect((canvas.getWidth()/2), (canvas.getHeight()/2), (8*(canvas.getWidth()/8)), (8*(canvas.getHeight()/8)), paint);
+
+        paint.setStyle(Paint.Style.STROKE);       // samo rub
+        paint.setStrokeWidth(10);
+        paint.setColor(Color.GREEN);
+        canvas.drawRect((canvas.getWidth()/2), (canvas.getHeight()/2), (6*(canvas.getWidth()/8)), (6*(canvas.getHeight()/8)), paint);
+
+        paint.setStyle(Paint.Style.STROKE);       // samo rub
+        paint.setStrokeWidth(10);
+        paint.setColor(Color.BLACK);
+        canvas.drawRect(2*(canvas.getWidth()/8), 6*(canvas.getHeight()/8), (4*(canvas.getWidth()/8)), (7*(canvas.getHeight()/8)), paint);
+
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(10);
+        paint.setAntiAlias(true);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()/2, 0, 2*(canvas.getHeight()/8), paint);
+
+        paint.setColor(Color.GREEN);
+        paint.setStrokeWidth(10);
+        paint.setAntiAlias(true);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()/2, (canvas.getWidth()/8), 2*(canvas.getHeight()/8), paint);
+
+        paint.setColor(Color.YELLOW);
+        paint.setStrokeWidth(10);
+        paint.setAntiAlias(true);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()/2, 2*(canvas.getWidth()/8), 2*(canvas.getHeight()/8), paint);
+
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(10);
+        paint.setAntiAlias(true);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()/2, 3*(canvas.getWidth()/8), 2*(canvas.getHeight()/8), paint);
+
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(10);
+        paint.setAntiAlias(true);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()/2, 4*(canvas.getWidth()/8), 2*(canvas.getHeight()/8), paint);
+
+
+        ImageView mImageView = (ImageView) findViewById(R.id.imageview);
+        mImageView.setImageBitmap(bitmap);
+    }
+
+
+}
