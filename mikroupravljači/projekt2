@@ -1,0 +1,571 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <IRremote.h>
+
+// LCD I2C
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// IR prijemnik pin i objekti
+const int RECV_PIN = 7;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+// --- IR kodovi (HEX) ---
+// Ovdje zamijeni kodove prema svom daljinskom ako treba
+const unsigned long IR_POWER = 0xC05C0C;
+const unsigned long IR_LEFT = 0xC05C5A;
+const unsigned long IR_RIGHT = 0xC05C5B;
+const unsigned long IR_UP = 0xC05C58;
+const unsigned long IR_DOWN = 0xC05C59;
+const unsigned long IR_OK = 0xC05C5C;
+const unsigned long IR_0 = 0xC05C00;
+const unsigned long IR_1 = 0xC05C01;
+const unsigned long IR_2 = 0xC05C02;
+const unsigned long IR_3 = 0xC05C03;
+const unsigned long IR_4 = 0xC05C04;
+const unsigned long IR_5 = 0xC05C05;
+const unsigned long IR_6 = 0xC05C06;
+const unsigned long IR_7 = 0xC05C07;
+const unsigned long IR_8 = 0xC05C08;
+const unsigned long IR_9 = 0xC05C09;
+
+// --- Globalne varijable ---
+enum StanjeIgre { MENI, SKAKAC, POGODI_BROJ, REAKCIJA, BROJCANI_LOVAC, LOTO };
+StanjeIgre stanjeIgre = MENI;
+
+// Meni
+int meniIndex = 0;
+const char* meniStavke[] = {
+  "1. Skakac",
+  "2. Pogodi broj",
+  "3. Reakcija",
+  "4. Brojcani lovac",
+  "5. Loto"
+};
+const int meniBroj = 5;
+
+// Pogodi broj
+int brojevi[] = {824, 391, 157, 642, 999, 123, 456};
+int brojeviIndex = 0;
+int trazeniBroj = 0;
+String unosBroja = "";
+
+// Reakcija
+unsigned long vrijemePocetka = 0;
+bool reakcijaAktivna = false;
+
+// --- Skakac varijable i grafika ---
+#define SPRITE_RUN1 1
+#define SPRITE_RUN2 2
+#define SPRITE_JUMP 3
+#define SPRITE_JUMP_UPPER '.'         
+#define SPRITE_JUMP_LOWER 4
+#define SPRITE_TERRAIN_EMPTY ' '      
+#define SPRITE_TERRAIN_SOLID 5
+#define SPRITE_TERRAIN_SOLID_RIGHT 6
+#define SPRITE_TERRAIN_SOLID_LEFT 7
+
+#define HERO_HORIZONTAL_POSITION 1
+#define TERRAIN_WIDTH 16
+
+static char terrainUpper[TERRAIN_WIDTH + 1];
+static char terrainLower[TERRAIN_WIDTH + 1];
+static bool skakacSkace = false;
+static bool skakacPlaying = false;
+static byte skakacHeroPos = 1;
+static byte skakacNewTerrainType = 0;
+static byte skakacNewTerrainDuration = 1;
+static unsigned int skakacDistance = 0;
+static bool skakacBlink = false;
+
+// --- Brojcani lovac ---
+bool lovacActive = false;
+unsigned long lovacStartTime = 0;
+unsigned long lovacTimeLeft = 10000; // 10 sekundi
+int lovacScore = 0;
+int lovacTarget = 0;
+
+// --- LOTO 6/39 ADVANCED ---
+const int lotoUkupno = 6;
+int lotoGenerirani[6];
+int lotoPonudjeni[6][2];
+int lotoOdabir[6]; // 0 ili 1
+int lotoKorak = 0;
+
+// --- Prototipi ---
+void prikaziMeni();
+void pokreniIgru(int index);
+void povratakUMeni();
+void azurirajPrikazUnosa();
+void provjeriPogodak();
+int irKodUBroj(unsigned long kod);
+void initializeSkakacGraphics();
+void skakacGameLoop();
+void brojcaniLovacLoop();
+void prikaziLovac();
+void resetirajLovac();
+void pokreniLoto();
+void prikaziLotoIzbor();
+void prikaziLotoRezultat();
+
+void setup() {
+  Serial.begin(9600);
+  lcd.init(); lcd.backlight();
+  irrecv.enableIRIn(); irrecv.blink13(true);
+  prikaziMeni();
+  randomSeed(analogRead(A0)); // Za bolju slučajnost
+}
+
+void loop() {
+  if (irrecv.decode(&results)) {
+    unsigned long kod = results.value;
+    irrecv.resume();
+    obradiIR(kod);
+  }
+  switch (stanjeIgre) {
+    case SKAKAC: skakacGameLoop(); break;
+    case BROJCANI_LOVAC: brojcaniLovacLoop(); break;
+    case REAKCIJA: /* reakcija se obrađuje u IR handleru */ break;
+    default: break;
+  }
+}
+
+// --- MENI I LOGIKA ---
+
+void prikaziMeni() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Izaberi igru:");
+  lcd.setCursor(0, 1);
+  lcd.print(meniStavke[meniIndex]);
+}
+
+void obradiIR(unsigned long kod) {
+  switch (stanjeIgre) {
+    case MENI:
+      if (kod == IR_LEFT) {
+        meniIndex = (meniIndex - 1 + meniBroj) % meniBroj;
+        prikaziMeni();
+      } else if (kod == IR_RIGHT) {
+        meniIndex = (meniIndex + 1) % meniBroj;
+        prikaziMeni();
+      } else if (kod == IR_OK) {
+        pokreniIgru(meniIndex);
+      }
+      break;
+
+    case SKAKAC:
+      if (kod == IR_OK) skakacSkace = true;
+      else if (kod == IR_POWER) povratakUMeni();
+      break;
+
+    case POGODI_BROJ:
+      if (kod >= IR_0 && kod <= IR_9) {
+        int znamenka = irKodUBroj(kod);
+        if (unosBroja.length() < 3) {
+          unosBroja += String(znamenka);
+          azurirajPrikazUnosa();
+        }
+      } else if (kod == IR_LEFT && unosBroja.length() > 0) {
+        unosBroja.remove(unosBroja.length() - 1);
+        azurirajPrikazUnosa();
+      } else if (kod == IR_OK && unosBroja.length() > 0) {
+        provjeriPogodak();
+      } else if (kod == IR_POWER) {
+        povratakUMeni();
+      }
+      break;
+
+    case REAKCIJA:
+      if (reakcijaAktivna && kod == IR_OK) {
+        reakcijaAktivna = false;
+        unsigned long vrijemeReakcije = millis() - vrijemePocetka;
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Vrijeme:");
+        lcd.setCursor(0, 1);
+        lcd.print(vrijemeReakcije);
+        lcd.print(" ms");
+      } else if (kod == IR_POWER) {
+        povratakUMeni();
+      }
+      break;
+
+    case BROJCANI_LOVAC:
+      if (!lovacActive && kod == IR_OK) {
+        resetirajLovac();
+        lovacActive = true;
+        prikaziLovac();
+      } else if (lovacActive) {
+        int digit = irKodUBroj(kod);
+        if (digit == lovacTarget) {
+          lovacScore++;
+          lovacTarget = random(0, 10);
+          prikaziLovac();
+        } else if (digit >= 0 && digit <= 9) {
+          if (lovacTimeLeft > 2000) lovacTimeLeft -= 1000;
+          prikaziLovac();
+        }
+      }
+      if (kod == IR_POWER) povratakUMeni();
+      break;
+
+    case LOTO:
+      if (kod == IR_LEFT) {
+        lotoOdabir[lotoKorak] = 0;
+        prikaziLotoIzbor();
+      } else if (kod == IR_RIGHT) {
+        lotoOdabir[lotoKorak] = 1;
+        prikaziLotoIzbor();
+      } else if (kod == IR_OK) {
+        lotoKorak++;
+        if (lotoKorak == lotoUkupno) {
+          prikaziLotoRezultat();
+          delay(3000);
+          povratakUMeni();
+        } else {
+          prikaziLotoIzbor();
+        }
+      } else if (kod == IR_POWER) {
+        povratakUMeni();
+      }
+      break;
+  }
+}
+
+void pokreniIgru(int index) {
+  lcd.clear();
+  switch (index) {
+    case 0:
+      stanjeIgre = SKAKAC;
+      initializeSkakacGraphics();
+      skakacHeroPos = 1;
+      skakacPlaying = false;
+      skakacDistance = 0;
+      skakacBlink = false;
+      skakacNewTerrainType = 0;
+      skakacNewTerrainDuration = 1;
+      break;
+    case 1:
+      stanjeIgre = POGODI_BROJ;
+      trazeniBroj = brojevi[brojeviIndex];
+      unosBroja = "";
+      lcd.setCursor(0, 0);
+      lcd.print("Pogodi broj");
+      lcd.setCursor(0, 1);
+      lcd.print("Unos: ");
+      break;
+    case 2:
+      stanjeIgre = REAKCIJA;
+      lcd.setCursor(0, 0);
+      lcd.print("Reakcija...");
+      delay(1000 + random(1000, 4000));
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Pritisni OK!");
+      vrijemePocetka = millis();
+      reakcijaAktivna = true;
+      break;
+    case 3:
+      stanjeIgre = BROJCANI_LOVAC;
+      lovacActive = false;
+      prikaziLovac();
+      break;
+    case 4:
+      stanjeIgre = LOTO;
+      pokreniLoto();
+      break;
+  }
+}
+
+void povratakUMeni() {
+  brojeviIndex = (brojeviIndex + 1) % (sizeof(brojevi) / sizeof(int));
+  stanjeIgre = MENI;
+  meniIndex = 0;
+  prikaziMeni();
+}
+
+// --- POGODI BROJ ---
+void azurirajPrikazUnosa() {
+  lcd.setCursor(6, 1);
+  lcd.print("   "); // obriši prethodni unos (do 3 znamenke)
+  lcd.setCursor(6, 1);
+  lcd.print(unosBroja);
+}
+
+void provjeriPogodak() {
+  int pogodak = unosBroja.toInt();
+  lcd.clear();
+  if (pogodak == trazeniBroj) {
+    lcd.setCursor(0, 0);
+    lcd.print("Tocno! Broj je");
+    lcd.setCursor(0, 1);
+    lcd.print(trazeniBroj);
+    delay(2000);
+    povratakUMeni();
+  } else {
+    lcd.setCursor(0, 0);
+    if (pogodak < trazeniBroj) {
+      lcd.print("Veci od ");
+      lcd.print(pogodak);
+    } else {
+      lcd.print("Manji od ");
+      lcd.print(pogodak);
+    }
+    delay(1500);
+    unosBroja = "";
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Pogodi broj");
+    lcd.setCursor(0, 1);
+    lcd.print("Unos: ");
+  }
+}
+
+int irKodUBroj(unsigned long kod) {
+  if (kod == IR_0) return 0;
+  if (kod == IR_1) return 1;
+  if (kod == IR_2) return 2;
+  if (kod == IR_3) return 3;
+  if (kod == IR_4) return 4;
+  if (kod == IR_5) return 5;
+  if (kod == IR_6) return 6;
+  if (kod == IR_7) return 7;
+  if (kod == IR_8) return 8;
+  if (kod == IR_9) return 9;
+  return -1;
+}
+
+// --- SKAKAC ---
+void initializeSkakacGraphics() {
+  static byte graphics[] = {
+    B01100,B01100,B00000,B01110,B11100,B01100,B11010,B10011,
+    B01100,B01100,B00000,B01100,B01100,B01100,B01100,B01110,
+    B01100,B01100,B00000,B11110,B01101,B11111,B10000,B00000,
+    B11110,B01101,B11111,B10000,B00000,B00000,B00000,B00000,
+    B11111,B11111,B11111,B11111,B11111,B11111,B11111,B11111,
+    B00011,B00011,B00011,B00011,B00011,B00011,B00011,B00011,
+    B11000,B11000,B11000,B11000,B11000,B11000,B11000,B11000,
+  };
+  for (int i = 0; i < 7; ++i) {
+    lcd.createChar(i + 1, &graphics[i * 8]);
+  }
+  for (int i = 0; i < TERRAIN_WIDTH; ++i) {
+    terrainUpper[i] = SPRITE_TERRAIN_EMPTY;
+    terrainLower[i] = SPRITE_TERRAIN_EMPTY;
+  }
+  terrainUpper[TERRAIN_WIDTH] = '\0';
+  terrainLower[TERRAIN_WIDTH] = '\0';
+}
+
+void advanceTerrain(char* terrain, byte newTerrain) {
+  for (int i = 0; i < TERRAIN_WIDTH; ++i) {
+    char current = terrain[i];
+    char next = (i == TERRAIN_WIDTH-1) ? newTerrain : terrain[i+1];
+    switch (current) {
+      case SPRITE_TERRAIN_EMPTY:
+        terrain[i] = (next == SPRITE_TERRAIN_SOLID) ? SPRITE_TERRAIN_SOLID_RIGHT : SPRITE_TERRAIN_EMPTY;
+        break;
+      case SPRITE_TERRAIN_SOLID:
+        terrain[i] = (next == SPRITE_TERRAIN_EMPTY) ? SPRITE_TERRAIN_SOLID_LEFT : SPRITE_TERRAIN_SOLID;
+        break;
+      case SPRITE_TERRAIN_SOLID_RIGHT:
+        terrain[i] = SPRITE_TERRAIN_SOLID;
+        break;
+      case SPRITE_TERRAIN_SOLID_LEFT:
+        terrain[i] = SPRITE_TERRAIN_EMPTY;
+        break;
+    }
+  }
+}
+
+bool drawSkakacHero(byte position, char* terrainUpper, char* terrainLower, unsigned int score) {
+  bool collide = false;
+  char upperSave = terrainUpper[HERO_HORIZONTAL_POSITION];
+  char lowerSave = terrainLower[HERO_HORIZONTAL_POSITION];
+  byte upper, lower;
+  switch (position) {
+    case 0: upper = lower = SPRITE_TERRAIN_EMPTY; break;
+    case 1: upper = SPRITE_TERRAIN_EMPTY; lower = SPRITE_RUN1; break;
+    case 2: upper = SPRITE_TERRAIN_EMPTY; lower = SPRITE_RUN2; break;
+    case 3: case 10: upper = SPRITE_TERRAIN_EMPTY; lower = SPRITE_JUMP; break;
+    case 4: case 9: upper = SPRITE_JUMP_UPPER; lower = SPRITE_JUMP_LOWER; break;
+    case 5: case 6: case 7: case 8: upper = SPRITE_JUMP; lower = SPRITE_TERRAIN_EMPTY; break;
+    case 11: upper = SPRITE_RUN1; lower = SPRITE_TERRAIN_EMPTY; break;
+    case 12: upper = SPRITE_RUN2; lower = SPRITE_TERRAIN_EMPTY; break;
+  }
+  if (upper != ' ') {
+    terrainUpper[HERO_HORIZONTAL_POSITION] = upper;
+    collide = (upperSave == SPRITE_TERRAIN_EMPTY) ? false : true;
+  }
+  if (lower != ' ') {
+    terrainLower[HERO_HORIZONTAL_POSITION] = lower;
+    collide |= (lowerSave == SPRITE_TERRAIN_EMPTY) ? false : true;
+  }
+  byte digits = (score > 9999) ? 5 : (score > 999) ? 4 : (score > 99) ? 3 : (score > 9) ? 2 : 1;
+  char temp = terrainUpper[16-digits];
+  terrainUpper[16-digits] = '\0';
+  lcd.setCursor(0,0); lcd.print(terrainUpper);
+  terrainUpper[16-digits] = temp;
+  lcd.setCursor(0,1); lcd.print(terrainLower);
+  lcd.setCursor(16 - digits,0); lcd.print(score);
+  terrainUpper[HERO_HORIZONTAL_POSITION] = upperSave;
+  terrainLower[HERO_HORIZONTAL_POSITION] = lowerSave;
+  return collide;
+}
+
+void skakacGameLoop() {
+  static unsigned long lastFrame = 0;
+  if (!skakacPlaying) {
+    drawSkakacHero((skakacBlink) ? 0 : skakacHeroPos, terrainUpper, terrainLower, skakacDistance >> 3);
+    if (skakacBlink) {
+      lcd.setCursor(0,0);
+      lcd.print("Pritisni OK");
+    }
+    delay(250);
+    skakacBlink = !skakacBlink;
+    if (skakacSkace) {
+      initializeSkakacGraphics();
+      skakacHeroPos = 1;
+      skakacPlaying = true;
+      skakacSkace = false;
+      skakacDistance = 0;
+    }
+    return;
+  }
+  if (millis() - lastFrame < 50) return;
+  lastFrame = millis();
+
+  advanceTerrain(terrainLower, skakacNewTerrainType == 1 ? SPRITE_TERRAIN_SOLID : SPRITE_TERRAIN_EMPTY);
+  advanceTerrain(terrainUpper, skakacNewTerrainType == 2 ? SPRITE_TERRAIN_SOLID : SPRITE_TERRAIN_EMPTY);
+
+  if (--skakacNewTerrainDuration == 0) {
+    if (skakacNewTerrainType == 0) {
+      skakacNewTerrainType = (random(3) == 0) ? 2 : 1;
+      skakacNewTerrainDuration = 2 + random(10);
+    } else {
+      skakacNewTerrainType = 0;
+      skakacNewTerrainDuration = 10 + random(10);
+    }
+  }
+  if (skakacSkace) {
+    if (skakacHeroPos <= 2) skakacHeroPos = 3;
+    skakacSkace = false;
+  }
+  if (drawSkakacHero(skakacHeroPos, terrainUpper, terrainLower, skakacDistance >> 3)) {
+    skakacPlaying = false;
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("GAME OVER!");
+    lcd.setCursor(0, 1);
+    lcd.print("Score: ");
+    lcd.print(skakacDistance >> 3);
+    delay(3000);
+    stanjeIgre = MENI;
+    meniIndex = 0;
+    prikaziMeni();
+    return;
+  } else {
+    if (skakacHeroPos == 2 || skakacHeroPos == 10) skakacHeroPos = 1;
+    else if ((skakacHeroPos >= 5 && skakacHeroPos <= 7) && terrainLower[HERO_HORIZONTAL_POSITION] != SPRITE_TERRAIN_EMPTY) skakacHeroPos = 11;
+    else if (skakacHeroPos >= 11 && terrainLower[HERO_HORIZONTAL_POSITION] == SPRITE_TERRAIN_EMPTY) skakacHeroPos = 7;
+    else if (skakacHeroPos == 12) skakacHeroPos = 11;
+    else ++skakacHeroPos;
+    ++skakacDistance;
+  }
+}
+
+// --- BROJCANI LOVAC ---
+void brojcaniLovacLoop() {
+  if (!lovacActive) return;
+  unsigned long now = millis();
+  if (now - lovacStartTime >= lovacTimeLeft) {
+    lovacActive = false;
+    lcd.clear();
+    lcd.setCursor(0,0); lcd.print("Vrijeme isteklo!");
+    lcd.setCursor(0,1); lcd.print("Score: "); lcd.print(lovacScore);
+    delay(2000);
+    povratakUMeni();
+    return;
+  }
+}
+
+void prikaziLovac() {
+  lcd.clear();
+  lcd.setCursor(0,0); lcd.print("Stisni: ");
+  lcd.print(lovacTarget);
+  lcd.setCursor(0,1); lcd.print("Score:");
+  lcd.print(lovacScore);
+  lcd.print(" ");
+  lcd.print("T:");
+  lcd.print((lovacTimeLeft - (millis()-lovacStartTime))/1000);
+}
+
+void resetirajLovac() {
+  lovacScore = 0;
+  lovacTarget = random(0, 10);
+  lovacStartTime = millis();
+  lovacTimeLeft = 10000;
+  prikaziLovac();
+}
+
+// --- LOTO 6/39 ADVANCED ---
+void pokreniLoto() {
+  stanjeIgre = LOTO;
+  bool used[40] = {false};
+  for (int i = 0; i < lotoUkupno; i++) {
+    int broj;
+    do {
+      broj = random(1, 40);
+    } while (used[broj]);
+    lotoGenerirani[i] = broj;
+    used[broj] = true;
+
+    int brojPlusJedan = (broj == 39) ? 1 : broj + 1;
+
+    // Nasumično odluči hoće li prvo biti originalni broj ili broj+1
+    if (random(0, 2) == 0) {
+      lotoPonudjeni[i][0] = broj;
+      lotoPonudjeni[i][1] = brojPlusJedan;
+    } else {
+      lotoPonudjeni[i][0] = brojPlusJedan;
+      lotoPonudjeni[i][1] = broj;
+    }
+
+    lotoOdabir[i] = 0; // default prvi
+  }
+  lotoKorak = 0;
+  prikaziLotoIzbor();
+}
+
+void prikaziLotoIzbor() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Broj ");
+  lcd.print(lotoKorak+1);
+  lcd.print(":");
+  lcd.setCursor(0, 1);
+  for (int i=0; i<2; i++) {
+    if (lotoOdabir[lotoKorak]==i) lcd.print("[");
+    else lcd.print(" ");
+    if (lotoPonudjeni[lotoKorak][i]<10) lcd.print("0");
+    lcd.print(lotoPonudjeni[lotoKorak][i]);
+    if (lotoOdabir[lotoKorak]==i) lcd.print("]");
+    else lcd.print(" ");
+    lcd.print("  ");
+  }
+}
+
+void prikaziLotoRezultat() {
+  int pogodaka = 0;
+  for (int i=0; i<lotoUkupno; i++) {
+    if (lotoPonudjeni[i][lotoOdabir[i]] == lotoGenerirani[i]) pogodaka++;
+  }
+  lcd.clear();
+  if (pogodaka == lotoUkupno) {
+    lcd.setCursor(0,0); lcd.print("OSVOJIO SI LOTO!");
+  } else {
+    lcd.setCursor(0,0); lcd.print("Pogodaka: ");
+    lcd.print(pogodaka);
+  }
+}
