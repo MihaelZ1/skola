@@ -1,0 +1,183 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
+namespace WindowsFormsApp1
+{
+	public partial class Form1 : Form
+	{
+
+		public class Osoba
+		{
+			public string ime;
+			public string prezime;
+			public string datumRodjenja;
+			public string OIB;
+		}
+		public class Nastavnik:Osoba
+		{
+			public string skola;
+		}
+
+		public class zaposleni : Osoba
+		{
+			public string servisira;
+		}
+
+		private List<Nastavnik> listaNastavnika = new List<Nastavnik>();
+		private List<zaposleni> listaZaposlenih = new List<zaposleni>();
+		private int trenutniIndex = -1;
+		public Form1()
+		{
+			InitializeComponent();
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+
+			if (radioButton1.Checked==true)
+			{
+				string ime = textBox1.Text;
+				string prezime = textBox2.Text;
+				string DatumRodjenja = textBox3.Text;
+				string servis = textBox7.Text;
+				string OIB = textBox9.Text;
+
+				zaposleni noviZaposleni = new zaposleni();
+				noviZaposleni.ime = ime;
+				noviZaposleni.prezime = prezime;
+				noviZaposleni.datumRodjenja = DatumRodjenja;
+				noviZaposleni.servisira = servis;
+				noviZaposleni.OIB = OIB;
+				listaZaposlenih.Add(noviZaposleni);
+
+
+				textBox1.Clear();
+				textBox2.Clear();
+				textBox3.Clear();
+				textBox7.Clear();
+				textBox9.Clear();
+
+
+				MessageBox.Show("Uneseni radnik");
+
+			}
+			if (radioButton2.Checked == true)
+			{
+				string ime = textBox1.Text;
+				string prezime = textBox2.Text;
+				string DatumRodjenja = textBox3.Text;
+				string skola = textBox7.Text;
+				string OIB = textBox9.Text;
+
+				Nastavnik noviNastavnik = new Nastavnik();
+				noviNastavnik.ime = ime;
+				noviNastavnik.prezime = prezime;
+				noviNastavnik.datumRodjenja = DatumRodjenja;
+				noviNastavnik.skola = skola;
+				noviNastavnik.OIB = OIB;
+				listaNastavnika.Add(noviNastavnik);
+
+
+				textBox1.Clear();
+				textBox2.Clear();
+				textBox3.Clear();
+				textBox7.Clear();
+				textBox9.Clear();
+
+				MessageBox.Show("Uneseni nastavnik");
+			}
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			if (radioButton1.Checked == true)
+			{
+				if (listaZaposlenih.Count > 0)
+				{
+					trenutniIndex = 0;
+					PrikaziZaposlene();
+				}
+			}
+			if (radioButton2.Checked == true)
+			{
+				if (listaNastavnika.Count > 0)
+				{
+					trenutniIndex = 0;
+					PrikaziNastavnika();
+				}
+			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (radioButton1.Checked == true)
+			{
+				if (listaZaposlenih.Count > 0 && trenutniIndex < listaZaposlenih.Count - 1)
+				{
+					trenutniIndex++;
+					PrikaziZaposlene();
+				}
+				else
+				{
+					MessageBox.Show("Nema više zaposlenih.");
+				}
+			}
+
+			if (radioButton2.Checked == true)
+			{
+				if (listaNastavnika.Count > 0 && trenutniIndex < listaNastavnika.Count - 1)
+				{
+					trenutniIndex++;
+					PrikaziNastavnika();
+				}
+				else
+				{
+					MessageBox.Show("Nema više nastavnika.");
+				}
+			}
+		}
+		private void PrikaziNastavnika()
+		{
+			if (trenutniIndex >= 0 && trenutniIndex < listaNastavnika.Count)
+			{
+				Nastavnik trenutniNastavnik = listaNastavnika[trenutniIndex];
+
+			
+				textBox4.Text = trenutniNastavnik.ime;
+				textBox5.Text = trenutniNastavnik.prezime;
+				textBox6.Text = trenutniNastavnik.datumRodjenja;
+				textBox8.Text = trenutniNastavnik.skola;
+				textBox10.Text = trenutniNastavnik.OIB;
+			}
+		}
+		private void PrikaziZaposlene()
+		{
+			if (trenutniIndex >= 0 && trenutniIndex < listaZaposlenih.Count)
+			{
+				zaposleni trenutniZaposleni = listaZaposlenih[trenutniIndex];
+
+			
+				textBox4.Text = trenutniZaposleni.ime;
+				textBox5.Text = trenutniZaposleni.prezime;
+				textBox6.Text = trenutniZaposleni.datumRodjenja;
+				textBox8.Text = trenutniZaposleni.servisira;
+				textBox10.Text = trenutniZaposleni.OIB;
+
+			}
+		}
+	}
+}
