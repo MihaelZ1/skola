@@ -1,0 +1,59 @@
+int x = 0; // Pekmenova pozicija po X
+int y = 240; // Pekmenova pozicija po Y
+int r = 40; // Poluprečnik pekmena
+float usta = 0; // Za animaciju usta
+boolean otvara = true;
+
+ArrayList<PVector> hrana = new ArrayList<PVector>();
+
+void setup() {
+  size(480, 480);
+  
+  // Dodaj hranu po liniji
+  for (int i = 80; i < width; i += 40) {
+    hrana.add(new PVector(i, y));
+  }
+}
+
+void draw() {
+  background(0);
+  
+  // Animacija usta
+  if (otvara) {
+    usta += 0.1;
+    if (usta > PI/4) otvara = false;
+  } else {
+    usta -= 0.1;
+    if (usta < 0) otvara = true;
+  }
+  
+  // Crtanje pekmena
+  fill(255, 255, 0);
+  arc(x, y, r*2, r*2, usta, TWO_PI - usta, PIE);
+  
+  // Crtanje hrane
+  fill(255);
+  for (PVector f : hrana) {
+    ellipse(f.x, f.y, 10, 10);
+  }
+
+  // Provera da li jede jednu tačku po frejmu
+  for (int i = 0; i < hrana.size(); i++) {
+    PVector f = hrana.get(i);
+    if (dist(x, y, f.x, f.y) < 20) {
+      hrana.remove(i); // Pojede tačku
+      break; // Samo jedna po frejmu
+    }
+  }
+
+  // Kretanje pekmena
+  x += 2;
+  if (x > width + r) {
+    x = -r; // Počne ponovo s leva
+    // Opcionalno: resetuj hranu ako želiš da jede opet
+    hrana.clear();
+    for (int i = 80; i < width; i += 40) {
+      hrana.add(new PVector(i, y));
+    }
+  }
+}
