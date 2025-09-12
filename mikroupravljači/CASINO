@@ -1,0 +1,297 @@
+int rows = 3;
+int cols = 3;
+int[][] reels = new int[rows][cols];  // 3x3 simboli
+
+boolean spinning = false;
+int spinTime = 0;
+int maxSpinTime = 40;
+
+int credits = 100;
+int spinCost = 10;
+
+int jackpot = 500;  // jackpot za tri 7
+boolean won = false;
+
+int totalWin = 0;
+
+HashMap<Integer, Integer> payouts = new HashMap<Integer, Integer>();
+
+ArrayList<Particle> particles = new ArrayList<Particle>();
+
+void setup() {
+  size(600, 400);
+  textAlign(CENTER, CENTER);
+  textSize(24);
+
+  // Definišemo nagrade po simbolima za tri ista na liniji
+  payouts.put(0, 40);  // trešnje
+  payouts.put(1, 30);  // limun
+  payouts.put(2, 20);  // zvono
+  payouts.put(3, 10);  // BAR
+  payouts.put(4, 25);  // zvezda
+  payouts.put(5, jackpot); // sedmica (jackpot)
+
+  generateRandomReels();
+}
+
+void draw() {
+  background(0);
+
+  // Pozadina bljeska ako je dobitak
+  if (won) {
+    int flash = int(map(sin(frameCount * 0.3), -1, 1, 50, 150));
+    background(flash, flash, 0);
+  }
+
+  // Crtamo mrežu simbola 3x3
+  for (int r = 0; r < rows; r++) {
+    for (int c = 0; c < cols; c++) {
+      fill(255);
+      rect(100 + c*120, 50 + r*100, 100, 80, 10);
+
+      // Pulsiranje za linije koje su dobitne
+      if (won && winningLines.contains(r)) {
+        noFill();
+        stroke(255, 255, 0, 150 + 100 * sin(radians(frameCount * 5)));
+        strokeWeight(5);
+        rect(100 + c*120, 50 + r*100, 100, 80, 10);
+        noStroke();
+      }
+
+      drawSymbol(reels[r][c], 150 + c*120, 90 + r*100);
+    }
+  }
+
+  // Ako se vrti, menja simbole
+  if (spinning) {
+    if (frameCount % 3 == 0) {
+      generateRandomReels();
+    }
+    spinTime++;
+    if (spinTime > maxSpinTime) {
+      spinning = false;
+      spinTime = 0;
+      totalWin = checkWinnings();
+
+      if (totalWin > 0) {
+        credits += totalWin;
+        won = true;
+
+        // Napravi čestice za sve dobitne linije
+        for (int r : winningLines) {
+          for (int c = 0; c < cols; c++) {
+            for (int i = 0; i < 15; i++) {
+              particles.add(new Particle(150 + c*120, 90 + r*100));
+            }
+          }
+        }
+      } else {
+        won = false;
+      }
+    }
+  }
+
+  // Prikaz kredita i poruka
+  fill(255);
+  textSize(24);
+  if (!spinning) {
+    if (won) {
+      text("Pobedili ste! +"+totalWin, width/2, height - 40);
+    } else {
+      text("Pokušajte ponovo", width/2, height - 40);
+    }
+  } else {
+    text("Vrti se...", width/2, height - 40);
+  }
+
+  text("Krediti: " + credits, width/2, 30);
+
+  if (credits < spinCost && !spinning) {
+    textSize(18);
+    fill(255, 0, 0);
+    text("Nema dovoljno kredita za spin!", width/2, height - 70);
+  }
+
+  // Update i crtanje čestica
+  for (int i = particles.size()-1; i >= 0; i--) {
+    Particle p = particles.get(i);
+    p.update();
+    p.display();
+    if (p.isDead()) {
+      particles.remove(i);
+    }
+  }
+}
+
+void mousePressed() {
+  if (!spinning && credits >= spinCost) {
+    credits -= spinCost;
+    spinning = true;
+    spinTime = 0;
+    won = false;
+    totalWin = 0;
+    winningLines.clear();
+    particles.clear();
+  }
+}
+
+void generateRandomReels() {
+  for (int r = 0; r < rows; r++) {
+    for (int c = 0; c < cols; c++) {
+      reels[r][c] = int(random(6));
+    }
+  }
+}
+
+// Lista dobitnih linija (redovi) koje su osvojile
+ArrayList<Integer> winningLines = new ArrayList<Integer>();
+
+int checkWinnings() {
+  winningLines.clear();
+  int win = 0;
+
+  // Proveravamo sve tri linije (redove)
+  for (int r = 0; r < rows; r++) {
+    int first = reels[r][0];
+    boolean lineWin = true;
+
+    for (int c = 1; c < cols; c++) {
+      if (reels[r][c] != first) {
+        lineWin = false;
+        break;
+      }
+    }
+
+    if (lineWin) {
+      win += payouts.get(first);
+      winningLines.add(r);
+    }
+  }
+  return win;
+}
+
+void drawSymbol(int symbol, float x, float y) {
+  switch(symbol) {
+    case 0:
+      drawCherry(x, y);
+      break;
+    case 1:
+      drawLemon(x, y);
+      break;
+    case 2:
+      drawBell(x, y);
+      break;
+    case 3:
+      drawBar(x, y);
+      break;
+    case 4:
+      drawStar(x, y);
+      break;
+    case 5:
+      drawSeven(x, y);
+      break;
+  }
+}
+
+void drawCherry(float x, float y) {
+  stroke(100, 50, 0);
+  strokeWeight(3);
+  line(x - 10, y + 10, x, y - 10);
+  line(x + 10, y + 10, x, y - 10);
+  noStroke();
+  fill(255, 0, 0);
+  ellipse(x - 10, y + 10, 20, 20);
+  ellipse(x + 10, y + 10, 20, 20);
+}
+
+void drawLemon(float x, float y) {
+  noStroke();
+  fill(255, 255, 0);
+  ellipse(x, y, 40, 25);
+  fill(0, 150, 0);
+  ellipse(x + 15, y - 10, 15, 10);
+}
+
+void drawBell(float x, float y) {
+  noStroke();
+  fill(255, 215, 0);
+  arc(x, y, 40, 50, PI, TWO_PI);
+  rect(x - 20, y, 40, 10);
+  fill(200, 180, 0);
+  ellipse(x, y + 5, 15, 10);
+}
+
+void drawBar(float x, float y) {
+  noStroke();
+  fill(0);
+  rect(x - 20, y - 15, 40, 30, 5);
+  fill(255);
+  textSize(20);
+  text("BAR", x, y);
+  textSize(24);
+}
+
+void drawStar(float x, float y) {
+  fill(255, 255, 0);
+  stroke(200, 200, 0);
+  strokeWeight(2);
+  pushMatrix();
+  translate(x, y);
+  rotate(radians(frameCount * 5));
+  beginShape();
+  for (int i = 0; i < 5; i++) {
+    float angle = TWO_PI / 5 * i - HALF_PI;
+    float sx = cos(angle) * 20;
+    float sy = sin(angle) * 20;
+    vertex(sx, sy);
+    angle += TWO_PI / 10;
+    sx = cos(angle) * 10;
+    sy = sin(angle) * 10;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
+  popMatrix();
+  noStroke();
+}
+
+void drawSeven(float x, float y) {
+  fill(255, 0, 0);
+  textSize(48);
+  text("7", x, y + 10);
+  textSize(24);
+}
+
+class Particle {
+  PVector pos;
+  PVector vel;
+  float lifespan;
+  color col;
+  float size;
+
+  Particle(float x, float y) {
+    pos = new PVector(x, y);
+    float angle = random(TWO_PI);
+    float speed = random(2, 6);
+    vel = new PVector(cos(angle)*speed, sin(angle)*speed);
+    lifespan = 255;
+    size = random(4, 8);
+    col = color(255, 255, 0, lifespan);
+  }
+
+  void update() {
+    pos.add(vel);
+    lifespan -= 8;
+    col = color(255, 255, 0, lifespan);
+    size *= 0.95;
+  }
+
+  void display() {
+    noStroke();
+    fill(col);
+    ellipse(pos.x, pos.y, size, size);
+  }
+
+  boolean isDead() {
+    return lifespan < 0 || size < 0.5;
+  }
+}
