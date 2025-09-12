@@ -1,0 +1,20 @@
+int value = 0;
+
+void setup() {
+  size(900, 900);
+  textSize(64);
+  textAlign(CENTER);
+}
+
+void draw() {
+  background(0);
+  text("NIGGERS NIGGERS NIGGERS", 300, 200);
+  text("NIGGERS NIGGERS NIGGERS", 300, 100);
+  text("NIGGERS NIGGERS NIGGERS", 300, 0);
+  text("NIGGERS NIGGERS NIGGERS", 300, 300);
+  text("NIGGERS NIGGERS NIGGERS", 300, 400);
+  text("NIGGERS NIGGERS NIGGERS", 300, 500);
+  text("NIGGERS NIGGERS NIGGERS", 300, 600);
+  text("NIGGERS NIGGERS NIGGERS", 300, 700);
+  text("NIGGERS NIGGERS NIGGERS", 300, 800);
+}
