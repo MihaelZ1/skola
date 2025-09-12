@@ -1,0 +1,18 @@
+color rectColor = color(200);
+
+void setup() {
+  size(400, 400);
+}
+
+void draw() {
+  background(255);
+  fill(rectColor);
+  rect(120, 80, 220, 220);
+}
+
+void mousePressed() {
+  if (mouseX >= 120 && mouseX <= 340 &&
+      mouseY >= 80 && mouseY <= 300) {
+    rectColor = color(random(255), random(255), random(255));
+  }
+}
