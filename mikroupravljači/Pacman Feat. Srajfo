@@ -1,0 +1,17 @@
+int value=0;
+
+void setup(){
+size(700,700);
+}
+
+void draw(){
+  fill(255,255,0);
+  background(0);
+  if(mousePressed == true){
+    ellipse(200,200,180,180);
+  }
+  else{
+      arc(200,200,180,180, QUARTER_PI, PIE+QUARTER_PI+HALF_PI);
+  }
+}
+
