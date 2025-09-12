@@ -1,0 +1,182 @@
+// Pac-Man with Ghosts in Processing
+
+// Grid
+int cols = 20;
+int rows = 20;
+int cellSize = 30;
+int[][] map;
+
+// Pacman
+int pacmanX = 1;
+int pacmanY = 1;
+int dirX = 0;
+int dirY = 0;
+
+// Score and game state
+int score = 0;
+boolean gameOver = false;
+
+// Ghosts
+int numGhosts = 3;
+Ghost[] ghosts;
+
+void setup() {
+  size(600,600);
+  frameRate(10);
+  initMap();
+  ghosts = new Ghost[numGhosts];
+  for (int i = 0; i < numGhosts; i++) {
+    ghosts[i] = new Ghost(cols - 2 - i, rows - 2);  // Start ghosts at bottom-right
+  }
+}
+
+void draw() {
+  background(0);
+  drawMap();
+
+  if (!gameOver) {
+    movePacman();
+    drawPacman();
+
+    for (Ghost g : ghosts) {
+      g.move();
+      g.display();
+
+      if (g.x == pacmanX && g.y == pacmanY) {
+        gameOver = true;
+      }
+    }
+  } else {
+    displayGameOver();
+  }
+
+  displayScore();
+}
+
+void keyPressed() {
+  if (keyCode == UP) {
+    dirX = 0;
+    dirY = -1;
+  } else if (keyCode == DOWN) {
+    dirX = 0;
+    dirY = 1;
+  } else if (keyCode == LEFT) {
+    dirX = -1;
+    dirY = 0;
+  } else if (keyCode == RIGHT) {
+    dirX = 1;
+    dirY = 0;
+  }
+}
+
+void initMap() {
+  // 0 = empty, 1 = wall, 2 = dot
+  map = new int[cols][rows];
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      if (x == 0 || y == 0 || x == cols - 1 || y == rows - 1 || (x % 4 == 0 && y % 4 == 0)) {
+        map[x][y] = 1; // wall
+      } else {
+        map[x][y] = 2; // dot
+      }
+    }
+  }
+  map[pacmanX][pacmanY] = 0; // starting position
+}
+
+void drawMap() {
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      int cx = x * cellSize;
+      int cy = y * cellSize;
+
+      if (map[x][y] == 1) {
+        fill(0, 0, 255);
+        rect(cx, cy, cellSize, cellSize);
+      } else if (map[x][y] == 2) {
+        fill(255, 255, 0);
+        ellipse(cx + cellSize / 2, cy + cellSize / 2, 6, 6);
+      }
+    }
+  }
+}
+
+void movePacman() {
+  int nextX = pacmanX + dirX;
+  int nextY = pacmanY + dirY;
+
+  if (map[nextX][nextY] != 1) { // Not a wall
+    pacmanX = nextX;
+    pacmanY = nextY;
+
+    if (map[pacmanX][pacmanY] == 2) {
+      map[pacmanX][pacmanY] = 0;
+      score++;
+    }
+  }
+}
+
+void drawPacman() {
+  float px = pacmanX * cellSize + cellSize / 2;
+  float py = pacmanY * cellSize + cellSize / 2;
+  fill(255, 255, 0);
+  ellipse(px, py, cellSize - 4, cellSize - 4);
+}
+
+void displayScore() {
+  fill(255);
+  textSize(18);
+  text("Score: " + score, 10, height - 10);
+}
+
+void displayGameOver() {
+  fill(255, 0, 0);
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  text("Game Over", width / 2, height / 2);
+}
+
+// Ghost class
+class Ghost {
+  int x, y;
+  color ghostColor;
+
+  Ghost(int x, int y) {
+    this.x = x;
+    this.y = y;
+    ghostColor = color(random(100, 255), random(100, 255), random(100, 255));
+  }
+
+  void move() {
+    int[] dx = {1, -1, 0, 0};
+    int[] dy = {0, 0, 1, -1};
+
+    int[] validMovesX = new int[4];
+    int[] validMovesY = new int[4];
+    int count = 0;
+
+    for (int i = 0; i < 4; i++) {
+      int nx = x + dx[i];
+      int ny = y + dy[i];
+
+      if (map[nx][ny] != 1) {
+        validMovesX[count] = dx[i];
+        validMovesY[count] = dy[i];
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      int r = int(random(count));
+      x += validMovesX[r];
+      y += validMovesY[r];
+    }
+  }
+
+  void display() {
+    float gx = x * cellSize + cellSize / 2;
+    float gy = y * cellSize + cellSize / 2;
+    fill(ghostColor);
+    ellipse(gx, gy, cellSize - 6, cellSize - 6);
+  }
+}
