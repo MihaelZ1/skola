@@ -1,0 +1,102 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+
+namespace WindowsFormsApp2
+{
+	public partial class Form1 : Form
+	{
+		public class Osoba
+		{
+			public string ime;
+			public string prezime;
+			public long OIB;
+			protected internal static long brojac = 56522347010;
+		}
+		private void dodjela(Osoba novaOsoba)
+		{
+			novaOsoba.OIB = Osoba.brojac;
+
+			Osoba.brojac++;
+		}
+		private List<Osoba> listaOsoba= new List<Osoba>();
+		private int trenutniIndex = -1;
+		public Form1()
+		{
+			InitializeComponent();
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			string ime = textBox1.Text;
+			string prezime = textBox2.Text;
+			
+
+			Osoba novaOsoba = new Osoba {
+				ime = ime,
+				prezime = prezime
+				};
+
+			dodjela(novaOsoba);
+
+
+			listaOsoba.Add(novaOsoba);
+
+
+			textBox1.Clear();
+			textBox2.Clear();
+			
+			MessageBox.Show("Osoba unesena");
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			
+				if (listaOsoba.Count > 0)
+				{
+					trenutniIndex = 0;
+					PrikaziOsobe();
+				}
+			
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (listaOsoba.Count > 0 && trenutniIndex < listaOsoba.Count - 1)
+			{
+				trenutniIndex++;
+				PrikaziOsobe();
+			}
+			else
+			{
+				MessageBox.Show("Nema više osoba.");
+			}
+		}
+		private void PrikaziOsobe()
+		{
+			if (trenutniIndex >= 0 && trenutniIndex < listaOsoba.Count)
+			{
+				Osoba trenutnaOsoba = listaOsoba[trenutniIndex];
+
+
+				textBox3.Text = trenutnaOsoba.ime;
+				textBox4.Text = trenutnaOsoba.prezime;
+				textBox5.Text = trenutnaOsoba.OIB.ToString();
+				
+			}
+		}
+	}
+}
