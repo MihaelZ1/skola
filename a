@@ -1,0 +1,164 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        nastavnik nast = new nastavnik();
+        dt_radnik radnik = new dt_radnik();
+        int currentIndex = -1;
+        int currentIndexradnik = -1;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        class osoba
+        {
+            public ArrayList ime = new ArrayList();
+            public ArrayList prezime = new ArrayList();
+            public ArrayList godina = new ArrayList();
+            public ArrayList OIB = new ArrayList();
+            protected internal static int Brojac = 0;
+        }
+        private void dodjelaOIB2()
+        {
+            int brojac = osoba.Brojac;
+            nast.OIB.Add(brojac);
+            osoba.Brojac++;
+        }
+        private void dodjelaOIB()
+        {
+            int brojac = osoba.Brojac;
+            radnik.OIB.Add(brojac);
+            osoba.Brojac++;
+        }
+        class nastavnik: osoba
+        {
+            public ArrayList skola = new ArrayList();
+        }
+        class dt_radnik : osoba
+        {
+            public ArrayList auto = new ArrayList();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+    }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int godina1 = Convert.ToInt32(textBox_godina.Text);
+                string ime1 = textBox_ime.Text;
+                string prezime1 = textBox_prezime.Text;
+                string skola1 = textBox_skola.Text;
+
+                nast.ime.Add(ime1);
+                nast.prezime.Add(prezime1);
+                nast.godina.Add(godina1);
+                nast.skola.Add(skola1);
+                dodjelaOIB();
+
+            }
+            catch
+            {
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (currentIndex < nast.ime.Count - 1)
+            {
+                currentIndex++;
+                textBox1.Text = nast.ime[currentIndex].ToString();
+                textBox2.Text = nast.prezime[currentIndex].ToString();
+                textBox3.Text = nast.godina[currentIndex].ToString();
+                textBox4.Text = nast.skola[currentIndex].ToString();
+                textBox5.Text = nast.OIB[currentIndex].ToString();
+            }
+            else
+            {
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (currentIndex > 0)
+            {
+                currentIndex--;
+                textBox1.Text = nast.ime[currentIndex].ToString();
+                textBox2.Text = nast.prezime[currentIndex].ToString();
+                textBox3.Text = nast.godina[currentIndex].ToString();
+                textBox3.Text = nast.skola[currentIndex].ToString();
+                textBox5.Text = nast.OIB[currentIndex].ToString();
+            }
+            else
+            {
+            }
+        }
+
+        private void button_radnik_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int godina1 = Convert.ToInt32(textBox_godina.Text);
+                string ime1 = textBox_ime.Text;
+                string prezime1 = textBox_prezime.Text;
+                string auto1 =textBox_auto.Text;
+
+                radnik.ime.Add(ime1);
+                radnik.prezime.Add(prezime1);
+                radnik.godina.Add(godina1);
+                radnik.auto.Add(auto1);
+                dodjelaOIB2();
+            }
+            catch
+            {
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (currentIndexradnik < radnik.ime.Count - 1)
+            {
+                currentIndexradnik++;
+                textBox5.Text = radnik.ime[currentIndex].ToString();
+                textBox6.Text = radnik.prezime[currentIndex].ToString();
+                textBox7.Text = radnik.godina[currentIndex].ToString();
+                textBox8.Text = radnik.auto[currentIndex].ToString();
+                textBox10.Text = radnik.OIB[currentIndex].ToString();
+            }
+            else
+            {
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (currentIndexradnik > 0)
+            {
+                currentIndexradnik--;
+                textBox5.Text = radnik.ime[currentIndex].ToString();
+                textBox6.Text = radnik.prezime[currentIndex].ToString();
+                textBox7.Text = radnik.godina[currentIndex].ToString();
+                textBox8.Text = radnik.auto[currentIndex].ToString();
+                textBox10.Text = radnik.OIB[currentIndex].ToString();
+            }
+            else
+            {
+            }
+        }
+    }
+}
