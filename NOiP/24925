@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace _24._9._25
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+    public class Nastavnik
+    {
+        public delegate void PosaljiObavijest(string poruka);
+        public event PosaljiObavijest Obavijesti;
+
+        public void Posalji(string poruka)
+        {
+            if (Obavijesti != null)
+                Obavijesti(poruka);
+        }
+    }
+
+    public class Ucenik
+    {
+        public string Ime { get; private set; }
+
+        public Ucenik(string ime)
+        {
+            Ime = ime;
+        }
+
+        public void PrimaPoruku(string poruka)
+        {
+            Console.WriteLine($"{Ime} je primio poruku: {poruka}");
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Nastavnik nastavnik = new Nastavnik();
+
+            Ucenik u1 = new Ucenik("Marko");
+            Ucenik u2 = new Ucenik("Ana");
+            Ucenik u3 = new Ucenik("Ivan");
+
+            nastavnik.Obavijesti += u1.PrimaPoruku;
+            nastavnik.Obavijesti += u2.PrimaPoruku;
+            nastavnik.Obavijesti += u3.PrimaPoruku;
+
+            nastavnik.Posalji("Danas imamo test iz matematike!");
+
+            Console.ReadLine();
+        }
+    }
+}
