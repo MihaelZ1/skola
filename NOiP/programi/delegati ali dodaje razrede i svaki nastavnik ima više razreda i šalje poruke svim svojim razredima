@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static WindowsFormsApp3.Form1;
+using static WindowsFormsApp3.Form1.DogadajiDelegati;
+
+namespace WindowsFormsApp3
+{
+
+
+	public partial class Form1 : Form
+	{
+		public class DogadajiDelegati
+		{
+			public delegate void PosaljiPoruku(string s);
+		}
+
+		public class Ucenik
+		{
+			public string Ime { get; set; }
+			public Ucenik(string ime)
+			{
+				Ime = ime;
+			}
+			public void PrimiPoruku(string poruka)
+			{
+				MessageBox.Show($"{Ime} je primio poruku: {poruka}");
+			}
+		}
+
+		public class Razred
+		{
+			public string Naziv { get; set; }
+			public List<Ucenik> Ucenici { get; } = new List<Ucenik>();
+
+			public Razred(string naziv)
+			{
+				Naziv = naziv;
+			}
+		}
+
+		public class Nastavnik
+		{
+			public string Ime { get; set; }
+			public List<Razred> Razredi { get; } = new List<Razred>();
+
+			public Nastavnik(string ime)
+			{
+				Ime = ime;
+			}
+
+			public void PosaljiPorukuURazred(Razred razred, string poruka)
+			{
+				foreach (var ucenik in razred.Ucenici)
+				{
+					ucenik.PrimiPoruku(poruka);
+				}
+			}
+
+		
+			public void PosaljiPorukuSvima(string poruka)
+			{
+				foreach (var razred in Razredi)
+				{
+					PosaljiPorukuURazred(razred, poruka);
+				}
+			}
+		}
+
+		private Nastavnik kreso, ivan, ana;
+		private Razred razred1, razred2, razred3;
+		private Ucenik u1, u2, u3, u4, u5, u6;
+
+		public Form1()
+		{
+			InitializeComponent();
+
+		
+			u1 = new Ucenik("U1");
+			u2 = new Ucenik("U2");
+			u3 = new Ucenik("U3");
+			u4 = new Ucenik("U4");
+			u5 = new Ucenik("U5");
+			u6 = new Ucenik("U6");
+
+	
+			razred1 = new Razred("Razred 1");
+			razred1.Ucenici.Add(u1);
+			razred1.Ucenici.Add(u4);
+
+			razred2 = new Razred("Razred 2");
+			razred2.Ucenici.Add(u2);
+			razred2.Ucenici.Add(u5);
+
+			razred3 = new Razred("Razred 3");
+			razred3.Ucenici.Add(u3);
+			razred3.Ucenici.Add(u6);
+
+	
+			kreso = new Nastavnik("Kreso");
+			ivan = new Nastavnik("Ivan");
+			ana = new Nastavnik("Ana");
+
+	
+			kreso.Razredi.Add(razred1);
+			kreso.Razredi.Add(razred2);
+
+			ivan.Razredi.Add(razred2);
+			ivan.Razredi.Add(razred3);
+
+			ana.Razredi.Add(razred1);
+			ana.Razredi.Add(razred3);
+		}
+		private void button3_Click(object sender, EventArgs e)
+		{
+			ana.PosaljiPorukuSvima("Poruka od Ane za sve njene razrede.");
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			ivan.PosaljiPorukuSvima("Poruka od Ivana za sve njegove razrede.");
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			kreso.PosaljiPorukuSvima("Poruka od Krese za sve njegove razrede.");
+		}
+
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+
+		}
+	}
+}
