@@ -1,0 +1,48 @@
+ide kod
+
+int podatak;
+int ledpin=13;
+void setup() {
+ Serial.begin(9600);
+ pinMode(13,OUTPUT);
+}
+
+void loop() {
+if(Serial.available()){
+  podatak=Serial.read();}
+if(podatak==1){
+  digitalWrite(13,HIGH);
+
+}
+else
+{
+  digitalWrite(13,LOW);
+}
+
+}
+
+processing kod
+
+import processing.serial.*;
+Serial myport;
+int var1;
+int value = 255; 
+void setup(){
+  size(512,512);
+  printArray(Serial.list());
+  myport = new Serial(this,"COM4",9600);
+}
+
+void draw() {
+  background(255);
+  fill(value);
+  rect(100, 100, 200, 200);
+
+  if (mousePressed && mouseX >= 100 && mouseX <= 300 && mouseY >= 100 && mouseY <= 300) {
+    var1 = 1;
+  } else {
+    var1 = 0;
+  }
+
+  myport.write(var1);
+}
