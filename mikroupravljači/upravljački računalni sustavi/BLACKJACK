@@ -1,0 +1,230 @@
+ArrayList<Card> deck;
+String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+String[] values = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+ArrayList<Card> playerHand, dealerHand;
+int playerMoney = 1000;
+int bet = 0;
+boolean gameStarted = false;
+boolean playerTurn = false;
+boolean gameOver = false;
+boolean playerWon = false;
+
+void setup() {
+  size(800, 600);
+  textAlign(CENTER, CENTER);
+  resetGame();
+}
+
+void draw() {
+  background(0, 120, 0);
+  fill(255);
+  textSize(24);
+  text("Money: $" + playerMoney, width / 2, 30);
+  text("Bet: $" + bet, width / 2, 60);
+
+  if (!gameStarted) {
+    textSize(32);
+    text("Click LEFT side to Increase Bet", width / 2, height / 2 - 40);
+    text("Click RIGHT side to Start Game", width / 2, height / 2);
+    textSize(20);
+    text("(Max Bet: $" + playerMoney + ", increments of $100)", width / 2, height / 2 + 30);
+  } else {
+    // Draw Hands
+    drawHand(playerHand, width / 4, height - 150);
+    drawHand(dealerHand, width * 3 / 4, 100);
+
+    // Show hand values
+    textSize(20);
+    text("Player: " + handValue(playerHand), width / 4 + (playerHand.size() - 1) * 30, height - 170);
+    if (gameOver) {
+      text("Dealer: " + handValue(dealerHand), width * 3 / 4 + (dealerHand.size() - 1) * 30, 80);
+    } else {
+      // Hide dealer second card if game in progress
+      if (dealerHand.size() > 1) {
+        text(dealerHand.get(0).rank + " " + dealerHand.get(0).suit, width * 3 / 4 + 25, 140);
+        fill(80);
+        rect(width * 3 / 4 + 60, 100, 50, 80); // face down card
+      }
+    }
+
+    if (gameOver) {
+      textSize(48);
+      if (playerWon) {
+        text("You Win!", width / 2, height / 2);
+      } else {
+        text("You Lose!", width / 2, height / 2);
+      }
+      textSize(24);
+      text("Click to play again", width / 2, height / 2 + 50);
+    }
+
+    // Show buttons if it's player turn and game not over
+    if (playerTurn && !gameOver) {
+      fill(50, 200, 50);
+      rect(width / 2 - 120, height / 2, 100, 40); // Hit button
+      fill(0);
+      textSize(20);
+      text("Hit", width / 2 - 70, height / 2 + 20);
+
+      fill(200, 50, 50);
+      rect(width / 2 + 20, height / 2, 100, 40); // Stand button
+      fill(0);
+      text("Stand", width / 2 + 70, height / 2 + 20);
+    }
+  }
+}
+
+void mousePressed() {
+  if (!gameStarted) {
+    if (mouseX < width / 2) {
+      // Increase bet by $100, max playerMoney
+      bet = min(playerMoney, bet + 100);
+    } else {
+      // Start game if bet > 0
+      if (bet > 0) {
+        startGame();
+      }
+    }
+  } else if (gameOver) {
+    resetGame();
+  } else if (playerTurn) {
+    // Check if clicked Hit button
+    if (mouseX > width / 2 - 120 && mouseX < width / 2 - 20 && 
+        mouseY > height / 2 && mouseY < height / 2 + 40) {
+      dealCardToPlayer();
+    }
+    // Check if clicked Stand button
+    else if (mouseX > width / 2 + 20 && mouseX < width / 2 + 120 && 
+             mouseY > height / 2 && mouseY < height / 2 + 40) {
+      playerTurn = false;
+      dealerPlays();
+    }
+  }
+}
+
+void startGame() {
+  gameStarted = true;
+  playerTurn = true;
+  gameOver = false;
+  playerWon = false;
+  playerHand = new ArrayList<Card>();
+  dealerHand = new ArrayList<Card>();
+  deck = createDeck();
+  shuffleDeck(deck);
+  // Deal initial cards
+  playerHand.add(dealCard());
+  playerHand.add(dealCard());
+  dealerHand.add(dealCard());
+  dealerHand.add(dealCard());
+
+  // Check for immediate blackjack
+  if (handValue(playerHand) == 21) {
+    playerTurn = false;
+    dealerPlays();
+  }
+}
+
+void resetGame() {
+  playerMoney += playerWon ? bet : 0; // add bet winnings
+  if (gameOver && !playerWon) {
+    playerMoney -= bet; // subtract lost bet
+  }
+  if (playerMoney < 0) playerMoney = 0;  // Prevent negative money
+  bet = 0;
+  gameStarted = false;
+  gameOver = false;
+  playerTurn = false;
+  playerHand = new ArrayList<Card>();
+  dealerHand = new ArrayList<Card>();
+}
+
+ArrayList<Card> createDeck() {
+  ArrayList<Card> newDeck = new ArrayList<Card>();
+  for (int s = 0; s < 4; s++) {
+    for (int v = 0; v < 13; v++) {
+      newDeck.add(new Card(values[v], suits[s]));
+    }
+  }
+  return newDeck;
+}
+
+void shuffleDeck(ArrayList<Card> deck) {
+  for (int i = deck.size() - 1; i > 0; i--) {
+    int j = (int)random(i + 1);
+    Card temp = deck.get(i);
+    deck.set(i, deck.get(j));
+    deck.set(j, temp);
+  }
+}
+
+Card dealCard() {
+  return deck.remove(0);
+}
+
+void dealCardToPlayer() {
+  playerHand.add(dealCard());
+  if (handValue(playerHand) > 21) {
+    gameOver = true;
+    playerWon = false;
+  }
+}
+
+void dealerPlays() {
+  // Dealer hits until value >= 17
+  while (handValue(dealerHand) < 17) {
+    dealerHand.add(dealCard());
+  }
+  int playerScore = handValue(playerHand);
+  int dealerScore = handValue(dealerHand);
+
+  if (dealerScore > 21 || playerScore > dealerScore) {
+    playerWon = true;
+  } else {
+    playerWon = false;
+  }
+  gameOver = true;
+}
+
+void drawHand(ArrayList<Card> hand, float x, float y) {
+  float cardSpacing = 30;
+  for (int i = 0; i < hand.size(); i++) {
+    Card c = hand.get(i);
+    fill(255);
+    rect(x + i * cardSpacing, y, 50, 80, 8);
+    fill(c.suit.equals("Hearts") || c.suit.equals("Diamonds") ? color(200, 0, 0) : 0);
+    textSize(18);
+    text(c.rank, x + i * cardSpacing + 25, y + 25);
+    textSize(14);
+    text(c.suit, x + i * cardSpacing + 25, y + 55);
+  }
+}
+
+int handValue(ArrayList<Card> hand) {
+  int totalValue = 0;
+  int aceCount = 0;
+  for (Card c : hand) {
+    if (c.rank.equals("A")) {
+      aceCount++;
+      totalValue += 11;
+    } else if (c.rank.equals("K") || c.rank.equals("Q") || c.rank.equals("J")) {
+      totalValue += 10;
+    } else {
+      totalValue += Integer.parseInt(c.rank);
+    }
+  }
+  while (totalValue > 21 && aceCount > 0) {
+    totalValue -= 10;
+    aceCount--;
+  }
+  return totalValue;
+}
+
+class Card {
+  String rank;
+  String suit;
+
+  Card(String rank, String suit) {
+    this.rank = rank;
+    this.suit = suit;
+  }
+}
