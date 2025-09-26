@@ -1,15 +1,15 @@
 void setup() {
-  pinMode(9, OUTPUT);       // Postavi pin 9 kao izlaz
-  Serial.begin(9600);       // Pokreni serijsku komunikaciju
+  pinMode(9, OUTPUT);       
+  Serial.begin(9600);       
 }
 
 void loop() {
   if (Serial.available() > 0) {
-    char command = Serial.read();  // Čitaj primljeni znak
+    char command = Serial.read();  
     if (command == '1') {
-      digitalWrite(9, HIGH);       // Upali LED
+      digitalWrite(9, HIGH);    
     } else if (command == '0') {
-      digitalWrite(9, LOW);        // Ugasi LED
+      digitalWrite(9, LOW);    
     }
   }
 }
