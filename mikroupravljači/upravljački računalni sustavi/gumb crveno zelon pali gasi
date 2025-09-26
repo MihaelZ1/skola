@@ -15,59 +15,34 @@ void loop() {
 }
 
 
-
 import processing.serial.*;
 
 Serial myPort;
 boolean ledOn = false;
-Button toggleButton;
+float buttonX = 75, buttonY = 75, buttonW = 100, buttonH = 50;
 
 void setup() {
   size(200, 200);
-  printArray(Serial.list()); // Pokaži sve serijske portove u konzoli
-
-  // Odaberi pravi port iz liste (npr. Serial.list()[0] ili drugi prema potrebi)
   myPort = new Serial(this, Serial.list()[0], 9600);
-
-  toggleButton = new Button(width/2 - 50, height/2 - 25, 100, 50);
 }
 
 void draw() {
   background(255);
-  toggleButton.display();
+  if (ledOn) {
+    fill(0, 255, 0);
+  } else {
+    fill(255, 0, 0);
+  }
+  rect(buttonX, buttonY, buttonW, buttonH);
 }
 
 void mousePressed() {
-  if (toggleButton.isMouseOver()) {
-    ledOn = !ledOn;  // Prebaci stanje
-    myPort.write(ledOn ? '1' : '0');  // Pošalji naredbu Arduinu
-  }
-}
-
-// Klasa za gumb
-class Button {
-  float x, y, w, h;
-
-  Button(float x, float y, float w, float h) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-  }
-
-  void display() {
+  if (mouseX > buttonX && mouseX < buttonX + buttonW && mouseY > buttonY && mouseY < buttonY + buttonH) {
+    ledOn = !ledOn;
     if (ledOn) {
-      fill(0, 255, 0);  // Zelena ako je LED upaljen
+      myPort.write('1');
     } else {
-      fill(255, 0, 0);  // Crvena ako je LED ugašen
+      myPort.write('0');
     }
-    rect(x, y, w, h);
-    fill(255);
-    textAlign(CENTER, CENTER);
-    text(ledOn ? "UGASI" : "UPALI", x + w/2, y + h/2);
-  }
-
-  boolean isMouseOver() {
-    return mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h;
   }
 }
