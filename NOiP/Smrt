@@ -1,0 +1,11 @@
+Napraviti aplikaciju sa dvije forme.
+
+Prva forma ima gumb za otvaranje druge forme i delegat za primanje podatka iz druge forme.
+
+Druga forma nasljeđuje osnovnu klasu "Osoba" koja ima konstruktor i virtualnu metodu za prikaz podataka (primjer polimorfizma).
+
+Kada se u drugoj formi unesu podaci i pritisne gumb, putem delegate i događaja pošalju se podaci natrag na prvu formu.
+
+Prva forma prima podatke i prikazuje ih u nekom kontrolu (npr. Label).
+
+Ako želite, mogu vam sada pokazati konkretan kod za obje forme s objašnjenjima. Želite li?
