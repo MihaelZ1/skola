@@ -1,0 +1,53 @@
+using System.ComponentModel;
+
+namespace Davinga
+{
+    public class Zivotinja
+    {
+        public string Ime { get; set; }
+        public string Glasanje;
+
+        public Zivotinja(string ime)
+        {
+            Ime = ime;
+        }
+    }
+
+    public class Maca : Zivotinja
+    {
+        public Maca(string ime) : base(ime)
+        {
+            Glasanje = "Mijau";
+        }
+    }
+
+    public class Pas : Zivotinja
+    {
+        public Pas(string ime) : base(ime)
+        {
+            Glasanje = "Av";
+        }
+    }
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Zivotinja> zivotinje = new List<Zivotinja>
+            {
+                new Maca("mica"),
+                new Maca("maca"),
+               
+                new Pas("rex"),
+                new Pas("bobi"),
+                new Pas("max"),
+                new Maca("miki")
+            };
+
+            foreach (var zivotinja in zivotinje)
+            {
+                Console.WriteLine($"{zivotinja.Glasanje}");
+            }
+        }
+    }
+}
