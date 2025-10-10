@@ -1,0 +1,46 @@
+processing
+
+import processing.serial.*;
+import controlP5.*;
+
+Serial myPort;
+ControlP5 cp5;
+int sliderValue = 0;
+
+void setup() {
+  size(400, 200);
+  cp5 = new ControlP5(this);
+  cp5.addSlider("sliderValue")
+     .setPosition(50, 80)
+     .setSize(300, 20)
+     .setRange(0, 1023)
+     .setValue(0);
+  myPort = new Serial(this, "COM3", 9600);
+  myPort.bufferUntil('\n');
+}
+
+void draw() {
+  background(240);
+  text("Vrijednost: " + sliderValue, 50, 50);
+}
+
+void serialEvent(Serial myPort) {
+  String input = trim(myPort.readStringUntil('\n'));
+  if (input != null && input.matches("\\d+")) {
+    sliderValue = int(input);
+    cp5.getController("sliderValue").setValue(sliderValue);
+  }
+}
+
+
+arduino ide 
+
+void setup() {
+Serial.begin(9600);
+}
+
+void loop() {
+int vrijednost=analogRead(A1);
+delay(50);
+Serial.println(vrijednost);
+}
