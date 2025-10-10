@@ -1,0 +1,32 @@
+processing
+
+import processing.serial.*;
+Serial myPort;
+int myText;
+
+
+void setup(){
+ size(300,300); 
+ myPort= new Serial(this,"COM3",9600);
+}
+
+void serialEvent(Serial myPort){
+  myText = myPort.read();
+}
+
+void draw(){
+  background(0,0,0);
+  text(myText,120,120);
+}
+
+arduino ide
+
+void setup() {
+Serial.begin(9600);
+}
+
+void loop() {
+int vrijednost=analogRead(A1);
+delay(50);
+Serial.write(vrijednost);
+}
