@@ -1,0 +1,32 @@
+UPS Sustavi (Uninterruptible Power Supply):
+- uređaji koji osiguravaju kontinuirani izvor napajanja za elektroničku opremu, čime štite računala i druge uređaje od nestanka struje, prenapona, podnapona i drugih električnih smetnji
+- Omogućuju sigurno gašenje opreme, štite od gubitka podataka.
+Vrste UPS-a:
+-Offline UPS:Prati napon iz mreže i tek kad dođe do nestanka struje, preuzima napajanje iz baterija. Kratko vrijeme prijelaza (5-10 ms). Pogodan je za manje, nezahtjevne sustave poput kućnih.
+-Line-interactive UPS:preuzima napajanje pri nestanku struje,regulira napon. Ako napon u mreži postane prenizak ili previsok, sustav automatski stabilizira napon. Kraći prijelaz od offline UPS-a i koristi se za kućne ili uredske sustave.
+-Online UPS:Stalno napaja uređaje preko baterije i stalno pretvara napon (AC-DC-AC), osigurava potpunu stabilnost napajanja bez prekida. Idealno je za kritične sustave koji zahtijevaju maksimalnu pouzdanost, poput data centara, bolnica i servera.
+Komponente UPS-a:
+-Baterije: pohranjuju napon
+-Inverter: Pretvara napon iz DC (baterija) u AC (napajanje uređaja)
+-Punjač: Napaja baterije dok je struja iz mreže prisutna
+-Regulator napona: Stabilizira napon koji dolazi iz mreže
+-Prekidač za prebacivanje: Omogućuje prijelaz na baterije kad nestane struje
+Način rada UPS-a:
+-Simulira AC pomoću DC tako da svakih nekoliko ms(ovisi o kvaliteti UPS-a) poveća/smanji napon koji odašilje do sljedećeg povišenja/sniženja. Time se simulira AC napon
+Primjena UPS-a:
+-Data centri: Zaštita servera i opreme od nestanka struje.
+-Bolnice: Kontinuirani rad medicinskih uređaja.
+-Industrija: Zaštita automatiziranih sustava i opreme.
+-Kućna uporaba: Zaštita osobnih računala i drugih kućanskih uređaja.
+
+Biometrija:
+-Korištenje jedinstvenih fizičkih karakteristika ili karakteristika ponašanja za identifikaciju korisnika
+-Sve prisutnija u pametnim telefonima, sigurnosnim sustavima i korporativnim mrežama.
+-Primjeri: Otisak prsta, prepoznavanje lica, šarenice oka, glasovna identifikacija.
+-Prednosti: sigurnije od lozinki, brži pristup sustavima od lozinki.
+-Izazovi: Privatnost i zaštita biometrijskih podataka, Mogućnost lažiranja ili hakiranja uz napredne metode.
+
+Environmnent(Okruženje):
+-Moramo zaštiti naše komponente/servere
+-Server sobe na povišenim mjestima
+-Ne dopuštamo ulaz neovlaštenim osobama. Npr dostava smije samo u dvorište, radnici u zgradu, admini u sve sobe, mehaničar samo u sobu za popravke
