@@ -1,0 +1,36 @@
+UPS – Uninterruptible power supply 
+
+UPS je uređaj neprekidnog napajanja (Uninterruptible Power Supply) koji štiti računala i druge elektroničke uređaje od prekida električne energije 
+i oscilacija u mreži. Njegova glavna funkcija je osigurati neprekidno napajanje iz baterije tijekom nestanka struje, što omogućava korisnicima 
+da sigurno sačuvaju svoj rad i ugase uređaj bez gubitka podataka. UPS također štiti uređaje od prenapona i drugih fluktuacija napona. Postoje različite 
+veličine UPS uređaja, od manjih za kućnu upotrebu do velikih sustava za servere i podatkovne centre. 
+
+ 
+
+Okoliš -  
+
+Server soba treba biti u centru ili blizu centra zgrade, nikako uz vanjski zid osim ako nije iznad trećeg kata.
+Ne smije imati vanjski prozor, a ni unutarnji se izbjegavaju. Mora imati čist gasni sustav za gašenje požara u skladu s lokalnim propisima.
+Cijevi za vodu pod pritiskom, odvod kišnice i ventilacijski kanali ne smiju prolaziti kroz prostor server sobe. 
+Klima uređaji trebaju se ugasiti kad se aktivira protupožarni sustav, a hlađenje treba održavati temperaturu između 22-26 °C s vlagom 15-99% bez kondenzacije. 
+Hlađenje treba biti podržano AC generatorom i baterijskom rezervom za pravilno prebacivanje ili koordinirano gašenje sustava. 
+Vrata server sobe moraju imati zaključavanje s kontroliranim pristupom samo za stručno osoblje. Zabranjeno je skladištenje papira i lako zapaljivih materijala u server sobi.  
+
+IT environment -  
+
+Pojačanje pc hardwarea 
+
+Smanjiti troškove 
+
+Bolja sigurnost 
+
+ 
+
+Biometrija u užem smislu je tehnika za autentikaciju koja koristi jedinstvene fizičke karakteristike svakog čovjeka kako bi ga IT sistema autenticirao. 
+
+To znači da se npr. kod autentikacije odnosno prijave na računalo korisnik umjesto unošenjem korisničkog imena (user name) i šifre (passworda) 
+autentificira nečim drugim što je jedinstveno za njega i što ga čini jedinstvenim i različitim od drugih ljudi tj. korisnika. 
+
+Danas najčešće korištene osobine su otisak prsta, geometrija šake i lica, izgled šarenice oka. Sve ove osobine su jedinstvene za svaku osobu. 
+
+ 
