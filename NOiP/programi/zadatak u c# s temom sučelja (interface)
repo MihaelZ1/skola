@@ -1,0 +1,166 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static WindowsFormsApp4.Form1;
+
+namespace WindowsFormsApp4
+{
+	public partial class Form1 : Form
+	{
+		
+		public interface IVehicle
+		{
+			void StartEngine();
+			void StopEngine();
+			string GetVehicleType();
+		}
+
+		
+		public class Car : IVehicle
+		{
+			public void StartEngine()
+			{
+				MessageBox.Show("Car engine started.");
+			}
+
+			public void StopEngine()
+			{
+				MessageBox.Show("Car engine stopped.");
+			}
+
+			public string GetVehicleType()
+			{
+				return "Car";
+			}
+		}
+
+		
+		public class Motorcycle : IVehicle
+		{
+			public void StartEngine()
+			{
+				MessageBox.Show("Motorcycle engine started.");
+			}
+
+			public void StopEngine()
+			{
+				MessageBox.Show("Motorcycle engine stopped.");
+			}
+
+			public string GetVehicleType()
+			{
+				return "Motorcycle";
+			}
+		}
+
+		
+		public class Garage
+		{
+			private List<IVehicle> vehicles;
+
+			public Garage()
+			{
+				vehicles = new List<IVehicle>();
+			}
+
+			public void AddVehicle(IVehicle vehicle)
+			{
+				vehicles.Add(vehicle);
+			}
+
+			public void StartAllEngines()
+			{
+				foreach (var vehicle in vehicles)
+				{
+					vehicle.StartEngine();
+				}
+			}
+
+			public void StopAllEngines()
+			{
+				foreach (var vehicle in vehicles)
+				{
+					vehicle.StopEngine();
+				}
+			}
+
+			public List<string> GetVehicleInfo()
+			{
+				List<string> info = new List<string>();
+				foreach (var vehicle in vehicles)
+				{
+					info.Add(vehicle.GetVehicleType());
+				}
+				return info;
+			}
+		}
+
+		
+		private Garage garage;
+		public Form1()
+		{
+			InitializeComponent();
+			garage=new Garage();
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			cmbVehicleType.Items.Add("Car");
+			cmbVehicleType.Items.Add("Motorcycle");
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			IVehicle vehicle = null;
+
+			// Provjera da li je nešto odabrano u ComboBox-u
+			if (cmbVehicleType.SelectedItem != null)
+			{
+				// Na temelju odabira u ComboBox-u dodajemo vozilo
+				if (cmbVehicleType.SelectedItem.ToString() == "Car")
+				{
+					vehicle = new Car();
+				}
+				else if (cmbVehicleType.SelectedItem.ToString() == "Motorcycle")
+				{
+					vehicle = new Motorcycle();
+				}
+
+				if (vehicle != null)
+				{
+					garage.AddVehicle(vehicle);
+					UpdateVehicleList();
+				}
+			}
+			else
+			{
+				MessageBox.Show("Please select a vehicle type.");
+			}
+		}
+		private void UpdateVehicleList()
+		{
+			lstVehicles.Items.Clear();
+			var vehicles = garage.GetVehicleInfo();
+			foreach (var vehicle in vehicles)
+			{
+				lstVehicles.Items.Add(vehicle);
+			}
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			garage.StartAllEngines();
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			garage.StopAllEngines();
+		}
+	}
+}
