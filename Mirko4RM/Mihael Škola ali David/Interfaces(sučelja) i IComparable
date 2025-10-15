@@ -1,0 +1,93 @@
+namespace DavidKonzola
+{
+    internal class Program
+    {
+        public interface IVozilo
+        {
+            void Pokreni();
+            void Zaustavi();
+            string GetTipVozila();
+        }
+        public class Automobil : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Automobil je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Automobil je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Automobil";
+            }
+            public int BrojVrata { get; set; }
+        }
+        public class Motocikl : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Motocikl je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Motocikl je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Motocikl";
+            }
+            public int ZapremninaMotora { get; set; }
+        }
+        public class Bicikl : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Bicikl je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Bicikl je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Bicikl";
+            }
+            public int BrojBrzina { get; set; }
+        }
+        public class VozniPark
+        {
+            private List<IVozilo> vozila = new List<IVozilo>();
+            public void DodajVozilo(IVozilo vozilo)
+            {
+                vozila.Add(vozilo);
+            }
+            public void UkloniVozilo(IVozilo vozilo)
+            {
+                vozila.Remove(vozilo);
+            }
+            public void PrikaziVozila()
+            {
+                foreach (var vozilo in vozila)
+                {
+                    Console.WriteLine(vozilo.GetTipVozila());
+                }
+            }
+        }
+        static void Main(string[] args)
+        {
+            VozniPark park = new VozniPark();
+            Automobil auto = new Automobil { BrojVrata = 4 };
+            Motocikl moto = new Motocikl { ZapremninaMotora = 600 };
+            Bicikl bicikl = new Bicikl { BrojBrzina = 21 };
+            park.DodajVozilo(auto);
+            park.DodajVozilo(moto);
+            park.DodajVozilo(bicikl);
+            auto.Pokreni();
+            moto.Pokreni();
+            bicikl.Pokreni();
+            park.PrikaziVozila();
+        }
+    }
+}
