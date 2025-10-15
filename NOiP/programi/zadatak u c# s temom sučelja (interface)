@@ -13,154 +13,161 @@ namespace WindowsFormsApp4
 {
 	public partial class Form1 : Form
 	{
-		
+		// Sučelje za vozilo
 		public interface IVehicle
 		{
-			void StartEngine();
-			void StopEngine();
-			string GetVehicleType();
+			void PokreniMotor();
+			void ZaustaviMotor();
+			string DohvatiVrstuVozila();
 		}
 
-		
+		// Klasa za automobil
 		public class Car : IVehicle
 		{
-			public void StartEngine()
+			public void PokreniMotor()
 			{
-				MessageBox.Show("Car engine started.");
+				MessageBox.Show("Motor automobila je pokrenut.");
 			}
 
-			public void StopEngine()
+			public void ZaustaviMotor()
 			{
-				MessageBox.Show("Car engine stopped.");
+				MessageBox.Show("Motor automobila je zaustavljen.");
 			}
 
-			public string GetVehicleType()
+			public string DohvatiVrstuVozila()
 			{
-				return "Car";
+				return "Automobil";
 			}
 		}
 
-		
+		// Klasa za motocikl
 		public class Motorcycle : IVehicle
 		{
-			public void StartEngine()
+			public void PokreniMotor()
 			{
-				MessageBox.Show("Motorcycle engine started.");
+				MessageBox.Show("Motor motocikla je pokrenut.");
 			}
 
-			public void StopEngine()
+			public void ZaustaviMotor()
 			{
-				MessageBox.Show("Motorcycle engine stopped.");
+				MessageBox.Show("Motor motocikla je zaustavljen.");
 			}
 
-			public string GetVehicleType()
+			public string DohvatiVrstuVozila()
 			{
-				return "Motorcycle";
+				return "Motocikl";
 			}
 		}
 
-		
+		// Klasa garaža
 		public class Garage
 		{
-			private List<IVehicle> vehicles;
+			private List<IVehicle> vozila;
 
 			public Garage()
 			{
-				vehicles = new List<IVehicle>();
+				vozila = new List<IVehicle>();
 			}
 
-			public void AddVehicle(IVehicle vehicle)
+			public void DodajVozilo(IVehicle vozilo)
 			{
-				vehicles.Add(vehicle);
+				vozila.Add(vozilo);
 			}
 
-			public void StartAllEngines()
+			public void PokreniSveMotore()
 			{
-				foreach (var vehicle in vehicles)
+				foreach (var vozilo in vozila)
 				{
-					vehicle.StartEngine();
+					vozilo.PokreniMotor();
 				}
 			}
 
-			public void StopAllEngines()
+			public void ZaustaviSveMotore()
 			{
-				foreach (var vehicle in vehicles)
+				foreach (var vozilo in vozila)
 				{
-					vehicle.StopEngine();
+					vozilo.ZaustaviMotor();
 				}
 			}
 
-			public List<string> GetVehicleInfo()
+			public List<string> DohvatiInformacijeOVozilima()
 			{
 				List<string> info = new List<string>();
-				foreach (var vehicle in vehicles)
+				foreach (var vozilo in vozila)
 				{
-					info.Add(vehicle.GetVehicleType());
+					info.Add(vozilo.DohvatiVrstuVozila());
 				}
 				return info;
 			}
 		}
 
-		
-		private Garage garage;
+		private Garage garaža;
+
+		// Konstruktor
 		public Form1()
 		{
 			InitializeComponent();
-			garage=new Garage();
+			garaža = new Garage();
 		}
 
+		// Događaj pri učitavanju forme
 		private void Form1_Load(object sender, EventArgs e)
 		{
-			cmbVehicleType.Items.Add("Car");
-			cmbVehicleType.Items.Add("Motorcycle");
+			cmbVehicleType.Items.Add("Automobil");
+			cmbVehicleType.Items.Add("Motocikl");
 		}
 
+		// Događaj za dodavanje vozila
 		private void button1_Click(object sender, EventArgs e)
 		{
-			IVehicle vehicle = null;
+			IVehicle vozilo = null;
 
 			// Provjera da li je nešto odabrano u ComboBox-u
 			if (cmbVehicleType.SelectedItem != null)
 			{
 				// Na temelju odabira u ComboBox-u dodajemo vozilo
-				if (cmbVehicleType.SelectedItem.ToString() == "Car")
+				if (cmbVehicleType.SelectedItem.ToString() == "Automobil")
 				{
-					vehicle = new Car();
+					vozilo = new Car();
 				}
-				else if (cmbVehicleType.SelectedItem.ToString() == "Motorcycle")
+				else if (cmbVehicleType.SelectedItem.ToString() == "Motocikl")
 				{
-					vehicle = new Motorcycle();
+					vozilo = new Motorcycle();
 				}
 
-				if (vehicle != null)
+				if (vozilo != null)
 				{
-					garage.AddVehicle(vehicle);
-					UpdateVehicleList();
+					garaža.DodajVozilo(vozilo);
+					AžurirajListuVozila();
 				}
 			}
 			else
 			{
-				MessageBox.Show("Please select a vehicle type.");
+				MessageBox.Show("Molimo odaberite vrstu vozila.");
 			}
 		}
-		private void UpdateVehicleList()
+
+		// Ažuriranje liste vozila
+		private void AžurirajListuVozila()
 		{
 			lstVehicles.Items.Clear();
-			var vehicles = garage.GetVehicleInfo();
-			foreach (var vehicle in vehicles)
+			var vozila = garaža.DohvatiInformacijeOVozilima();
+			foreach (var vozilo in vozila)
 			{
-				lstVehicles.Items.Add(vehicle);
+				lstVehicles.Items.Add(vozilo);
 			}
 		}
 
+		// Događaj za pokretanje svih motora
 		private void button2_Click(object sender, EventArgs e)
 		{
-			garage.StartAllEngines();
+			garaža.PokreniSveMotore();
 		}
 
+		// Događaj za zaustavljanje svih motora
 		private void button3_Click(object sender, EventArgs e)
 		{
-			garage.StopAllEngines();
+			garaža.ZaustaviSveMotore();
 		}
 	}
 }
