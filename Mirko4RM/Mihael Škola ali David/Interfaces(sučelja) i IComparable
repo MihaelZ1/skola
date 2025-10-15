@@ -91,3 +91,164 @@ namespace DavidKonzola
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Z Sortiranjem:
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+namespace DavidKonzola
+{
+    internal class Program
+    {
+        public interface IVozilo : IComparable<IVozilo>
+        {
+            void Pokreni();
+            void Zaustavi();
+            string GetTipVozila();
+
+            int CompareTo(IVozilo? other)
+            {
+                if (other == null) return 1;
+                return string.Compare(GetTipVozila(), other.GetTipVozila(), StringComparison.Ordinal);
+            }
+        }
+        public class Automobil : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Automobil je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Automobil je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Automobil";
+            }
+            public int BrojVrata { get; set; }
+
+            public int CompareTo(IVozilo? other)
+            {
+                if (other == null) return 1;
+                return string.Compare(GetTipVozila(), other.GetTipVozila(), StringComparison.Ordinal);
+            }
+        }
+
+        public class Motocikl : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Motocikl je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Motocikl je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Motocikl";
+            }
+            public int ZapremninaMotora { get; set; }
+
+            public int CompareTo(IVozilo? other)
+            {
+                if (other == null) return 1;
+                return string.Compare(GetTipVozila(), other.GetTipVozila(), StringComparison.Ordinal);
+            }
+        }
+        public class Bicikl : IVozilo
+        {
+            public void Pokreni()
+            {
+                Console.WriteLine("Bicikl je pokrenut.");
+            }
+            public void Zaustavi()
+            {
+                Console.WriteLine("Bicikl je zaustavljen.");
+            }
+            public string GetTipVozila()
+            {
+                return "Bicikl";
+            }
+            public int BrojBrzina { get; set; }
+
+            public int CompareTo(IVozilo? other)
+            {
+                if (other == null) return 1;
+                return string.Compare(GetTipVozila(), other.GetTipVozila(), StringComparison.Ordinal);
+            }
+        }
+        public class VozniPark
+        {
+            private List<IVozilo> vozila = new List<IVozilo>();
+            public void DodajVozilo(IVozilo vozilo)
+            {
+                vozila.Add(vozilo);
+            }
+            public void UkloniVozilo(IVozilo vozilo)
+            {
+                vozila.Remove(vozilo);
+            }
+            public void PrikaziVozila()
+            {
+                foreach (var vozilo in vozila)
+                {
+                    Console.WriteLine(vozilo.GetTipVozila());
+                }
+            }
+        }
+        static void Main(string[] args)
+        {
+            VozniPark park = new VozniPark();
+            Automobil auto = new Automobil { BrojVrata = 4 };
+            Motocikl moto = new Motocikl { ZapremninaMotora = 600 };
+            List<Bicikl> bicikli = new List<Bicikl>
+            {
+               new Bicikl { BrojBrzina = 21 },
+               new Bicikl { BrojBrzina = 18 },
+               new Bicikl { BrojBrzina = 24 }    
+            };
+            park.DodajVozilo(auto);
+            park.DodajVozilo(moto);
+            auto.Pokreni();
+            moto.Pokreni();
+            bicikli[1].Pokreni();
+            park.PrikaziVozila();
+            bicikli.Sort((a, b) => a.BrojBrzina.CompareTo(b.BrojBrzina));
+
+            foreach (var bicikl in bicikli)
+            {
+                Console.WriteLine($"Bicikl sa {bicikl.BrojBrzina} brzina");
+            }
+        }
+    }
+}
+
