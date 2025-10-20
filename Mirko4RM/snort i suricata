@@ -1,0 +1,18 @@
+Snort - 
+
+Snort je vodeći svjetski sustav za sprječavanje upada (IPS) otvorenog koda.
+Snort IPS koristi niz pravila koja pomažu u definiranju zlonamjernih mrežnih aktivnosti i koristi ta pravila za pronalaženje paketa koji se podudaraju s njima te generira upozorenja za korisnike.
+Snort se također može implementirati inline za zaustavljanje ovih paketa. 
+Snort ima tri primarne upotrebe: Kao njuškalo paketa poput tcpdumpa, kao bilježač paketa - što je korisno za otklanjanje pogrešaka mrežnog prometa, ili se može koristiti kao potpuni sustav za sprječavanje upada u mrežu.
+Snort se može preuzeti i konfigurirati za osobnu i poslovnu upotrebu.
+
+
+Suricata - 
+
+Suricata je IDS/IPS﻿ sustav otvorenog koda za otkrivanje i sprječavanje napada na mrežu.
+Razvijen je od strane Open Information Security Foundation (OISF) i koristi se za praćenje mrežnog prometa u stvarnom vremenu kako bi detektirao sumnjive aktivnosti poput zlonamjernih programa, neovlaštenih pristupa i napada.
+Suricata koristi prilagodljive skupove pravila za prepoznavanje prijetnji i podržava analizu dubokog paketa za detaljnu analizu mrežnih podataka.
+Značajna je po svojoj višedretvenoj arhitekturi koja omogućuje brzo procesiranje velikih količina podataka. 
+Može raditi u načinu samo upozorenja ili kao aktivni sustav za blokiranje napada. 
+Suricata je popularna zbog svoje fleksibilnosti, učinkovitosti i činjenice da je besplatan alat koji se stalno nadograđuje Suricata je IDS/IPS sustav otvorenog koda za detekciju i sprječavanje mrežnih prijetnji, 
+koristi prilagodljiva pravila, višedretvenu arhitekturu i može raditi u načinu blokiranja ili samo upozorenja﻿.
