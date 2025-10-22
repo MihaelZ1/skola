@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
+using System.Net.NetworkInformation;
+
+
+namespace DavidaSql
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        SqlConnection cnn;
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string cs = @"Data Source=localhost\sqlexpress;Initial Catalog=DavidSQL;User ID=DavidJambrosic;Password=ManCity33";
+
+            try
+            {
+                cnn = new SqlConnection(cs);
+                cnn.Open();
+                MessageBox.Show("Konekcija je uspješno otvorena.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška prilikom konekcije: {ex.Message}");
+            }
+        }
+
+        private void Dodaj_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Konekcija nije otvorena.");
+                return;
+            }
+
+            try
+            {
+                string ime = textBoxIme.Text;
+                string prezime = textBoxPrezime.Text;
+                int godine = int.Parse(textBoxGodine.Text);
+
+                string sql = "INSERT INTO dbo.DavidTablica (Ime, Prezime, Godine, Aktivan) VALUES (@Ime, @Prezime, @Godine, @Aktivan)";
+                using (SqlCommand naredba = new SqlCommand(sql, cnn))
+                {
+                    naredba.Parameters.AddWithValue("@Ime", ime);
+                    naredba.Parameters.AddWithValue("@Prezime", prezime);
+                    naredba.Parameters.AddWithValue("@Godine", godine);
+                    naredba.Parameters.AddWithValue("@Aktivan", 1);
+
+                    naredba.ExecuteNonQuery();
+                    MessageBox.Show("Podaci su uspešno dodani.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška prilikom dodavanja podataka: {ex.Message}");
+            }
+        }
+    }
+}
