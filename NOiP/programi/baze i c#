@@ -1,0 +1,135 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp6
+{
+	public partial class Form1 : Form
+	{
+		private SqlConnection cnn;
+		private string cs = @"Data Source=localhost\sqlexpress;Initial Catalog=david;User ID=zeleznjak;Password=zeleznjak";
+		public Form1()
+		{
+			InitializeComponent();
+			cnn = new SqlConnection(cs);
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				cnn.Open();
+				MessageBox.Show("Otvorena konekcija...");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Greška prilikom otvaranja konekcije: " + ex.Message);
+			}
+			finally
+			{
+				cnn.Close();
+			}
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				cnn.Open();
+				string sql = "SELECT * FROM Osoba";
+				SqlCommand naredba = new SqlCommand(sql, cnn);
+				SqlDataReader dataReader = naredba.ExecuteReader();
+				string output = "";
+				while (dataReader.Read())
+				{
+					output += $"{dataReader["id"]}\t{dataReader["ime"]}\t{dataReader["prezime"]}\t{dataReader["Godina rođenja"]}\t{dataReader["spol"]}\n";
+				}
+				MessageBox.Show(output);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Greška prilikom čitanja podataka: " + ex.Message);
+			}
+			finally
+			{
+				cnn.Close();
+			}
+
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				cnn.Open();
+				string sql = "INSERT INTO Osoba (ime, prezime, [Godina rođenja], spol) VALUES (@ime, @prezime, @godina, @spol)";
+				SqlCommand naredba = new SqlCommand(sql, cnn);
+				naredba.Parameters.AddWithValue("@ime", "ime01");
+				naredba.Parameters.AddWithValue("@prezime", "prezime01");
+				naredba.Parameters.AddWithValue("@godina",5000);
+				naredba.Parameters.AddWithValue("@spol", "r");
+				naredba.ExecuteNonQuery();
+				MessageBox.Show("Podaci su uspešno uneseni.");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Greška prilikom unosa podataka: " + ex.Message);
+			}
+			finally
+			{
+				cnn.Close();
+			}
+
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				cnn.Open();
+				string sql = "UPDATE Osoba SET ime = @ime WHERE prezime = @prezime";
+				SqlCommand naredba = new SqlCommand(sql, cnn);
+				naredba.Parameters.AddWithValue("@ime", "novoIme");
+				naredba.Parameters.AddWithValue("@prezime", "prezime01");
+				naredba.ExecuteNonQuery();
+				MessageBox.Show("Podaci su uspešno ažurirani.");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Greška prilikom ažuriranja podataka: " + ex.Message);
+			}
+			finally
+			{
+				cnn.Close();
+			}
+		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				cnn.Open();
+				string sql = "DELETE FROM Osoba WHERE id = @id";
+				SqlCommand naredba = new SqlCommand(sql, cnn);
+				naredba.Parameters.AddWithValue("@id", 666);
+				naredba.ExecuteNonQuery();
+				MessageBox.Show("Podaci su uspešno obrisani.");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Greška prilikom brisanja podataka: " + ex.Message);
+			}
+			finally
+			{
+				cnn.Close();
+			}
+		}
+	}
+}
