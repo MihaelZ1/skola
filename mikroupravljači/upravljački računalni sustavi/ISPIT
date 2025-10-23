@@ -1,0 +1,102 @@
+const int pin_pot = A0;
+const int pin_joy = A1;
+const int pin_led = 9;
+
+int cilj_temp = 25;
+int trenutna_temp = 0;
+int tol_gore = 3;
+int tol_dolje = 3;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pin_led, OUTPUT);
+}
+
+void loop() {
+  int vrijednost_pot = analogRead(pin_pot);
+  cilj_temp = map(vrijednost_pot, 0, 1023, 0, 50);
+  int vrijednost_joy = analogRead(pin_joy);
+  trenutna_temp = map(vrijednost_joy, 0, 1023, 0, 50);
+
+  if (trenutna_temp > cilj_temp + tol_gore) digitalWrite(pin_led, HIGH);
+  else if (trenutna_temp < cilj_temp - tol_dolje) digitalWrite(pin_led, LOW);
+
+  Serial.print(trenutna_temp);
+  Serial.print(",");
+  Serial.print(cilj_temp);
+  Serial.print(",");
+  Serial.print(tol_gore);
+  Serial.print(",");
+  Serial.print(tol_dolje);
+  Serial.print(",");
+  Serial.println(digitalRead(pin_led));
+
+  delay(100);
+}
+
+
+
+
+
+
+import controlP5.*;
+import processing.serial.*;
+
+ControlP5 cp5;
+Serial serijski_port;
+
+float cilj = 25;
+float tol_gore = 3;
+float tol_dolje = 3;
+float trenutna = 0;
+int led_stanje = 0;
+
+Slider sCilj, sGore, sDolje;
+
+void setup() {
+  size(500, 300);
+  printArray(Serial.list());
+  serijski_port = new Serial(this, Serial.list()[0], 9600);
+  cp5 = new ControlP5(this);
+  sCilj = cp5.addSlider("Ciljana").setPosition(50, 180).setSize(400, 20).setRange(0, 50).setValue(cilj).lock();
+  sGore = cp5.addSlider("Plus").setPosition(50, 210).setSize(400, 20).setRange(0, 10).setValue(tol_gore);
+  sDolje = cp5.addSlider("Minus").setPosition(50, 240).setSize(400, 20).setRange(0, 10).setValue(tol_dolje);
+  textSize(18);
+}
+
+void draw() {
+  background(50);
+  fill(255);
+  text("Ciljana temperatura: " + nf(cilj, 2, 1) + " °C", 20, 40);
+  text("Trenutna temperatura: " + nf(trenutna, 2, 1) + " °C", 20, 70);
+  fill(led_stanje == 1 ? color(255, 0, 0) : color(100));
+  ellipse(450, 60, 30, 30);
+  tol_gore = constrain(sGore.getValue(), 0, 10);
+  tol_dolje = constrain(sDolje.getValue(), 0, 10);
+  citajSerijski();
+}
+
+void citajSerijski() {
+  if (serijski_port.available() > 0) {
+    String linija = serijski_port.readStringUntil('\n');
+    if (linija != null) {
+      String[] dijelovi = split(trim(linija), ',');
+      if (dijelovi.length == 5) {
+        trenutna = float(dijelovi[0]);
+        cilj = float(dijelovi[1]);
+        tol_gore = float(dijelovi[2]);
+        tol_dolje = float(dijelovi[3]);
+        led_stanje = int(dijelovi[4]);
+        sCilj.setValue(cilj);
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
