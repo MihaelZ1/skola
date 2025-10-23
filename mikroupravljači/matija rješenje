@@ -1,0 +1,137 @@
+int joyX = A1;      // joystick X pin
+int pot = A0;       // potenciometar pin
+int ledPin = 9;    // LED pin
+
+float temp = 25;    // početna trenutna temperatura
+int target = 0;
+int upper = 10;
+int lower = 10;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  int joyVal = analogRead(joyX);
+  int potVal = analogRead(pot);
+
+  // potenciometar postavlja ciljanu temperaturu
+  target = map(potVal, 0, 1023, 0, 100);
+
+  // joystick mijenja trenutnu temperaturu
+  int center = 512;
+  int deadzone = 50;
+
+  if (joyVal > center + deadzone) {
+    temp += 0.5; // povećaj temperaturu
+  } else if (joyVal < center - deadzone) {
+    temp -= 0.5; // smanji temperaturu
+  }
+
+  // ograniči temperaturu
+  if (temp < 0) temp = 0;
+  if (temp > 100) temp = 100;
+
+  // čitaj granice iz Processing-a
+  if (Serial.available() >= 2) {
+    upper = Serial.read();
+    lower = Serial.read();
+  }
+
+  // 🔥 LED logika: svijetli ako je izvan raspona, gasi se kad je unutar
+  if (temp > target + upper || temp < target - lower) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+
+  // pošalji podatke Processing-u
+  Serial.print(temp);
+  Serial.print(",");
+  Serial.print(target);
+  Serial.print(",");
+  Serial.print(upper);
+  Serial.print(",");
+  Serial.println(lower);
+
+  delay(200);
+}
+
+
+PROCESSING: import processing.serial.*;
+Serial myPort;
+
+float temp = 25;
+float target = 25;
+int upper = 10;
+int lower = 10;
+
+float sliderTargetY = 200;
+float sliderUpperY = 300;
+float sliderLowerY = 400;
+float sliderX = 100;
+float sliderW = 300;
+
+void setup() {
+  size(500, 500);
+  printArray(Serial.list());
+  myPort = new Serial(this, Serial.list()[0], 9600);
+}
+
+void draw() {
+  background(30);
+  fill(255);
+  textSize(18);
+  text("Ciljana temperatura: " + int(target), 50, 50);
+  text("Trenutna temperatura: " + int(temp), 50, 80);
+
+  
+  if (temp > target + upper || temp < target - lower) fill(255, 0, 0); // crvena = izvan raspona
+  else fill(0, 255, 0); // zelena = unutar granica
+  ellipse(450, 60, 30, 30);
+
+  // slideri
+  drawSlider(sliderTargetY, target, "Ciljana");
+  drawSlider(sliderUpperY, upper, "+");
+  drawSlider(sliderLowerY, lower, "-");
+
+  // čitanje serijskih podataka
+  while (myPort.available() > 0) {
+    String val = myPort.readStringUntil('\n');
+    if (val != null) {
+      String[] parts = split(trim(val), ',');
+      if (parts.length == 4) {
+        temp = float(parts[0]);
+        target = float(parts[1]);
+        upper = int(parts[2]);
+        lower = int(parts[3]);
+      }
+    }
+  }
+}
+
+void drawSlider(float y, float val, String label) {
+  fill(100);
+  rect(sliderX, y, sliderW, 20);
+  fill(200);
+  float xPos = map(val, 0, 100, sliderX, sliderX + sliderW);
+  rect(xPos - 5, y - 5, 10, 30);
+  fill(255);
+  text(label + " " + nf(val, 1, 0), sliderX + sliderW + 20, y + 15);
+}
+
+// s mišem pomičemo + i - granice
+void mouseDragged() {
+  if (mouseY > sliderUpperY - 10 && mouseY < sliderUpperY + 30) {
+    upper = int(map(mouseX, sliderX, sliderX + sliderW, 0, 100));
+    upper = constrain(upper, 0, 100);
+  }
+  if (mouseY > sliderLowerY - 10 && mouseY < sliderLowerY + 30) {
+    lower = int(map(mouseX, sliderX, sliderX + sliderW, 0, 100));
+    lower = constrain(lower, 0, 100);
+  }
+
+  myPort.write(upper);
+  myPort.write(lower);
+}
