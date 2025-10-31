@@ -1,0 +1,67 @@
+ide
+
+// Arduino kod
+
+int potPin1 = A0;  // Pin za prvi potenciometar
+int potPin2 = A1;  // Pin za drugi potenciometar
+int potValue1 = 0;  // Vrednost prvog potenciometra
+int potValue2 = 0;  // Vrednost drugog potenciometra
+
+void setup() {
+  // Pokrećemo serijsku komunikaciju
+  Serial.begin(9600); 
+}
+
+void loop() {
+  // Čitamo vrednosti sa potenciometara (0 do 1023)
+  potValue1 = analogRead(potPin1);
+  potValue2 = analogRead(potPin2);
+  
+  // Šaljemo vrednosti na serijski port, razdvojene zarezom
+  Serial.print(potValue1);
+  Serial.print(","); // Razdvaja podatke
+  Serial.println(potValue2);
+
+  delay(100); // Pošaljemo podatke svakih 100 ms
+}
+
+
+
+processing
+
+// Processing kod
+
+import processing.serial.*;
+
+Serial myPort;  // Serijski port
+String potValue1 = "";
+String potValue2 = "";
+
+void setup() {
+  // Otvorimo serijski port, zameniti sa portom na kojem je tvoj Arduino
+  myPort = new Serial(this, "COM3", 9600); 
+  myPort.bufferUntil('\n'); // Čeka kraj linije
+}
+
+void draw() {
+  background(255); // Pozadina
+  
+  // Prikazujemo vrednosti potenciometara na ekranu
+  textSize(32);
+  text("Potenciometar 1: " + potValue1, 50, 100);
+  text("Potenciometar 2: " + potValue2, 50, 150);
+}
+
+void serialEvent(Serial myPort) {
+  // Čitanje serijskog podatka
+  String incomingData = myPort.readStringUntil('\n');
+  if (incomingData != null) {
+    incomingData = trim(incomingData); // Uklanja praznine
+    String[] values = split(incomingData, ','); // Razdvaja podatke sa zarezom
+
+    if (values.length == 2) {
+      potValue1 = values[0]; // Vrednost prvog potenciometra
+      potValue2 = values[1]; // Vrednost drugog potenciometra
+    }
+  }
+}
