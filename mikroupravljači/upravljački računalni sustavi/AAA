@@ -37,18 +37,29 @@ void loop() {
   Serial.println(digitalRead(pin_led));
 
   if (Serial.available() > 0) {
-    int primljenaVrijednost = Serial.parseInt(); 
-    analogWrite(pin_led, primljenaVrijednost); // PWM upravljanje LED-icom
+    String ulaz = Serial.readStringUntil('\n');
+    ulaz.trim();
+    if (ulaz.length() > 0) {
+      int vrijednosti[3];
+      int i = 0;
+      char *ptr = strtok((char*)ulaz.c_str(), ",");
+      while (ptr != NULL && i < 3) {
+        vrijednosti[i++] = atoi(ptr);
+        ptr = strtok(NULL, ",");
+      }
+      if (i == 3) {
+        analogWrite(pin_led, vrijednosti[0]); // PWM za LED
+        tol_gore = vrijednosti[1];
+        tol_dolje = vrijednosti[2];
+      }
+    }
   }
 
   delay(400);
 }
 
 
-
-
-
-   import controlP5.*;
+import controlP5.*;
 import processing.serial.*;
 
 ControlP5 cp5;
@@ -102,17 +113,17 @@ void citajSerijski() {
         tol_dolje = float(dijelovi[3]);
         led_stanje = int(dijelovi[4]);
         sCilj.setValue(cilj);
+        sGore.setValue(tol_gore);
+        sDolje.setValue(tol_dolje);
       }
     }
   }
 }
 
 void salji(){
-  // šalje vrijednost slidera Tz kao PWM (0–255)
   int pwm = int(map(sCilj.getValue(), 0, 50, 0, 255));
-  myPort.write(pwm + "\n");
+  int gore = int(tol_gore);
+  int dolje = int(tol_dolje);
+  String poruka = pwm + "," + gore + "," + dolje + "\n";
+  myPort.write(poruka);
 }
-
-
-
-
