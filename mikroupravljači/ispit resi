@@ -1,0 +1,124 @@
+import processing.serial.*;
+import controlP5.*;
+
+Serial myPort;
+ControlP5 cp5;
+
+int zeljenaRaw = 0;
+int stvarnaRaw = 0;
+float zeljenaTemp = 0;
+float stvarnaTemp = 0;
+
+float minOgranicenje = 0;
+float maxOgranicenje = 15;
+
+boolean lockUpdate = false;
+
+void setup() {
+  size(1000, 600);
+  cp5 = new ControlP5(this);
+
+  cp5.addSlider("zeljenaRaw")
+     .setPosition(100, 150)
+     .setSize(400, 30)
+     .setRange(0, 1023)
+     .setValue(0);
+
+  cp5.addSlider("minOgranicenje")
+     .setPosition(100, 300)
+     .setSize(400, 30)
+     .setRange(0, 15)
+     .setValue(0);
+
+  cp5.addSlider("maxOgranicenje")
+     .setPosition(100, 380)
+     .setSize(400, 30)
+     .setRange(0, 15)
+     .setValue(15);
+
+  myPort = new Serial(this, "COM3", 9600);
+  myPort.bufferUntil('\n');
+  textSize(20);
+}
+
+void draw() {
+  background(0);
+  fill(255);
+  text("Željena temperatura: " + nf(zeljenaTemp, 0, 1) + " °C", 100, 120);
+  text("Stvarna temperatura: " + nf(stvarnaTemp, 0, 1) + " °C", 100, 230);
+  text("Minimalno ograničenje: " + nf(minOgranicenje, 0, 1) + " °C", 100, 290);
+  text("Maksimalno ograničenje: " + nf(maxOgranicenje, 0, 1) + " °C", 100, 370);
+
+  if (stvarnaTemp > zeljenaTemp + maxOgranicenje) {
+    myPort.write("1\n");
+  } 
+  else if (stvarnaTemp < zeljenaTemp-minOgranicenje) {
+    myPort.write("0\n");
+  }
+}
+
+void serialEvent(Serial myPort) {
+  String input = trim(myPort.readStringUntil('\n'));
+  if (input != null && input.length() > 0) {
+    try {
+      lockUpdate = true;
+      float val = float(input);
+      int zeljenapr = int(val / 10000);
+      int stvarnapr = int(val % 10000);
+
+      zeljenaRaw = zeljenapr;
+      stvarnaRaw = stvarnapr;
+
+      zeljenaTemp = map(zeljenaRaw, 0, 1023, 0, 50);
+      stvarnaTemp = map(stvarnaRaw, 0, 1023, 0, 50);
+
+      cp5.getController("zeljenaRaw").setValue(zeljenaRaw);
+      lockUpdate = false;
+    } catch (Exception e) {
+      println("Greška u parsiranju: " + input);
+    }
+  }
+}
+
+void zeljenaRaw(int val) {
+  if (!lockUpdate) {
+    myPort.write(val + "\n");
+  }
+}
+
+void minOgranicenje(float val) {
+  minOgranicenje = val;
+}
+
+void maxOgranicenje(float val) {
+  maxOgranicenje = val;
+}
+------------------------------------------------------
+
+int zeljpin = A0;
+int stvpin = A1;
+int LEDpin = 9;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LEDpin, OUTPUT);
+}
+
+void loop() {
+  int zeljValue = analogRead(zeljpin);
+  int stvValue = analogRead(stvpin);
+  long vrijednost = (long)zeljValue * 10000 + stvValue;
+  Serial.println(vrijednost);
+
+  if (Serial.available() > 0) {
+    char cmd = Serial.read();
+    if (cmd == '1') {
+      digitalWrite(LEDpin, HIGH);
+    } else if (cmd == '0') {
+      digitalWrite(LEDpin, LOW);
+    }
+  }
+
+  delay(200);
+}
+ Pazi na ogranicenja i histerezu!!!!!
