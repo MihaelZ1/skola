@@ -1,1 +1,23 @@
+Autentifikacija je proces provjere identiteta korisnika koji pokušava pristupiti sistemu. Cilj je potvrditi da korisnik jest ono za koga se predstavlja — najčešće unosom korisničkog imena i lozinke.
+Nakon uspješne autentifikacije, slijedi autorizacija (određivanje dozvola i prava pristupa).
 
+Windows autentifikacija:
+- vrste računi: Lokalni računi–definirani na pojedinačnom računalu              Domenski računi–definirani u okviru Active Directory (AD) infrastrukture
+- Proces lokalne autorizacije:   Korisnik unosi korisničko ime i lozinku/ Lozinka se ne pohranjuje ni šalje u čistom tekstu – stvara se hash (npr. NTLM hash)/ Windows provjerava hash lozinke u SAM bazi 
+      (Security Accounts Manager)/ Ako se hash podudara → korisnik se autentificira i dobiva Access Token s informacijama o identitetu, grupama i privilegijama.
+- Proces autorizacije u domeni:    Koristi se Kerberos protokol, koji je sigurniji od starijeg NTLM sustava/Korisnik se prijavljuje → AD izdaje TGT (Ticket Granting Ticket) putem KDC-a (Key Distribution Center) /
+      Kada korisnik želi pristupiti određenom servisu, KDC izdaje Service Ticket./   Servis vjeruje KDC-u, pa ne mora sam provjeravati lozinku.
+- Glavne komponente Windows sigurnosti:   
+          LSASS (Local Security Authority Subsystem Service) – glavni proces koji upravlja autentifikacijom/ 
+          SAM (Security Accounts Manager) – baza lokalnih korisnika i hashova.
+          Active Directory – centralna baza korisnika i grupa u mreži.
+
+Linux autentifikacija:
+- Informacije o korisnicima nalaze se u datoteci /etc/passwd.
+- Hash lozinki pohranjuje se u /etc/shadow (pristup ima samo root korisnik).
+- Proces autentifikacije: Korisnik unosi korisničko ime i lozinku.    /  Sustav pomoću PAM-a (Pluggable Authentication Modules) provjerava hash lozinke iz /etc/shadow.  /  
+        Ako se hash podudara → korisnik dobiva pristup sustavu.
+- PAM (Pluggable Authentication Modules):   Modularni sustav koji omogućava različite metode autentifikacije(obična lozinka (pam_unix), LDAP (pam_ldap), Kerberos (pam_krb5),
+        blokiranje pristupa nakon više neuspjelih pokušaja (pam_faillock), Konfiguracija se nalazi u /etc/pam.d/
+- Dodatne metode autentifikacije:    SSH ključevi – koriste par javnog i privatnog ključa, bez lozinke.
+      LDAP/Kerberos – koriste se za mrežnu (centraliziranu) autentifikaciju u većim sustavima.
