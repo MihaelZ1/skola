@@ -1,0 +1,166 @@
+-- =========================================
+--   BANKARSKI SUSTAV - KOMPLETNA BAZA
+-- =========================================
+CREATE DATABASE bankarski_sustav;
+USE bankarski_sustav;
+
+-- =========================================
+-- 1. TABLICA: Korisnici
+-- =========================================
+CREATE TABLE korisnici (
+    korisnik_id INT AUTO_INCREMENT PRIMARY KEY,
+    oib CHAR(11) UNIQUE NOT NULL,
+    ime VARCHAR(50) NOT NULL,
+    prezime VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    lozinka_hash VARCHAR(255) NOT NULL,
+    adresa VARCHAR(150),
+    grad VARCHAR(100),
+    drzava VARCHAR(100),
+    telefon VARCHAR(20),
+    datum_registracije DATETIME DEFAULT CURRENT_TIMESTAMP,
+    uloga ENUM('klijent', 'sluzbenik', 'administrator') DEFAULT 'klijent'
+);
+
+-- =========================================
+-- 2. TABLICA: Vrste računa
+-- =========================================
+CREATE TABLE vrste_racuna (
+    vrsta_id INT AUTO_INCREMENT PRIMARY KEY,
+    naziv VARCHAR(50) NOT NULL,
+    opis VARCHAR(255)
+);
+
+INSERT INTO vrste_racuna (naziv, opis)
+VALUES ('Tekući račun', 'Osnovni račun za svakodnevne transakcije'),
+       ('Štedni račun', 'Račun za štednju s kamatom');
+
+-- =========================================
+-- 3. TABLICA: Računi
+-- =========================================
+CREATE TABLE racuni (
+    racun_id INT AUTO_INCREMENT PRIMARY KEY,
+    broj_racuna CHAR(18) UNIQUE NOT NULL,
+    korisnik_id INT NOT NULL,
+    vrsta_id INT NOT NULL,
+    saldo DECIMAL(15,2) DEFAULT 0.00,
+    datum_otvaranja DATE DEFAULT CURRENT_DATE,
+    datum_zatvaranja DATE,
+    status ENUM('aktivan', 'blokiran', 'zatvoren') DEFAULT 'aktivan',
+    FOREIGN KEY (korisnik_id) REFERENCES korisnici(korisnik_id),
+    FOREIGN KEY (vrsta_id) REFERENCES vrste_racuna(vrsta_id)
+);
+
+-- =========================================
+-- 4. TABLICA: Transakcije
+-- =========================================
+CREATE TABLE transakcije (
+    transakcija_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    racun_id INT NOT NULL,
+    tip ENUM('uplata', 'isplata', 'prijenos', 'placanje_racuna') NOT NULL,
+    iznos DECIMAL(15,2) NOT NULL,
+    datum_transakcije DATETIME DEFAULT CURRENT_TIMESTAMP,
+    opis VARCHAR(255),
+    racun_od INT NULL,
+    racun_na INT NULL,
+    qr_kod VARCHAR(255) NULL,
+    FOREIGN KEY (racun_id) REFERENCES racuni(racun_id),
+    FOREIGN KEY (racun_od) REFERENCES racuni(racun_id),
+    FOREIGN KEY (racun_na) REFERENCES racuni(racun_id)
+);
+
+-- =========================================
+-- 5. TABLICA: Kartice
+-- =========================================
+CREATE TABLE kartice (
+    kartica_id INT AUTO_INCREMENT PRIMARY KEY,
+    broj_kartice CHAR(16) UNIQUE NOT NULL,
+    racun_id INT NOT NULL,
+    datum_izdavanja DATE DEFAULT CURRENT_DATE,
+    datum_isteka DATE NOT NULL,
+    cvv CHAR(3) NOT NULL,
+    status ENUM('aktivna', 'blokirana', 'istekla') DEFAULT 'aktivna',
+    FOREIGN KEY (racun_id) REFERENCES racuni(racun_id)
+);
+
+-- =========================================
+-- 6. TABLICA: Krediti
+-- =========================================
+CREATE TABLE krediti (
+    kredit_id INT AUTO_INCREMENT PRIMARY KEY,
+    korisnik_id INT NOT NULL,
+    iznos DECIMAL(15,2) NOT NULL,
+    kamata DECIMAL(5,2) NOT NULL,
+    rok_otplate INT NOT NULL, -- u mjesecima
+    datum_podizanja DATE DEFAULT CURRENT_DATE,
+    status ENUM('aktivan', 'otplacen', 'kasni') DEFAULT 'aktivan',
+    FOREIGN KEY (korisnik_id) REFERENCES korisnici(korisnik_id)
+);
+
+-- =========================================
+-- 7. TABLICA: Otplate kredita
+-- =========================================
+CREATE TABLE otplate (
+    otplata_id INT AUTO_INCREMENT PRIMARY KEY,
+    kredit_id INT NOT NULL,
+    datum_uplate DATE DEFAULT CURRENT_DATE,
+    iznos_uplate DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (kredit_id) REFERENCES krediti(kredit_id)
+);
+
+-- =========================================
+-- 8. TABLICA: Plaćanja računa (QR)
+-- =========================================
+CREATE TABLE placanja_racuna (
+    placanje_id INT AUTO_INCREMENT PRIMARY KEY,
+    korisnik_id INT NOT NULL,
+    racun_id INT NOT NULL,
+    iznos DECIMAL(15,2) NOT NULL,
+    opis VARCHAR(255),
+    qr_kod VARCHAR(255),
+    datum_placanja DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (korisnik_id) REFERENCES korisnici(korisnik_id),
+    FOREIGN KEY (racun_id) REFERENCES racuni(racun_id)
+);
+
+-- =========================================
+-- 9. TABLICA: Log pristupa (za mobilno/web bankarstvo)
+-- =========================================
+CREATE TABLE log_pristupa (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    korisnik_id INT NOT NULL,
+    uredaj ENUM('Windows_app', 'Web_app', 'Android_app'),
+    ip_adresa VARCHAR(50),
+    vrijeme_pristupa DATETIME DEFAULT CURRENT_TIMESTAMP,
+    uspjesno BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (korisnik_id) REFERENCES korisnici(korisnik_id)
+);
+
+-- =========================================
+-- 10. INDEKSI
+-- =========================================
+CREATE INDEX idx_korisnik_email ON korisnici(email);
+CREATE INDEX idx_racun_korisnik ON racuni(korisnik_id);
+CREATE INDEX idx_transakcija_racun ON transakcije(racun_id);
+CREATE INDEX idx_kredit_korisnik ON krediti(korisnik_id);
+CREATE INDEX idx_placanje_korisnik ON placanja_racuna(korisnik_id);
+
+-- =========================================
+-- 11. TRIGGER: automatsko ažuriranje salda nakon transakcije
+-- =========================================
+DELIMITER //
+CREATE TRIGGER azuriraj_saldo
+AFTER INSERT ON transakcije
+FOR EACH ROW
+BEGIN
+    IF NEW.tip = 'uplata' THEN
+        UPDATE racuni SET saldo = saldo + NEW.iznos WHERE racun_id = NEW.racun_id;
+    ELSEIF NEW.tip = 'isplata' THEN
+        UPDATE racuni SET saldo = saldo - NEW.iznos WHERE racun_id = NEW.racun_id;
+    ELSEIF NEW.tip = 'prijenos' THEN
+        UPDATE racuni SET saldo = saldo - NEW.iznos WHERE racun_id = NEW.racun_od;
+        UPDATE racuni SET saldo = saldo + NEW.iznos WHERE racun_id = NEW.racun_na;
+    END IF;
+END;
+//
+DELIMITER ;
