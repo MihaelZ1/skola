@@ -1,0 +1,154 @@
+CREATE TABLE adrese (
+	id INT PRIMARY KEY,
+	postanski_broj INT,
+	ime_naselja_postanski nchar(25),
+	ime_naselja nchar(25),
+	ulica nchar(25),
+	broj int,
+)
+
+CREATE TABLE ucenici (
+	id INT IDENTITY(1,1) PRIMARY KEY,
+	ime nchar(25),
+	prezime nchar(25),
+	godina_rodenja INT,
+	spol nchar(1),
+	adresa INT,
+	FOREIGN KEY (adresa) REFERENCES adrese(id)
+
+)
+
+CREATE TABLE ucenici (
+	id INT IDENTITY(1,1) PRIMARY KEY,
+	ime nchar(25),
+	prezime nchar(25),
+	godina_rodenja INT,
+	spol nchar(1),
+	adresa nchar(50),
+)
+
+string sql = "INSERT INTO ucenici (ime, prezime, spol, godina_rodenja, adresa) VALUES (@ime, @prezime, @spol, @godina, @adresa)";
+
+using (SqlCommand cmd = new SqlCommand(sql, cn))
+{
+    cmd.Parameters.AddWithValue("@ime", ime);
+    cmd.Parameters.AddWithValue("@prezime", prezime);
+    cmd.Parameters.AddWithValue("@spol", spol);
+    cmd.Parameters.AddWithValue("@godina", gr);
+	cmd.Parameters.AddWithValue("@adresa", adresa);
+
+    try
+	{
+		cmd.ExecuteNonQuery();
+	}
+	catch (Exception ex)
+	{
+		MessageBox.Show(ex.Message);
+		return;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+string sql = "UPDATE ucenici SET ime=@ime, prezime=@prezime, spol=@spol, godina_rodenja=@godina, adresa=@adresa WHERE id=@id";
+using (SqlCommand cmd = new SqlCommand(sql, cn))
+{
+	cmd.Parameters.AddWithValue("@ime", tb_ime.Text);
+	cmd.Parameters.AddWithValue("@prezime", tb_prezime.Text);
+	cmd.Parameters.AddWithValue("@spol", tb_spol.Text);
+	cmd.Parameters.AddWithValue("@godina", tb_godina.Text);
+	cmd.Parameters.AddWithValue("@adresa", tb_adresa.Text);
+	cmd.Parameters.AddWithValue("@id", id);
+	try
+	{
+		cmd.ExecuteNonQuery();
+	}
+	catch (Exception ex)
+	{
+		MessageBox.Show(ex.Message);
+		return;
+	}
+}
+
+
+int broj = Int32.Parse(tb_broj.Text);
+string sql = "SELECT TOP (@broj) * FROM ucenici";
+using (SqlCommand cmd = new SqlCommand(sql, cn))
+{
+	cmd.Parameters.AddWithValue("@broj", broj);
+	SqlDataReader data_reader;
+	try
+	{
+		data_reader = cmd.ExecuteReader();
+	}
+	catch (Exception ex)
+	{
+		MessageBox.Show(ex.Message);
+		return;
+	}
+	lb_result.Items.Clear();
+	string red;
+    while (data_reader.Read())
+	{
+		red = "";
+		for (int i = 0; i < data_reader.FieldCount; i++)
+		{
+			red += data_reader.GetValue(i).ToString().Trim() + "\t";
+        }
+		lb_result.Items.Add(red);
+    }
+	data_reader.Close();
+} 
+BITNO!
+
+string cs = @"Data Source=localhost;Initial Catalog=testiranje;User ID=user;Password=pass";
+
+SqlConnection cn = new SqlConnection(cs);
+
+cn.Open();
+cn.Close();
+
+string sql = "SELECT TOP (@broj) * FROM ucenici";
+string sql = "INSERT INTO ucenici (ime, prezime, spol, godina_rodenja, adresa) VALUES (@ime, @prezime, @spol, @godina, @adresa)";
+string sql = "UPDATE ucenici SET ime=@ime, prezime=@prezime, spol=@spol, godina_rodenja=@godina, adresa=@adresa WHERE id=@id";
+
+using (SqlCommand cmd = new SqlCommand(sql, cn))  {}
+
+cmd.Parameters.AddWithValue("@broj", broj);
+
+cmd.ExecuteNonQuery();
+
+SqlDataReader data_reader;
+while (data_reader.Read()) {}
+for (int i = 0; i < data_reader.FieldCount; i++) {}
+data_reader.GetValue(i)
+data_reader.Close();
+
+
+public delegate void ImeDelegata(object sender, EventArgs e);
+public ImeDelegata ImeDogadaja;
+
+if (this.ImeDogadaja != null)
+{
+    this.ImeDogadaja(this, EventArgs.Empty);
+}
+
+d.ImeDogadaja += obrada_dogadaja;
+
+((Dogodaji)sender).ime()
+
+
+virtual → moze biti overidean ako neko nasljeduje klasu
+abstarct → mora biti overidean
+override → overridea metodu/varijablu koju nasljeduje
