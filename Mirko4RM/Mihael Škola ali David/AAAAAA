@@ -1,0 +1,258 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DavidISPIT
+{
+    public partial class Form1 : Form
+    {
+        SqlConnection cnn;
+        int brojac = 0;
+        int brojacmarke = 0;
+        private List<string> markice = new List<string>();
+
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+       
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonpovezi_Click(object sender, EventArgs e)
+        {
+            string cs = @"Data Source=localhost\sqlexpress;Initial Catalog=DavidSQL;User ID=DavidJambrosic;Password=ManCity33;";
+            try
+            {
+                cnn=new SqlConnection(cs);
+                cnn.Open();
+                MessageBox.Show("Uspjesno povezivanje na bazu podataka.");
+                Prikazipodatke();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska prilikom povezivanja na bazu podataka: " + ex.Message);
+            }
+        }
+
+
+
+        private void button_dodaj_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                Marka();
+                string naziv = textBox_naziv.Text;
+                string marka = textBox_marka.Text;
+                /*if (markice.Contains(marka))
+                {*/
+                    string sql = "INSERT INTO Vozila (ID, Naziv, Marka, Aktivno) VALUES (@ID, @Naziv, @Marka, @Aktivno)";
+                    using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", brojac);
+                        cmd.Parameters.AddWithValue("@Naziv", naziv);
+                        cmd.Parameters.AddWithValue("@Marka", marka);
+                        cmd.Parameters.AddWithValue("@Aktivno", 1);
+                        cmd.ExecuteNonQuery();
+                    }
+                    MessageBox.Show("Uspjesno dodani podaci u bazu.");
+                    brojac++;
+                    Prikazipodatke();
+                /*}
+                else
+                {
+                    MessageBox.Show($"Ne postoji takva marka: {marka}");
+                }*/
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom dodavanja podataka: " + ex.Message);
+            }
+        }
+           
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void button_promjena_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                
+                string naziv = textBox_naziv.Text;
+                string marka = textBox_marka.Text;
+                int ID = int.Parse(textBox_ID.Text);
+                string sql = "UPDATE Vozila SET Naziv=@Naziv, Marka=@Marka WHERE ID=@ID";
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.AddWithValue("@ID", brojac - 1);
+                    cmd.Parameters.AddWithValue("@Naziv", naziv);
+                    cmd.Parameters.AddWithValue("@Marka", marka);
+                    cmd.ExecuteNonQuery();
+                }
+                MessageBox.Show("Uspjesno azurirani podaci u bazi.");
+                Prikazipodatke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom azuriranja podataka: " + ex.Message);
+
+            }
+        }
+
+        private void button_brisanje_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                string naziv = textBox_naziv.Text;
+                string marka = textBox_marka.Text;
+                int ID = int.Parse(textBox_ID.Text);
+                string sql = "UPDATE Vozila SET Aktivno=@Aktivno WHERE ID=@ID";
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.AddWithValue("@Aktivno", 0);
+                    cmd.Parameters.AddWithValue("@ID", ID);
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        MessageBox.Show("Uspjesno izbrisani podaci iz baze.");
+                        Prikazipodatke();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nema podataka sa unesenim ID-jem.");
+                    }
+
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska prilikom brisanja podataka: " + ex.Message);
+            }
+        }
+        void Prikazipodatke()
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                string sql = "SELECT * FROM Vozila";
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                SqlDataReader reader = cmd.ExecuteReader();
+                listBox1.Items.Clear();
+                while (reader.Read())
+                {
+                    string redak = $"ID:{reader["ID"]}|| Naziv:{reader["Naziv"]}|| Marka:{reader["Marka"]}|| Aktivan:{reader["Aktivno"]}";
+                    listBox1.Items.Add(redak);
+                }
+                reader.Close();
+                
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom prikazivanja podataka: " + ex.Message);
+            }
+        }
+        void Marka()
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                int brojac2 = 0;
+                string sql2 = "SELECT * FROM Marka";
+                SqlCommand cmd2 = new SqlCommand(sql2, cnn);
+                SqlDataReader reader2 = cmd2.ExecuteReader();
+                while (reader2.Read())
+                {
+                    string mmm = $"{reader2["Naziv"]}";
+                    if (mmm != null) { markice.Insert(brojac2, mmm); }
+                }
+                reader2.Close();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska prilikom učitavanja marka: " + ex.Message);
+            }
+        }
+
+        private void button_dodajmarku_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                string marka = textBox_nazivmarke.Text;
+                string sql = "INSERT INTO Marka (ID, Naziv) VALUES (@ID, @Marka)";
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.AddWithValue("@ID", brojacmarke);
+                    cmd.Parameters.AddWithValue("@Marka", marka);
+                    cmd.ExecuteNonQuery();
+                }
+                MessageBox.Show("Uspjesno dodani podaci u bazu.");
+                brojacmarke++;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom dodavanja podataka: " + ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (cnn == null || cnn.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Niste povezani na bazu podataka.");
+                return;
+            }
+            try
+            {
+                string marka = textBox_nazivmarke.Text;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom promjene marke: " + ex.Message);
+            }
+        }
+    }
+}
