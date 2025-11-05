@@ -1,0 +1,219 @@
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+
+
+namespace ispit3
+{
+	public partial class Form1 : Form
+	{
+		public SqlConnection cnn;
+		public Form1()
+		{
+			InitializeComponent();
+			ToggleButtons(false);
+		}
+		private void ToggleButtons(bool enable)
+		{
+			button1.Enabled = !enable;  // Spajanje na bazu može biti pritisnuto
+			button2.Enabled = enable;   // Pregled vozila
+			button3.Enabled = enable;   // Dodavanje vozila
+			button4.Enabled = enable;   // Promena vozila
+			button5.Enabled = enable;   // Dodavanje marke
+			button6.Enabled = enable;   // Promena marke
+			button7.Enabled = enable;   // Brisanje vozila
+			button8.Enabled = enable;   // Pregled marke
+		}
+
+		private bool AreTextBoxesNotEmpty(params TextBox[] textBoxes)
+		{
+			foreach (TextBox tb in textBoxes)
+			{
+				if (string.IsNullOrWhiteSpace(tb.Text))
+				{
+					MessageBox.Show("Sva polja moraju biti popunjena.");
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			string cs = @"Data Source=localhost\sqlexpress;Initial Catalog=ispit;User ID=zeleznjak;Password=zeleznjak";
+			cnn = new SqlConnection(cs);
+			try
+			{
+				cnn.Open();
+				MessageBox.Show("Connection Opened...");
+				ToggleButtons(true);  // Omogući dugmadi nakon spajanja
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Error: " + ex.Message);
+				ToggleButtons(false);  // Ako se dogodi greška, ostavi dugmadi onemogućenim
+			}
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			string sql = "SELECT v.id, v.naziv AS VoziloNaziv, m.naziv AS MarkaNaziv, v.aktivno " +
+				"FROM Vozila v " +
+				"JOIN Marka m ON v.marka = m.id";  // Spajanje sa tabelom Marka na osnovu ID marke
+
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			SqlDataReader reader = cmd.ExecuteReader();
+			string output = "";
+
+			while (reader.Read())
+			{
+				output += "ID: " + reader["id"].ToString() + ", Vozilo: " + reader["VoziloNaziv"].ToString() +
+						  ", Marka: " + reader["MarkaNaziv"].ToString() + ", Aktivno: " + reader["aktivno"].ToString() + "\n";
+			}
+
+			MessageBox.Show(output);
+			reader.Close();
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (!AreTextBoxesNotEmpty(textBox1, textBox2)) return;
+			string nazivVozila = textBox1.Text;  // TextBox1 za naziv vozila
+			int markaId;
+
+			// Pokušaj parsiranja ID marke
+			bool isValidMarkaId = int.TryParse(textBox2.Text, out markaId);
+			if (!isValidMarkaId)
+			{
+				MessageBox.Show("Unesite validan broj za ID marke.");
+				return;
+			}
+
+			int aktivno = 1;  // Podrazumevana vrednost za aktivno vozilo (1 = aktivno)
+
+			string sql = "INSERT INTO Vozila (naziv, marka, aktivno) VALUES (@naziv, @marka, @aktivno)";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			cmd.Parameters.AddWithValue("@naziv", nazivVozila);
+			cmd.Parameters.AddWithValue("@marka", markaId);
+			cmd.Parameters.AddWithValue("@aktivno", aktivno);  // Uvek je aktivno (1)
+
+			cmd.ExecuteNonQuery();
+			MessageBox.Show("Vehicle added successfully.");
+			textBox1.Clear();
+			textBox2.Clear();
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			if (!AreTextBoxesNotEmpty(textBox1, textBox3)) return;
+			int id = int.Parse(textBox3.Text);  // TextBox1 za unos ID vozila
+			string newNaziv = textBox1.Text;  // TextBox2 za novi naziv vozila
+
+			string sql = "UPDATE Vozila SET naziv = @naziv WHERE id = @id";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			cmd.Parameters.AddWithValue("@naziv", newNaziv);
+			cmd.Parameters.AddWithValue("@id", id);
+
+			cmd.ExecuteNonQuery();
+			MessageBox.Show("Vehicle updated.");
+			textBox3.Clear();
+			textBox2.Clear();
+		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			
+			string naziv = textBox4.Text;  // TextBox4 za unos naziva marke
+
+			// Proveri da li je naziv marke prazan
+			if (string.IsNullOrEmpty(naziv))
+			{
+				MessageBox.Show("Naziv marke ne može biti prazan.");
+				return;
+			}
+
+			string sql = "INSERT INTO Marka (naziv) VALUES (@naziv)";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			cmd.Parameters.AddWithValue("@naziv", naziv);
+
+			cmd.ExecuteNonQuery();
+			MessageBox.Show("Brand added successfully.");
+			textBox4.Clear();
+		}
+
+		private void button6_Click(object sender, EventArgs e)
+		{
+			if (!AreTextBoxesNotEmpty(textBox4, textBox5)) return;
+			int id = int.Parse(textBox5.Text);  // TextBox1 za unos ID marke
+			string newNaziv = textBox4.Text;  // TextBox4 za novi naziv marke
+
+			string sql = "UPDATE Marka SET naziv = @naziv WHERE id = @id";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			cmd.Parameters.AddWithValue("@naziv", newNaziv);
+			cmd.Parameters.AddWithValue("@id", id);
+
+			cmd.ExecuteNonQuery();
+			MessageBox.Show("Brand updated.");
+			textBox5.Clear();
+			textBox4.Clear();
+		}
+
+		private void button8_Click(object sender, EventArgs e)
+		{
+			string sql = "SELECT * FROM Marka";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			SqlDataReader reader = cmd.ExecuteReader();
+			string output = "";
+
+			while (reader.Read())
+			{
+				output += "ID: " + reader["id"].ToString() + ", Naziv: " + reader["naziv"].ToString() + "\n";
+			}
+
+			MessageBox.Show(output);
+			reader.Close();
+		}
+
+		private void button7_Click(object sender, EventArgs e)
+		{
+			if (!AreTextBoxesNotEmpty(textBox1, textBox2)) return;
+			int id;
+			bool isValidId = int.TryParse(textBox6.Text, out id);
+
+			string sql = "DELETE FROM Vozila WHERE id = @id";
+			SqlCommand cmd = new SqlCommand(sql, cnn);
+			cmd.Parameters.AddWithValue("@id", id);
+
+			cmd.ExecuteNonQuery();
+			MessageBox.Show("Vehicle deleted.");
+			textBox1.Clear();
+			
+		}
+
+		private void label1_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void groupBox1_Enter(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textBox1_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textBox2_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textBox3_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+	}
+}
