@@ -1,0 +1,197 @@
+import controlP5.*; 
+import processing.serial.*;
+
+ControlP5 cp5;
+Serial myPort;
+
+float cilj = 25;
+float tol_gore = 3;
+float tol_dolje = 3;
+float trenutna = 0;
+int led_stanje = 0;
+
+Slider sCilj, sGore, sDolje;
+boolean promjena = false;
+
+void setup() {
+  size(600, 600);
+  printArray(Serial.list()); 
+  myPort = new Serial(this, "COM3", 9600); 
+  myPort.bufferUntil('\n');
+  cp5 = new ControlP5(this);
+  sCilj = cp5.addSlider("Tz").setPosition(50, 30).setSize(400, 20).setRange(0, 50).setValue(cilj);
+  sGore = cp5.addSlider("T1").setPosition(50, 60).setSize(400, 20).setRange(0, 15).setValue(tol_gore);
+  sDolje = cp5.addSlider("T2").setPosition(50, 90).setSize(400, 20).setRange(0, 15).setValue(tol_dolje);
+  textSize(18);
+}
+
+void draw() {
+  background(50);
+  fill(255);
+  text(nf(trenutna, 2, 1) + " C", 550, 50);
+  tol_gore = constrain(sGore.getValue(), 0, 15);
+  tol_dolje = constrain(sDolje.getValue(), 0, 15);
+  cilj = constrain(sCilj.getValue(), 0, 50);
+  if (cilj - tol_dolje < 0) {
+    tol_dolje = cilj;
+    sDolje.setValue(tol_dolje);
+  }
+  if (cilj + tol_gore > 50) {
+    tol_gore = 50 - cilj;
+    sGore.setValue(tol_gore);
+  }
+  citajSerijski();
+  if (promjena) {
+    salji();
+    promjena = false;
+  }
+  crtajHisterezu();
+}
+
+void controlEvent(ControlEvent e) {
+  promjena = true;
+}
+
+void citajSerijski() {
+  while (myPort.available() > 0) {
+    String linija = myPort.readStringUntil('\n');
+    if (linija != null) {
+      linija = trim(linija);
+      String[] dijelovi = split(linija, ',');
+      if (dijelovi.length == 5) {
+        float novaTrenutna = float(dijelovi[0]);
+        float novaCilj = float(dijelovi[1]);
+        float novaGore = float(dijelovi[2]);
+        float novaDolje = float(dijelovi[3]);
+        int noviLED = int(dijelovi[4]);
+        if (abs(novaDolje - tol_dolje) < 5 && abs(novaGore - tol_gore) < 5) {
+          trenutna = novaTrenutna;
+          cilj = novaCilj;
+          tol_gore = novaGore;
+          tol_dolje = novaDolje;
+          led_stanje = noviLED;
+          sCilj.setValue(cilj);
+          sGore.setValue(tol_gore);
+          sDolje.setValue(tol_dolje);
+        }
+      }
+    }
+  }
+}
+
+void salji() {
+  String poruka = cilj + "," + tol_gore + "," + tol_dolje + "\n";
+  myPort.write(poruka);
+}
+
+void crtajHisterezu() {
+  float x0 = 50;
+  float y0 = 200;
+  float w = 400;
+  float h = 100;
+  stroke(200);
+  noFill();
+  rect(x0, y0, w, h);
+  fill(255);
+  text("0", x0 - 15, y0 + h - 5);
+  text("1", x0 - 15, y0 + 5);
+  text("0", x0 - 10, y0 + h + 20);
+  text("50", x0 + w - 10, y0 + h + 20);
+  float tMin = constrain(cilj - tol_dolje, 0, 50);
+  float tMax = constrain(cilj + tol_gore, 0, 50);
+  float xMin = map(tMin, 0, 50, x0, x0 + w);
+  float xMax = map(tMax, 0, 50, x0, x0 + w);
+  float xCilj = map(cilj, 0, 50, x0, x0 + w);
+  stroke(0, 255, 0);
+  strokeWeight(2);
+  noFill();
+  line(x0, y0 + h, xMax, y0 + h);
+  line(xMax, y0 + h, xMax, y0);
+  line(xMax, y0, x0 + w, y0);
+  stroke(255, 255, 0);
+  strokeWeight(1);
+  line(xCilj, y0, xCilj, y0 + h);
+  stroke(0, 255, 0);
+  line(xMin, y0, xMin, y0 + h);
+  stroke(255);
+  textAlign(CENTER);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const int pin_cilj = A0;
+const int pin_trenutna = A1;
+const int pin_led = 9;
+
+float cilj_temp = 25;
+float trenutna_temp = 0;
+float tol_gore = 3;
+float tol_dolje = 3;
+float stari_cilj = -1;
+float stari_gore = -1;
+float stari_dolje = -1;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pin_led, OUTPUT);
+}
+
+void loop() {
+  int vrijednost_cilj = analogRead(pin_cilj);
+  cilj_temp = map(vrijednost_cilj, 0, 1023, 0, 50);
+  int vrijednost_trenutna = analogRead(pin_trenutna);
+  trenutna_temp = map(vrijednost_trenutna, 0, 1023, 0, 50);
+  if (trenutna_temp > cilj_temp + tol_gore) {
+    digitalWrite(pin_led, HIGH);
+  }
+  if (trenutna_temp < cilj_temp - tol_dolje) {
+    digitalWrite(pin_led, LOW);
+  }
+  if (Serial.available() > 0) {
+    String linija = Serial.readStringUntil('\n');
+    linija.trim();
+    int z1 = linija.indexOf(',');
+    int z2 = linija.indexOf(',', z1 + 1);
+    if (z1 > 0 && z2 > 0) {
+      cilj_temp = linija.substring(0, z1).toFloat();
+      tol_gore = linija.substring(z1 + 1, z2).toFloat();
+      tol_dolje = linija.substring(z2 + 1).toFloat();
+    }
+  }
+  if (abs(stari_cilj - cilj_temp) > 0.2 || abs(stari_gore - tol_gore) > 0.2 || abs(stari_dolje - tol_dolje) > 0.2) {
+    Serial.print(trenutna_temp);
+    Serial.print(",");
+    Serial.print(cilj_temp);
+    Serial.print(",");
+    Serial.print(tol_gore);
+    Serial.print(",");
+    Serial.print(tol_dolje);
+    Serial.print(",");
+    Serial.println(digitalRead(pin_led));
+    stari_cilj = cilj_temp;
+    stari_gore = tol_gore;
+    stari_dolje = tol_dolje;
+  }
+  delay(200);
+}
