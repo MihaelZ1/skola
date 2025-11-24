@@ -6,7 +6,12 @@ interface/print
 ip/address/add address=192.168.1.10/24 interface=ether1
 ip/route/add gateway=192.168.1.1/24  dst-address=0.0.0.0/0
 ping 192.168.2.10
+
 ip/firewall/filter/add chain=forward action=log protocol=icmp
 ip/firewall/filter/ print detail stats
 log print
 ip/firewall/filter/add chain=forward action=drop protocol=icmp
+
+ip/service/print
+/tool/fetch url=google.com mode=http address=192.168.2.10
+ip/firewall/filter/add chain=forward action=log protocol=tcp
