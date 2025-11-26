@@ -1,0 +1,196 @@
+GLAVNA ----------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DavidForma
+{
+    public partial class Form1 : Form
+    {
+        private List<string> korisnici = new List<string>();
+
+        public Form1()
+        {
+            InitializeComponent();
+            UpdateKorisniciCount();
+        }
+
+        private void button_unos_Click(object sender, EventArgs e)
+        {
+            Form2 unosForm = new Form2();
+            if (unosForm.ShowDialog() == DialogResult.OK)
+            {
+                korisnici.Add(unosForm.Korisnik);
+                UpdateKorisniciCount();
+            }
+        }
+
+        private void button_ispis_Click(object sender, EventArgs e)
+        {
+            Form3 ispisForm = new Form3(korisnici);
+            ispisForm.ShowDialog();
+            UpdateKorisniciCount();
+        }
+
+        private void UpdateKorisniciCount()
+        {
+            label1.Text = $"Broj korisnika: {korisnici.Count}";
+        }
+    }
+}
+
+
+
+
+UNOS----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DavidForma
+{
+    public partial class Form2 : Form
+    {
+        public string Korisnik { get; private set; }
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_ok_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBox_unos.Text))
+            {
+                Korisnik = textBox_unos.Text.Trim();
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("Unesite ime korisnika!");
+            }
+        }
+
+        private void button_nok_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+        }
+    }
+}
+
+
+
+PRIKAZ KORISNIKA-----------------------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DavidForma
+{
+    public partial class Form3 : Form
+    {
+        private List<string> korisnici;
+        public Form3(List<string> korisnici)
+        {
+            InitializeComponent();
+            this.korisnici = korisnici;
+            UpdateList();
+        }
+        private void UpdateList()
+        {
+            listBox1.DataSource = null;
+            listBox1.DataSource = new List<string>(korisnici);
+        }
+        private void Form3_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_close_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void button_del_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedItem != null)
+            {
+                korisnici.Remove(listBox1.SelectedItem.ToString());
+                UpdateList();
+            }
+
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
