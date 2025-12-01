@@ -21,3 +21,9 @@ ip/firewall/filter/add chain=forward action=log protocol=tcp
 
 lijevi nemože pristupiti desnome desni može lijevome ---> by murk
 ip firewall filter add action=drop protocol=tcp chain=forward dst-port=80 dst-address=192.168.2.10 src-address=192.168.1.10
+
+
+
+
+192.168.x.0/24-----r1---------tšč switch (premoščeni adapter)
+
