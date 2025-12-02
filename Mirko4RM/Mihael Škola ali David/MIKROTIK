@@ -23,7 +23,18 @@ lijevi nemože pristupiti desnome desni može lijevome ---> by murk
 ip firewall filter add action=drop protocol=tcp chain=forward dst-port=80 dst-address=192.168.2.10 src-address=192.168.1.10
 
 
-
+export
+ip dhcp-client/print
+ip dhcp-client/add interface=ether1
+unutarnjamreža ne briged
+ip pool/add name=nest ranges=192.168.100.100-192.168.100.150
+ip dhcp-server/network/add address=192.168.100.0/24 netmask=24 dns-server=1.1.1.1 gateway=192.168.100.254 
+ip dhcp-server/add name=LAN1 lease-time=00:05:00 address-pool=nest interface=ether1
+ip/dhcp-server/lease/print
+ip/dhcp-client/print detail
 
 192.168.x.0/24-----r1---------tšč switch (premoščeni adapter)
 
+192.168.10.1 
+
+renew-bound-search
