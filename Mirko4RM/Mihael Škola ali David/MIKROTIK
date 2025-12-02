@@ -32,9 +32,14 @@ ip dhcp-server/network/add address=192.168.100.0/24 netmask=24 dns-server=1.1.1.
 ip dhcp-server/add name=LAN1 lease-time=00:05:00 address-pool=nest interface=ether1
 ip/dhcp-server/lease/print
 ip/dhcp-client/print detail
+ip/dhcp-server/lease/add address=192.168.100.140 mac-address=00:34:33:44:33 server=LAN
 
 192.168.x.0/24-----r1---------tšč switch (premoščeni adapter)
 
-192.168.10.1 
+192.168.10.1
 
 renew-bound-search
+rebinding-renewing-searching-stopped
+na pola vremena ide van iz bound.onda renewing
+na 30sec rebinding(multicast)
+koristi unicast za produljivanje
