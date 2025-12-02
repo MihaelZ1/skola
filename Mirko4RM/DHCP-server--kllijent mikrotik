@@ -1,1 +1,15 @@
+/ip pool add name=dhcp_pool ranges=192.168.1.10-192.168.1.100
+
+/ip dhcp-server add name=dhcp_server interface=ether2 lease-time=3d address-pool=dhcp_pool disabled=no
+
+/ip dhcp-server network add address=192.168.1.0/24 gateway=192.168.1.1 dns-server=192.168.1.1
+
+/ip dhcp-server print
+
+/ip dhcp-server lease print
+
+/ip dhcp-client add interface=ether1 disabled=no
+
+/ip dhcp-server disable dhcp_server
+/ip dhcp-server enable dhcp_server
 
