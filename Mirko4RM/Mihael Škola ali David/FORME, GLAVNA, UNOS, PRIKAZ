@@ -177,6 +177,2474 @@ ZADATAK:
 NAĆI NEKI PROBLEM I RIJEŠITI PROGRAMSKIM RJEŠENJEM (E DNEVNIK). Soba, Gost, Rezervacija
 TREBA NAPRAVITI BAZU I KOMUNICIRATI S BAZOM, KORISTITI VIŠE FORMA
 SADRŽAVATI KLASE, NASLJEĐIVANJA, DELEGATE, DOGAĐAJE
+Kasnije Implementacija plaćanja članarine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Danas
+Rekli ste
+NAĆI NEKI PROBLEM I RIJEŠITI PROGRAMSKIM RJEŠENJEM (E DNEVNIK).
+TREBA NAPRAVITI BAZU I KOMUNICIRATI S BAZOM, KORISTITI VIŠE FORMA
+SADRŽAVATI KLASE, NASLJEĐIVANJA, DELEGATE, DOGAĐAJE
+
+daj neki problem a da nije e dnevnik
+Copilot kaže
+Super pitanje 👍. Ako tražiš problem koji možeš riješiti programskim rješenjem (s bazom, više formi, klasama, nasljeđivanjem, delegatima i događajima), evo nekoliko ideja koje nisu vezane uz e-Dnevnik:
+
+💡 Primjeri problema za rješenje
+1. Sustav za knjižnicu
+Problem: Knjižnica mora pratiti knjige, članove i posudbe.
+
+Rješenje:
+
+Baza: tablice Knjige, Članovi, Posudbe.
+
+Više formi: forma za unos knjiga, forma za unos članova, forma za posudbu/vratiti knjigu.
+
+Klase: Knjiga, Član, Posudba.
+
+Nasljeđivanje: Osoba → Član i Zaposlenik.
+
+Delegati i događaji: događaj kada knjiga postane nedostupna (posuđena), obavijest korisniku.
+
+2. Sustav za vođenje teretane
+Problem: Teretana mora pratiti članove, članarine i termine treninga.
+
+Rješenje:
+
+Baza: Clanovi, Treneri, Termini, Clanarine.
+
+Više formi: registracija člana, pregled termina, plaćanje članarine.
+
+Klase: Clan, Trener, Termin.
+
+Nasljeđivanje: Osoba → Clan, Trener.
+
+Delegati/događaji: događaj kada članu istekne članarina → obavijest.
+
+3. Sustav za rezervaciju hotela
+Problem: Hotel mora pratiti sobe, goste i rezervacije.
+
+Rješenje:
+
+Baza: Sobe, Gosti, Rezervacije.
+
+Više formi: forma za unos soba, forma za rezervaciju, forma za pregled slobodnih soba.
+
+Klase: Soba, Gost, Rezervacija.
+
+Nasljeđivanje: Osoba → Gost, Recepcionar.
+
+Delegati/događaji: događaj kada se soba rezervira → automatski mijenja status sobe.
+
+4. Sustav za praćenje vozila (rent-a-car)
+Problem: Rent-a-car mora pratiti vozila, klijente i najmove.
+
+Rješenje:
+
+Baza: Vozila, Klijenti, Najmovi.
+
+Više formi: dodavanje vozila, registracija klijenta, najam vozila.
+
+Klase: Vozilo, Klijent, Najam.
+
+Nasljeđivanje: Vozilo → Automobil, Kombi, Motocikl.
+
+Delegati/događaji: događaj kada vozilo postane nedostupno → obavijest recepcionaru.
+
+🎯 Moj prijedlog
+Najjednostavniji za implementaciju, a opet dovoljno složen da pokažeš bazu + forme + OOP + događaje, je sustav za knjižnicu. Ima jasne entitete (knjige, članovi, posudbe), prirodno nasljeđivanje (osoba → član/zaposlenik), i možeš lako dodati događaje (npr. obavijest kad knjiga kasni).
+
+Želiš da ti detaljno razradim knjižnicu kao projekt (struktura baze, klase, primjer događaja/delegata), ili bi ti više odgovarao neki od ostalih (teretana, hotel, rent-a-car)?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj rezervaciju hotela
+Copilot kaže
+Odlično 👌, evo ti kompletno razrađen problem rezervacije hotela koji možeš implementirati kao projekt:
+
+🏨 Problem: Sustav za rezervaciju hotela
+Hotel mora pratiti sobe, goste i rezervacije. Recepcionar unosi podatke o sobama i gostima, a sustav omogućava rezervaciju i pregled slobodnih soba.
+
+📊 Struktura baze podataka
+Predlažem 3 glavne tablice:
+
+Sobe
+
+SobaID (PK)
+
+BrojSobe
+
+TipSobe (jednokrevetna, dvokrevetna, apartman)
+
+CijenaPoNoci
+
+Status (slobodna/zauzeta)
+
+Gosti
+
+GostID (PK)
+
+Ime
+
+Prezime
+
+Email
+
+Telefon
+
+Rezervacije
+
+RezervacijaID (PK)
+
+GostID (FK)
+
+SobaID (FK)
+
+DatumDolaska
+
+DatumOdlaska
+
+UkupnaCijena
+
+🖥️ Više formi
+Forma za unos soba (dodavanje, uređivanje, brisanje).
+
+Forma za unos gostiju.
+
+Forma za rezervaciju (odabir gosta + sobe + datuma).
+
+Forma za pregled slobodnih soba.
+
+🧩 Klase
+csharp
+
+
+Kopiraj
+public class Osoba
+{
+    public string Ime { get; set; }
+    public string Prezime { get; set; }
+}
+
+public class Gost : Osoba
+{
+    public string Email { get; set; }
+    public string Telefon { get; set; }
+}
+
+public class Soba
+{
+    public int SobaID { get; set; }
+    public string TipSobe { get; set; }
+    public decimal CijenaPoNoci { get; set; }
+    public bool Slobodna { get; set; }
+}
+
+public class Rezervacija
+{
+    public int RezervacijaID { get; set; }
+    public Gost Gost { get; set; }
+    public Soba Soba { get; set; }
+    public DateTime DatumDolaska { get; set; }
+    public DateTime DatumOdlaska { get; set; }
+}
+🔄 Nasljeđivanje
+Osoba → Gost, Recepcionar.
+
+Možeš kasnije dodati i Administrator s posebnim ovlastima.
+
+⚡ Delegati i događaji
+Primjer događaja: kada se soba rezervira, sustav automatski mijenja status sobe u zauzeta.
+
+csharp
+
+
+Kopiraj
+public delegate void RezervacijaHandler(Soba soba);
+
+public class Hotel
+{
+    public event RezervacijaHandler SobaRezervirana;
+
+    public void RezervirajSobu(Soba soba)
+    {
+        soba.Slobodna = false;
+        SobaRezervirana?.Invoke(soba);
+    }
+}
+U glavnom programu možeš povezati događaj s metodom koja ispisuje obavijest:
+
+csharp
+
+
+Kopiraj
+hotel.SobaRezervirana += (soba) =>
+{
+    Console.WriteLine($"Soba {soba.SobaID} je upravo rezervirana!");
+};
+🎯 Zašto je ovo dobar projekt?
+Ima bazu podataka (SQL).
+
+Koristi više formi.
+
+Ima klase i nasljeđivanje.
+
+Uključuje delegat i događaj.
+
+Realan je i može se proširivati (plaćanja, izvještaji, korisničke uloge).
+
+Hoćeš da ti detaljno razradim SQL skriptu za kreiranje baze i C# kod za spajanje na bazu, da imaš odmah kostur projekta?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj sql
+Copilot kaže
+Evo ti kompletna SQL skripta za kreiranje baze podataka sustava za rezervaciju hotela 👇
+
+sql
+
+
+Kopiraj
+-- Kreiranje baze
+CREATE DATABASE HotelRezervacije;
+USE HotelRezervacije;
+
+-- Tablica za sobe
+CREATE TABLE Sobe (
+    SobaID INT PRIMARY KEY AUTO_INCREMENT,
+    BrojSobe INT NOT NULL UNIQUE,
+    TipSobe VARCHAR(50) NOT NULL,   -- jednokrevetna, dvokrevetna, apartman
+    CijenaPoNoci DECIMAL(10,2) NOT NULL,
+    Status VARCHAR(20) DEFAULT 'slobodna'  -- slobodna / zauzeta
+);
+
+-- Tablica za goste
+CREATE TABLE Gosti (
+    GostID INT PRIMARY KEY AUTO_INCREMENT,
+    Ime VARCHAR(50) NOT NULL,
+    Prezime VARCHAR(50) NOT NULL,
+    Email VARCHAR(100),
+    Telefon VARCHAR(20)
+);
+
+-- Tablica za rezervacije
+CREATE TABLE Rezervacije (
+    RezervacijaID INT PRIMARY KEY AUTO_INCREMENT,
+    GostID INT NOT NULL,
+    SobaID INT NOT NULL,
+    DatumDolaska DATE NOT NULL,
+    DatumOdlaska DATE NOT NULL,
+    UkupnaCijena DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (GostID) REFERENCES Gosti(GostID),
+    FOREIGN KEY (SobaID) REFERENCES Sobe(SobaID)
+);
+
+-- Primjer unosa soba
+INSERT INTO Sobe (BrojSobe, TipSobe, CijenaPoNoci, Status)
+VALUES 
+(101, 'Jednokrevetna', 50.00, 'slobodna'),
+(102, 'Dvokrevetna', 80.00, 'slobodna'),
+(201, 'Apartman', 120.00, 'slobodna');
+
+-- Primjer unosa gosta
+INSERT INTO Gosti (Ime, Prezime, Email, Telefon)
+VALUES 
+('Marko', 'Horvat', 'marko.hor
+
+
+
+
+Uredi na stranici
+Rekli ste
+za mssms
+Copilot kaže
+Super, idemo točno za Microsoft SQL Server Management Studio (SSMS) 👨‍💻.
+Evo ti SQL skripta za kreiranje baze podataka za sustav rezervacije hotela:
+
+🏨 SQL skripta (SSMS)
+sql
+
+
+Kopiraj
+-- Kreiranje baze
+CREATE DATABASE HotelRezervacije;
+GO
+
+USE HotelRezervacije;
+GO
+
+-- Tablica Sobe
+CREATE TABLE Sobe (
+    SobaID INT IDENTITY(1,1) PRIMARY KEY,
+    BrojSobe INT NOT NULL UNIQUE,
+    TipSobe NVARCHAR(50) NOT NULL,
+    CijenaPoNoci DECIMAL(10,2) NOT NULL,
+    Status NVARCHAR(20) DEFAULT 'Slobodna' -- Slobodna / Zauzeta
+);
+
+-- Tablica Gosti
+CREATE TABLE Gosti (
+    GostID INT IDENTITY(1,1) PRIMARY KEY,
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100),
+    Telefon NVARCHAR(20)
+);
+
+-- Tablica Rezervacije
+CREATE TABLE Rezervacije (
+    RezervacijaID INT IDENTITY(1,1) PRIMARY KEY,
+    GostID INT NOT NULL,
+    SobaID INT NOT NULL,
+    DatumDolaska DATE NOT NULL,
+    DatumOdlaska DATE NOT NULL,
+    UkupnaCijena DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (GostID) REFERENCES Gosti(GostID),
+    FOREIGN KEY (SobaID) REFERENCES Sobe(SobaID)
+);
+📥 Primjer unosa podataka
+sql
+
+
+Kopiraj
+-- Dodavanje soba
+INSERT INTO Sobe (BrojSobe, TipSobe, CijenaPoNoci)
+VALUES (101, 'Jednokrevetna', 50.00),
+       (102, 'Dvokrevetna', 80.00),
+       (201, 'Apartman', 150.00);
+
+-- Dodavanje gosta
+INSERT INTO Gosti (Ime, Prezime, Email, Telefon)
+VALUES ('Marko', 'Horvat', 'marko.horvat@email.com', '091234567');
+
+-- Rezervacija sobe
+INSERT INTO Rezervacije (GostID, SobaID, DatumDolaska, DatumOdlaska, UkupnaCijena)
+VALUES (1, 2, '2025-12-10', '2025-12-15', 80.00 * 5);
+
+-- Ažuriranje statusa sobe na zauzeta
+UPDATE Sobe
+SET Status = 'Zauzeta'
+WHERE SobaID = 2;
+🔍 Primjer upita
+sql
+
+
+Kopiraj
+-- Pregled slobodnih soba
+SELECT * FROM Sobe WHERE Status = 'Slobodna';
+
+-- Pregled rezervacija s gostima
+SELECT r.RezervacijaID, g.Ime, g.Prezime, s.BrojSobe, r.DatumDolaska, r.DatumOdlaska, r.UkupnaCijena
+FROM Rezervacije r
+JOIN Gosti g ON r.GostID = g.GostID
+JOIN Sobe s ON r.SobaID = s.SobaID;
+🎯 Što dalje u C# aplikaciji
+Povežeš se na ovu bazu preko ADO.NET ili Entity Framework.
+
+Napraviš forme:
+
+Forma za dodavanje soba
+
+Forma za dodavanje gostiju
+
+Forma za rezervaciju
+
+Forma za pregled slobodnih soba
+
+Dodaj delegat/događaj: kad se soba rezervira, event mijenja status sobe i šalje obavijest.
+
+Želiš da ti pokažem i C# kod za spajanje na ovu bazu (ADO.NET primjer), da odmah imaš kostur aplikacije?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+ako je baza KNJIZNICA
+Copilot kaže
+Odlično, ako je baza KNJIZNICA, evo ti kompletna struktura i SQL skripta za Microsoft SQL Server Management Studio (SSMS):
+
+📚 Struktura baze KNJIZNICA
+Knjige
+
+KnjigaID (PK)
+
+Naslov
+
+Autor
+
+GodinaIzdavanja
+
+ISBN
+
+Status (Dostupna / Posuđena)
+
+Clanovi
+
+ClanID (PK)
+
+Ime
+
+Prezime
+
+Email
+
+Telefon
+
+DatumUclanjenja
+
+Posudbe
+
+PosudbaID (PK)
+
+ClanID (FK)
+
+KnjigaID (FK)
+
+DatumPosudbe
+
+DatumPovratka
+
+Vracena (bit: 0/1)
+
+🖥️ SQL skripta (SSMS)
+sql
+
+
+Kopiraj
+-- Kreiranje baze
+CREATE DATABASE Knjiznica;
+GO
+
+USE Knjiznica;
+GO
+
+-- Tablica Knjige
+CREATE TABLE Knjige (
+    KnjigaID INT IDENTITY(1,1) PRIMARY KEY,
+    Naslov NVARCHAR(100) NOT NULL,
+    Autor NVARCHAR(100) NOT NULL,
+    GodinaIzdavanja INT,
+    ISBN NVARCHAR(20) UNIQUE,
+    Status NVARCHAR(20) DEFAULT 'Dostupna' -- Dostupna / Posuđena
+);
+
+-- Tablica Clanovi
+CREATE TABLE Clanovi (
+    ClanID INT IDENTITY(1,1) PRIMARY KEY,
+    Ime NVARCHAR(50) NOT NULL,
+    Prezime NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100),
+    Telefon NVARCHAR(20),
+    DatumUclanjenja DATE DEFAULT GETDATE()
+);
+
+-- Tablica Posudbe
+CREATE TABLE Posudbe (
+    PosudbaID INT IDENTITY(1,1) PRIMARY KEY,
+    ClanID INT NOT NULL,
+    KnjigaID INT NOT NULL,
+    DatumPosudbe DATE NOT NULL,
+    DatumPovratka DATE,
+    Vracena BIT DEFAULT 0,
+    FOREIGN KEY (ClanID) REFERENCES Clanovi(ClanID),
+    FOREIGN KEY (KnjigaID) REFERENCES Knjige(KnjigaID)
+);
+📥 Primjer unosa podataka
+sql
+
+
+Kopiraj
+-- Dodavanje knjiga
+INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN)
+VALUES ('Na Drini ćuprija', 'Ivo Andrić', 1945, '978-953-1234567'),
+       ('Povratak Filipa Latinovicza', 'Miroslav Krleža', 1932, '978-953-7654321');
+
+-- Dodavanje člana
+INSERT INTO Clanovi (Ime, Prezime, Email, Telefon)
+VALUES ('Ana', 'Kovač', 'ana.kovac@email.com', '091234567');
+
+-- Posudba knjige
+INSERT INTO Posudbe (ClanID, KnjigaID, DatumPosudbe)
+VALUES (1, 2, GETDATE());
+
+-- Ažuriranje statusa knjige na posuđena
+UPDATE Knjige
+SET Status = 'Posuđena'
+WHERE KnjigaID = 2;
+🔍 Primjer upita
+sql
+
+
+Kopiraj
+-- Pregled dostupnih knjiga
+SELECT * FROM Knjige WHERE Status = 'Dostupna';
+
+-- Pregled posudbi s članovima
+SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, p.DatumPosudbe, p.DatumPovratka, p.Vracena
+FROM Posudbe p
+JOIN Clanovi c ON p.ClanID = c.ClanID
+JOIN Knjige k ON p.KnjigaID = k.KnjigaID;
+🎯 Za aplikaciju (C# WinForms/WPF)
+Forme:
+
+Dodavanje knjiga
+
+Dodavanje članova
+
+Posudba knjiga
+
+Pregled dostupnih knjiga
+
+Klase:
+
+Osoba → Clan, Zaposlenik
+
+Knjiga
+
+Posudba
+
+Delegati/događaji:
+
+Događaj kada knjiga postane posuđena → obavijest korisniku.
+
+Događaj kada knjiga kasni s povratkom → upozorenje.
+
+Želiš da ti odmah dam i C# primjer koda za spajanje na ovu bazu (ADO.NET), da imaš kostur aplikacije za KNJIZNICA?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj kod za glavnu formu
+Copilot kaže
+Jasno 👍. Evo ti primjer C# WinForms glavne forme za aplikaciju KNJIŽNICA koja se spaja na SQL Server bazu i omogućava osnovne operacije (pregled knjiga, članova i posudbi).
+
+🖥️ Primjer koda za glavnu formu (MainForm.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        // Connection string prema tvojoj bazi (prilagodi prema svom SQL Serveru!)
+        private string connectionString = 
+            "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        // 🔹 Učitavanje knjiga
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt; // dgvKnjige = DataGridView na formi
+            }
+        }
+
+        // 🔹 Učitavanje članova
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt; // dgvClanovi = DataGridView na formi
+            }
+        }
+
+        // 🔹 Učitavanje posudbi
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt; // dgvPosudbe = DataGridView na formi
+            }
+        }
+
+        // 🔹 Dodavanje nove knjige (primjer gumba)
+        private void btnDodajKnjigu_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN) " +
+                               "VALUES (@Naslov, @Autor, @Godina, @ISBN)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga dodana!");
+                LoadKnjige();
+            }
+        }
+    }
+}
+📋 Što se nalazi na formi
+Tri DataGridView kontrole: dgvKnjige, dgvClanovi, dgvPosudbe
+
+TextBox kontrole: txtNaslov, txtAutor, txtGodina, txtISBN
+
+Button: btnDodajKnjigu
+
+⚡ Kako radi
+Na Load forme učitava sve podatke iz tablica.
+
+Ima metodu za dodavanje nove knjige.
+
+Možeš proširiti sličnim metodama za dodavanje članova i posudbi.
+
+Delegati/događaji se mogu dodati npr. da se pokrene event kad se knjiga posudi (update statusa).
+
+Želiš da ti dam i primjer događaja/delegata u glavnoj formi (npr. event koji se aktivira kad se knjiga posudi)?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+ne daj za dodavanje knjige će biti nova forma. Za što mi sve trebaju nove forme
+Copilot kaže
+Odlično razmišljanje 👌 – ako želiš da dodavanje knjige ide preko posebne forme, onda je logično da i druge ključne funkcionalnosti budu odvojene u svoje forme. To ti daje preglednost i modularnost aplikacije. Evo što bi sve imalo smisla imati kao nove forme u projektu KNJIŽNICA:
+
+📑 Preporučene nove forme
+1. Forma za dodavanje knjiga
+Polja: Naslov, Autor, Godina, ISBN, Status.
+
+Gumb Spremi → upis u tablicu Knjige.
+
+2. Forma za dodavanje članova
+Polja: Ime, Prezime, Email, Telefon.
+
+Gumb Spremi → upis u tablicu Clanovi.
+
+3. Forma za posudbu knjiga
+Padajući izbornik za odabir člana.
+
+Padajući izbornik za odabir knjige (samo dostupne).
+
+Polja: Datum posudbe, Datum povratka.
+
+Gumb Posudi → upis u tablicu Posudbe + update statusa knjige na Posuđena.
+
+4. Forma za povrat knjige
+Pregled aktivnih posudbi.
+
+Odabir posudbe → gumb Vrati.
+
+Update: Vracena = 1 + status knjige vraćen na Dostupna.
+
+5. Forma za pregled slobodnih knjiga
+DataGridView s filtriranjem po autoru, naslovu, godini.
+
+Samo knjige gdje je Status = 'Dostupna'.
+
+6. Forma za izvještaje / statistiku (opcionalno)
+Pregled koliko je knjiga posuđeno.
+
+Pregled najaktivnijih članova.
+
+Pregled knjiga koje kasne s povratkom.
+
+🎯 Zašto više formi?
+Modularnost – svaka forma ima svoju logiku i lakše se održava.
+
+Preglednost – korisnik odmah zna gdje što radi (unos knjiga ≠ posudba).
+
+OOP princip – možeš povezati forme s klasama (Knjiga, Clan, Posudba).
+
+Delegati/događaji – npr. forma za posudbu može emitirati događaj KnjigaPosuđena, a glavna forma reagira i osvježava prikaz.
+
+👉 Dakle, minimalno ti trebaju 4 nove forme:
+
+Dodavanje knjiga
+
+Dodavanje članova
+
+Posudba knjiga
+
+Povrat knjiga
+
+A možeš dodati još pregled slobodnih knjiga i izvještaje ako želiš da projekt bude bogatiji.
+
+Hoćeš da ti dam kostur koda za jednu od tih formi (npr. Dodavanje člana) da vidiš kako izgleda povezivanje s bazom?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+i sad prema tome napiši ponovno početnu formu
+Copilot kaže
+Odlično, sad kad smo definirali da će dodavanje knjiga, članova, posudbi i povrat knjiga ići preko posebnih formi, početna forma (MainForm) treba biti centralno mjesto za navigaciju i pregled podataka. Dakle, ona ne radi unos, nego prikazuje stanje i otvara druge forme.
+
+🖥️ Primjer početne forme (MainForm.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        private string connectionString =
+            "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        // 🔹 Pregled knjiga
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt; // DataGridView na formi
+            }
+        }
+
+        // 🔹 Pregled članova
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+
+        // 🔹 Pregled posudbi
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+
+        // 🔹 Otvaranje forme za dodavanje knjige
+        private void btnDodajKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new DodajKnjiguForm();
+            form.ShowDialog();
+            LoadKnjige(); // osvježi prikaz nakon dodavanja
+        }
+
+        // 🔹 Otvaranje forme za dodavanje člana
+        private void btnDodajClana_Click(object sender, EventArgs e)
+        {
+            var form = new DodajClanaForm();
+            form.ShowDialog();
+            LoadClanovi();
+        }
+
+        // 🔹 Otvaranje forme za posudbu knjige
+        private void btnPosudiKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new PosudbaForm();
+            form.ShowDialog();
+            LoadPosudbe();
+            LoadKnjige(); // jer se status knjige mijenja
+        }
+
+        // 🔹 Otvaranje forme za povrat knjige
+        private void btnVratiKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new PovratForm();
+            form.ShowDialog();
+            LoadPosudbe();
+            LoadKnjige();
+        }
+    }
+}
+📋 Što se nalazi na početnoj formi
+Tri DataGridView kontrole:
+
+dgvKnjige → pregled svih knjiga
+
+dgvClanovi → pregled svih članova
+
+dgvPosudbe → pregled svih posudbi
+
+Navigacijski gumbi:
+
+btnDodajKnjigu → otvara formu za unos knjige
+
+btnDodajClana → otvara formu za unos člana
+
+btnPosudiKnjigu → otvara formu za posudbu
+
+btnVratiKnjigu → otvara formu za povrat
+
+🎯 Logika
+Početna forma je dashboard: prikazuje stanje baze.
+
+Unosi i izmjene se rade u posebnim formama.
+
+Nakon zatvaranja tih formi, početna forma se osvježava da prikaže nove podatke.
+
+Želiš da ti napišem i kostur koda za formu DodajKnjiguForm, da vidiš kako izgleda unos u bazu preko posebne forme?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+ne bi umjesto gumba bilo bolje staviti contextmenustrip
+Copilot kaže
+To je jako dobra ideja 👍.
+Umjesto da zatrpaš početnu formu s puno gumba, možeš koristiti ContextMenuStrip (desni klik meni) ili čak MenuStrip (glavni meni na vrhu). To daje aplikaciji profesionalniji izgled i lakšu navigaciju.
+
+🎯 Prednosti ContextMenuStrip-a
+Čist UI – nema hrpe gumba na formi.
+
+Brza navigacija – korisnik desnim klikom odmah dobiva opcije.
+
+Modularnost – lako dodaješ nove stavke bez mijenjanja dizajna forme.
+
+Integracija – možeš vezati meni na DataGridView (npr. desni klik na knjigu → Posudi, Vrati, Obriši).
+
+🖥️ Primjer koda za početnu formu s ContextMenuStrip
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        private string connectionString =
+            "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+
+            // Kreiraj context menu
+            ContextMenuStrip cms = new ContextMenuStrip();
+            cms.Items.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+            cms.Items.Add("Dodaj člana", null, DodajClana_Click);
+            cms.Items.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+            cms.Items.Add("Vrati knjigu", null, VratiKnjigu_Click);
+
+            // Veži meni na formu
+            this.ContextMenuStrip = cms;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+
+        // 🔹 Event handleri za meni
+        private void DodajKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new DodajKnjiguForm();
+            form.ShowDialog();
+            LoadKnjige();
+        }
+
+        private void DodajClana_Click(object sender, EventArgs e)
+        {
+            var form = new DodajClanaForm();
+            form.ShowDialog();
+            LoadClanovi();
+        }
+
+        private void PosudiKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new PosudbaForm();
+            form.ShowDialog();
+            LoadPosudbe();
+            LoadKnjige();
+        }
+
+        private void VratiKnjigu_Click(object sender, EventArgs e)
+        {
+            var form = new PovratForm();
+            form.ShowDialog();
+            LoadPosudbe();
+            LoadKnjige();
+        }
+    }
+}
+📋 Kako to radi
+Desni klik na formu → otvara se meni s opcijama.
+
+Svaka opcija otvara novu formu (unos knjige, člana, posudba, povrat).
+
+Nakon zatvaranja forme, početna forma se osvježava.
+
+👉 Ako želiš još bolje iskustvo, možeš staviti MenuStrip na vrh forme (File, Edit, Pregled, itd.), a ContextMenuStrip koristiti samo na DataGridView-u (npr. desni klik na knjigu → Posudi ili Obriši).
+
+Hoćeš da ti pokažem primjer kako bi izgledao ContextMenuStrip vezan na DataGridView za knjige (npr. desni klik na red → Posudi, Vrati)?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+imat ću 3 glavna dijela ContextMenuStripa. Knjige, Članovi, Statistika. U Knjige: Posudi Knjigu, Povrat Knjige, Pregledaj Knjige, Dodaj Knjigu, Uredi Knjigu, Izbriši Knjigu. U Članovi: Pregled članova, dodaj član, izbriši član, uredi član i Statistika ništa osim toga
+Copilot kaže
+Savršeno 👌 – točno tako se radi dobra organizacija menija. Dakle, početna forma (MainForm) će imati ContextMenuStrip s tri glavna dijela: Knjige, Članovi i Statistika. Svaki od njih ima svoje podstavke koje otvaraju odgovarajuće forme ili pokreću akcije.
+
+🖥️ Primjer koda za početnu formu s ovakvim ContextMenuStripom
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        private string connectionString =
+            "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitContextMenu();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        // 🔹 Kreiranje glavnog menija
+        private void InitContextMenu()
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+
+            // --- KNJIGE ---
+            ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
+            knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Povrat knjige", null, VratiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Pregledaj knjige", null, PregledajKnjige_Click);
+            knjigeMenu.DropDownItems.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Uredi knjigu", null, UrediKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Izbriši knjigu", null, IzbrisiKnjigu_Click);
+
+            // --- ČLANOVI ---
+            ToolStripMenuItem clanoviMenu = new ToolStripMenuItem("Članovi");
+            clanoviMenu.DropDownItems.Add("Pregled članova", null, PregledajClanove_Click);
+            clanoviMenu.DropDownItems.Add("Dodaj člana", null, DodajClana_Click);
+            clanoviMenu.DropDownItems.Add("Uredi člana", null, UrediClana_Click);
+            clanoviMenu.DropDownItems.Add("Izbriši člana", null, IzbrisiClana_Click);
+
+            // --- STATISTIKA ---
+            ToolStripMenuItem statistikaMenu = new ToolStripMenuItem("Statistika");
+            // zasad prazno – kasnije možeš dodati izvještaje
+
+            // Dodaj sve u meni
+            cms.Items.Add(knjigeMenu);
+            cms.Items.Add(clanoviMenu);
+            cms.Items.Add(statistikaMenu);
+
+            // Veži meni na formu
+            this.ContextMenuStrip = cms;
+        }
+
+        // 🔹 Metode za učitavanje podataka
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+
+        // 🔹 Event handleri za KNJIGE
+        private void PosudiKnjigu_Click(object sender, EventArgs e) => new PosudbaForm().ShowDialog();
+        private void VratiKnjigu_Click(object sender, EventArgs e) => new PovratForm().ShowDialog();
+        private void PregledajKnjige_Click(object sender, EventArgs e) => LoadKnjige();
+        private void DodajKnjigu_Click(object sender, EventArgs e) => new DodajKnjiguForm().ShowDialog();
+        private void UrediKnjigu_Click(object sender, EventArgs e) => new UrediKnjiguForm().ShowDialog();
+        private void IzbrisiKnjigu_Click(object sender, EventArgs e) => new IzbrisiKnjiguForm().ShowDialog();
+
+        // 🔹 Event handleri za ČLANOVE
+        private void PregledajClanove_Click(object sender, EventArgs e) => LoadClanovi();
+        private void DodajClana_Click(object sender, EventArgs e) => new DodajClanaForm().ShowDialog();
+        private void UrediClana_Click(object sender, EventArgs e) => new UrediClanaForm().ShowDialog();
+        private void IzbrisiClana_Click(object sender, EventArgs e) => new IzbrisiClanaForm().ShowDialog();
+    }
+}
+📋 Kako će izgledati
+Desni klik na formu → otvara se meni s Knjige, Članovi, Statistika.
+
+Svaka podstavka otvara novu formu ili izvršava akciju.
+
+Pregled knjiga/članova se radi direktno u glavnoj formi (refresh DataGridView).
+
+Dodavanje, uređivanje i brisanje se rade u posebnim formama.
+
+👉 Sljedeći korak je da napišemo kostur jedne od tih formi (npr. DodajKnjiguForm) da vidiš kako izgleda unos u bazu. Hoćeš da krenemo s tim?
+
+
+
+
+
+Uredi na stranici
+Copilot kaže
+Odlično, to je vrlo jasna struktura 👌. Evo ti kako može izgledati početna forma s ContextMenuStripom koji ima tri glavna dijela (Knjige, Članovi, Statistika) i sve podstavke koje si naveo:
+
+🖥️ Primjer koda (MainForm.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        private string connectionString =
+            "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitContextMenu();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        // 🔹 Kreiranje glavnog menija
+        private void InitContextMenu()
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+
+            // --- KNJIGE ---
+            ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
+            knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Povrat knjige", null, VratiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Pregledaj knjige", null, PregledajKnjige_Click);
+            knjigeMenu.DropDownItems.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Uredi knjigu", null, UrediKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Izbriši knjigu", null, IzbrisiKnjigu_Click);
+
+            // --- ČLANOVI ---
+            ToolStripMenuItem clanoviMenu = new ToolStripMenuItem("Članovi");
+            clanoviMenu.DropDownItems.Add("Pregled članova", null, PregledajClanove_Click);
+            clanoviMenu.Drop
+
+
+
+
+Uredi na stranici
+Rekli ste
+sada sam se odlučio za private void PosudiKnjigu_Click(object sender, EventArgs e) => new PosudbaKnjiga().ShowDialog();
+private void VratiKnjigu_Click(object sender, EventArgs e) => new PovratKnjiga().ShowDialog();
+private void PregledajKnjige_Click(object sender, EventArgs e) => new PregledKnjiga().ShowDialog();
+private void DodajKnjigu_Click(object sender, EventArgs e) => new DodavanjeKnjiga().ShowDialog();
+private void UrediKnjigu_Click(object sender, EventArgs e) => new UredivanjeKnjiga().ShowDialog();
+private void IzbrisiKnjigu_Click(object sender, EventArgs e) => new BrisanjeKnjiga().ShowDialog();
+private void PregledajClanove_Click(object sender, EventArgs e) => new PregledClanova().ShowDialog();
+private void DodajClana_Click(object sender, EventArgs e) => new DodavanjeClanova().ShowDialog();
+private void UrediClana_Click(object sender, EventArgs e) => new UredivanjeClanova().ShowDialog();
+private void IzbrisiClana_Click(object sender, EventArgs e) => new BrisanjeClanova().ShowDialog();
+Copilot kaže
+Odlično 👌, to je jako čista i pregledna organizacija!
+Dakle, svaka akcija u ContextMenuStripu otvara svoju formu (ShowDialog()), a glavna forma ostaje centralni “dashboard”.
+
+🔹 Kako to izgleda u praksi
+1. Glavna forma (MainForm)
+Ima ContextMenuStrip s tri glavna menija:
+
+Knjige (Posudi, Vrati, Pregledaj, Dodaj, Uredi, Izbriši)
+
+Članovi (Pregledaj, Dodaj, Uredi, Izbriši)
+
+Statistika (zasad prazno, kasnije možeš dodati izvještaje)
+
+2. Event handleri
+Ti si ih već definirao ovako:
+
+csharp
+
+
+Kopiraj
+private void PosudiKnjigu_Click(object sender, EventArgs e) => new PosudbaKnjiga().ShowDialog();
+private void VratiKnjigu_Click(object sender, EventArgs e) => new PovratKnjiga().ShowDialog();
+private void PregledajKnjige_Click(object sender, EventArgs e) => new PregledKnjiga().ShowDialog();
+private void DodajKnjigu_Click(object sender, EventArgs e) => new DodavanjeKnjiga().ShowDialog();
+private void UrediKnjigu_Click(object sender, EventArgs e) => new UredivanjeKnjiga().ShowDialog();
+private void IzbrisiKnjigu_Click(object sender, EventArgs e) => new BrisanjeKnjiga().ShowDialog();
+
+private void PregledajClanove_Click(object sender, EventArgs e) => new PregledClanova().ShowDialog();
+private void DodajClana_Click(object sender, EventArgs e) => new DodavanjeClanova().ShowDialog();
+private void UrediClana_Click(object sender, EventArgs e) => new UredivanjeClanova().ShowDialog();
+private void IzbrisiClana_Click(object sender, EventArgs e) => new BrisanjeClanova().ShowDialog();
+To je savršeno jer svaka forma ima svoju logiku i ne opterećuje glavnu formu.
+
+🔹 Kako povezati s ContextMenuStripom
+U InitContextMenu() metodi u glavnoj formi samo povežeš ove event handlere:
+
+csharp
+
+
+Kopiraj
+private void InitContextMenu()
+{
+    ContextMenuStrip cms = new ContextMenuStrip();
+
+    // --- KNJIGE ---
+    ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
+    knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+    knjigeMenu.DropDownItems.Add("Povrat knjige", null, VratiKnjigu_Click);
+    knjigeMenu.DropDownItems.Add("Pregledaj knjige", null, PregledajKnjige_Click);
+    knjigeMenu.DropDownItems.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+    knjigeMenu.DropDownItems.Add("Uredi knjigu", null, UrediKnjigu_Click);
+    knjigeMenu.DropDownItems.Add("Izbriši knjigu", null, IzbrisiKnjigu_Click);
+
+    // --- ČLANOVI ---
+    ToolStripMenuItem clanoviMenu = new ToolStripMenuItem("Članovi");
+    clanoviMenu.DropDownItems.Add("Pregled članova", null, PregledajClanove_Click);
+    clanoviMenu.DropDownItems.Add("Dodaj člana", null, DodajClana_Click);
+    clanoviMenu.DropDownItems.Add("Uredi člana", null, UrediClana_Click);
+    clanoviMenu.DropDownItems.Add("Izbriši člana", null, IzbrisiClana_Click);
+
+    // --- STATISTIKA ---
+    ToolStripMenuItem statistikaMenu = new ToolStripMenuItem("Statistika");
+    // zasad prazno
+
+    // Dodaj sve u meni
+    cms.Items.Add(knjigeMenu);
+    cms.Items.Add(clanoviMenu);
+    cms.Items.Add(statistikaMenu);
+
+    this.ContextMenuStrip = cms;
+}
+🎯 Rezultat
+Glavna forma je čista – samo prikazuje podatke (DataGridView za knjige, članove, posudbe).
+
+Sve akcije (dodavanje, uređivanje, brisanje, posudba, povrat) se rade u posebnim formama.
+
+ContextMenuStrip je centralna navigacija.
+
+👉 Sljedeći logičan korak je da napišemo kostur jedne od tih formi (npr. DodavanjeKnjiga) – da vidiš kako izgleda unos u bazu preko posebne forme. Hoćeš da krenemo s tim?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+idemo na Dodavanje, Editiranje I Brisanje Knjgia
+Copilot kaže
+Super, idemo točno razraditi tri forme za rad s knjigama: Dodavanje, Uređivanje i Brisanje. Svaka forma ima svoju logiku i povezuje se s bazom KNJIZNICA.
+
+📘 1. Dodavanje knjige (DodavanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class DodavanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public DodavanjeKnjiga()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN) " +
+                               "VALUES (@Naslov, @Autor, @Godina, @ISBN)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno dodana!");
+                this.Close();
+            }
+        }
+    }
+}
+📗 2. Uređivanje knjige (UredivanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class UredivanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public UredivanjeKnjiga()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN " +
+                               "WHERE KnjigaID=@KnjigaID";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+                cmd.Parameters.AddWithValue("@KnjigaID", int.Parse(txtKnjigaID.Text));
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno ažurirana!");
+                this.Close();
+            }
+        }
+    }
+}
+📕 3. Brisanje knjige (BrisanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class BrisanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public BrisanjeKnjiga()
+        {
+            InitializeComponent();
+        }
+
+        private void btnIzbrisi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "DELETE FROM Knjige WHERE KnjigaID=@KnjigaID";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@KnjigaID", int.Parse(txtKnjigaID.Text));
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno izbrisana!");
+                this.Close();
+            }
+        }
+    }
+}
+📋 Što svaka forma ima
+DodavanjeKnjiga → TextBox za naslov, autora, godinu, ISBN + gumb Spremi.
+
+UredivanjeKnjiga → TextBox za ID knjige + polja za izmjenu podataka + gumb Spremi.
+
+BrisanjeKnjiga → TextBox za ID knjige + gumb Izbriši.
+
+🎯 Kako se povezuje s glavnom formom
+U glavnoj formi (MainForm) već imaš event handlere:
+
+csharp
+
+
+Kopiraj
+private void DodajKnjigu_Click(object sender, EventArgs e) => new DodavanjeKnjiga().ShowDialog();
+private void UrediKnjigu_Click(object sender, EventArgs e) => new UredivanjeKnjiga().ShowDialog();
+private void IzbrisiKnjigu_Click(object sender, EventArgs e) => new BrisanjeKnjiga().ShowDialog();
+Dakle, sve se otvara preko ContextMenuStripa.
+
+👉 Hoćeš da ti dam i PregledKnjiga formu (DataGridView s filtriranjem i pretragom), da zaokružimo kompletan CRUD za knjige?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj mi za uređivanje i brisanje da ne moram ID knjige nego mogu kliknuti na npr DataGridViewu Koji želim urediti/izbrisati
+Copilot kaže
+Odlično razmišljanje 👌 – puno je praktičnije da korisnik klikne na red u DataGridViewu i onda otvori formu za uređivanje ili brisanje, umjesto da ručno upisuje ID. To se radi tako da se izabere redak u DataGridView i proslijedi KnjigaID (ili cijeli objekt) u formu za uređivanje/brisanje.
+
+🔹 Glavna forma – odabir retka iz DataGridView-a
+Pretpostavimo da u glavnoj formi imaš dgvKnjige (DataGridView s knjigama).
+Event handler za Uredi knjigu može izgledati ovako:
+
+csharp
+
+
+Kopiraj
+private void UrediKnjigu_Click(object sender, EventArgs e)
+{
+    if (dgvKnjige.CurrentRow != null)
+    {
+        int knjigaID = Convert.ToInt32(dgvKnjige.CurrentRow.Cells["KnjigaID"].Value);
+        var form = new UredivanjeKnjiga(knjigaID);
+        form.ShowDialog();
+        LoadKnjige(); // osvježi prikaz nakon uređivanja
+    }
+}
+Za Brisanje knjige:
+
+csharp
+
+
+Kopiraj
+private void IzbrisiKnjigu_Click(object sender, EventArgs e)
+{
+    if (dgvKnjige.CurrentRow != null)
+    {
+        int knjigaID = Convert.ToInt32(dgvKnjige.CurrentRow.Cells["KnjigaID"].Value);
+        var form = new BrisanjeKnjiga(knjigaID);
+        form.ShowDialog();
+        LoadKnjige(); // osvježi prikaz nakon brisanja
+    }
+}
+🔹 Forma za uređivanje knjige (UredivanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class UredivanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+        private int knjigaID;
+
+        public UredivanjeKnjiga(int id)
+        {
+            InitializeComponent();
+            knjigaID = id;
+            LoadKnjiga();
+        }
+
+        private void LoadKnjiga()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT Naslov, Autor, GodinaIzdavanja, ISBN FROM Knjige WHERE KnjigaID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    txtNaslov.Text = reader["Naslov"].ToString();
+                    txtAutor.Text = reader["Autor"].ToString();
+                    txtGodina.Text = reader["GodinaIzdavanja"].ToString();
+                    txtISBN.Text = reader["ISBN"].ToString();
+                }
+                conn.Close();
+            }
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN WHERE KnjigaID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+                cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno ažurirana!");
+                this.Close();
+            }
+        }
+    }
+}
+🔹 Forma za brisanje knjige (BrisanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class BrisanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+        private int knjigaID;
+
+        public BrisanjeKnjiga(int id)
+        {
+            InitializeComponent();
+            knjigaID = id;
+        }
+
+        private void btnIzbrisi_Click(object sender, EventArgs e)
+        {
+            var confirm = MessageBox.Show("Jeste li sigurni da želite izbrisati ovu knjigu?", 
+                                          "Potvrda brisanja", 
+                                          MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.Yes)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "DELETE FROM Knjige WHERE KnjigaID=@ID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+
+                    MessageBox.Show("Knjiga uspješno izbrisana!");
+                    this.Close();
+                }
+            }
+        }
+    }
+}
+🎯 Rezultat
+Korisnik klikne na red u DataGridViewu.
+
+ContextMenuStrip opcija Uredi knjigu ili Izbriši knjigu otvara formu s tim ID-om.
+
+Forma automatski učita podatke (za uređivanje) ili samo traži potvrdu (za brisanje).
+
+Nakon zatvaranja forme, glavna forma se osvježi.
+
+👉 Hoćeš da ti dam i PregledKnjiga formu (DataGridView s filtriranjem i pretragom), da kompletiramo CRUD za knjige?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+ne daj da korisnik bira knjigu tek kod uređivanja/brisanja ne na početku
+Copilot kaže
+Razumijem te 👍 – želiš da korisnik ne mora birati knjigu odmah na glavnoj formi, nego da tek kad otvori formu za uređivanje ili brisanje tamo odabere knjigu koju želi mijenjati. To je elegantnije jer svaka forma ima svoju logiku i korisnik radi sve na jednom mjestu.
+
+🔹 Kako to izgleda
+1. Forma za uređivanje knjige (UredivanjeKnjiga)
+Na formi se nalazi DataGridView s popisom svih knjiga.
+
+Korisnik klikne na red koji želi urediti.
+
+Podaci se učitaju u TextBoxove.
+
+Nakon izmjene, klikne Spremi → update u bazi.
+
+csharp
+
+
+Kopiraj
+public partial class UredivanjeKnjiga : Form
+{
+    private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+    private int knjigaID;
+
+    public UredivanjeKnjiga()
+    {
+        InitializeComponent();
+        LoadKnjige();
+    }
+
+    private void LoadKnjige()
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            dgvKnjige.DataSource = dt;
+        }
+    }
+
+    // Klik na red u DataGridViewu
+    private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex >= 0)
+        {
+            knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+            txtNaslov.Text = dgvKnjige.Rows[e.RowIndex].Cells["Naslov"].Value.ToString();
+            txtAutor.Text = dgvKnjige.Rows[e.RowIndex].Cells["Autor"].Value.ToString();
+            txtGodina.Text = dgvKnjige.Rows[e.RowIndex].Cells["GodinaIzdavanja"].Value.ToString();
+            txtISBN.Text = dgvKnjige.Rows[e.RowIndex].Cells["ISBN"].Value.ToString();
+        }
+    }
+
+    private void btnSpremi_Click(object sender, EventArgs e)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN WHERE KnjigaID=@ID";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+            cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+            cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+            cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+            cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+
+            MessageBox.Show("Knjiga uspješno ažurirana!");
+            LoadKnjige(); // osvježi prikaz
+        }
+    }
+}
+2. Forma za brisanje knjige (BrisanjeKnjiga)
+Na formi se nalazi DataGridView s popisom knjiga.
+
+Korisnik klikne na red koji želi obrisati.
+
+Klikne Izbriši → delete u bazi.
+
+csharp
+
+
+Kopiraj
+public partial class BrisanjeKnjiga : Form
+{
+    private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+    private int knjigaID;
+
+    public BrisanjeKnjiga()
+    {
+        InitializeComponent();
+        LoadKnjige();
+    }
+
+    private void LoadKnjige()
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige", conn);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            dgvKnjige.DataSource = dt;
+        }
+    }
+
+    private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex >= 0)
+        {
+            knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+        }
+    }
+
+    private void btnIzbrisi_Click(object sender, EventArgs e)
+    {
+        if (knjigaID > 0)
+        {
+            var confirm = MessageBox.Show("Jeste li sigurni da želite izbrisati ovu knjigu?",
+                                          "Potvrda brisanja", MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.Yes)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "DELETE FROM Knjige WHERE KnjigaID=@ID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+
+                    MessageBox.Show("Knjiga uspješno izbrisana!");
+                    LoadKnjige(); // osvježi prikaz
+                }
+            }
+        }
+    }
+}
+🎯 Rezultat
+Glavna forma ostaje čista – samo otvara UredivanjeKnjiga ili BrisanjeKnjiga.
+
+UredivanjeKnjiga → korisnik odabere knjigu iz DataGridViewa, podaci se učitaju u polja, izmijeni ih i spremi.
+
+BrisanjeKnjiga → korisnik odabere knjigu iz DataGridViewa i klikne Izbriši.
+
+Nema potrebe da korisnik zna ili upisuje ID knjige ručno.
+
+Želiš da ti dam i PregledKnjiga formu s mogućnošću pretrage i filtriranja (po autoru, naslovu, godini), da zaokružimo cijeli CRUD modul?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj želim da umjesto brisanja u bazi imamo aktivno(i za knjige i članove) te da se postavi na 0
+Copilot kaže
+Odlično rješenje 👌 – umjesto da fizički brišeš podatke iz baze, uvodiš logičko brisanje pomoću polja Aktivan. To je puno bolje jer:
+
+Ne gubiš podatke (možeš ih kasnije vratiti).
+
+Imaš povijest svih knjiga i članova.
+
+Jednostavno filtriraš samo aktivne zapise.
+
+📊 Promjena strukture baze
+Dodaj polje Aktivan u tablice Knjige i Clanovi:
+
+sql
+
+
+Kopiraj
+ALTER TABLE Knjige ADD Aktivan BIT DEFAULT 1;
+ALTER TABLE Clanovi ADD Aktivan BIT DEFAULT 1;
+Aktivan = 1 → zapis je aktivan
+
+Aktivan = 0 → zapis je "obrisan" (ne koristi se, ali ostaje u bazi)
+
+📥 Primjeri upita
+Pregled samo aktivnih knjiga
+sql
+
+
+Kopiraj
+SELECT * FROM Knjige WHERE Aktivan = 1;
+Pregled samo aktivnih članova
+sql
+
+
+Kopiraj
+SELECT * FROM Clanovi WHERE Aktivan = 1;
+"Brisanje" knjige (postavljanje na neaktivno)
+sql
+
+
+Kopiraj
+UPDATE Knjige
+SET Aktivan = 0
+WHERE KnjigaID = @ID;
+"Brisanje" člana
+sql
+
+
+Kopiraj
+UPDATE Clanovi
+SET Aktivan = 0
+WHERE ClanID = @ID;
+🖥️ C# kod za logičko brisanje
+Forma za brisanje knjige (BrisanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+private void btnIzbrisi_Click(object sender, EventArgs e)
+{
+    if (knjigaID > 0)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            string query = "UPDATE Knjige SET Aktivan = 0 WHERE KnjigaID=@ID";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+
+            MessageBox.Show("Knjiga je označena kao neaktivna!");
+            LoadKnjige(); // osvježi prikaz
+        }
+    }
+}
+Forma za brisanje člana (BrisanjeClanova.cs)
+csharp
+
+
+Kopiraj
+private void btnIzbrisi_Click(object sender, EventArgs e)
+{
+    if (clanID > 0)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            string query = "UPDATE Clanovi SET Aktivan = 0 WHERE ClanID=@ID";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ID", clanID);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+
+            MessageBox.Show("Član je označen kao neaktivan!");
+            LoadClanovi(); // osvježi prikaz
+        }
+    }
+}
+🎯 Rezultat
+Brisanje više ne briše podatke, nego ih samo označava kao neaktivne.
+
+U svim pregledima (PregledKnjiga, PregledClanova) prikazuješ samo one gdje je Aktivan = 1.
+
+Ako želiš, možeš napraviti posebnu formu Arhiva gdje se vide i neaktivni zapisi.
+
+👉 Hoćeš da ti odmah dam i PregledKnjiga formu koja prikazuje samo aktivne knjige i ima opciju da se uključi/isključi filter (aktivne vs. sve)?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+daj sada izmjeni uređivanje knjiga, dodavanje knjiga i početnu da se slažu s om promjenom
+Copilot kaže
+Odlično, idemo sada sve uskladiti s promjenom da brisanje nije fizičko nego se radi preko polja Aktivan (1 = aktivno, 0 = neaktivno). To znači da i DodavanjeKnjiga, UredivanjeKnjiga i MainForm moraju raditi s tim poljem.
+
+📘 Dodavanje knjige (DodavanjeKnjiga.cs)
+Dodavanje knjige sada automatski postavlja Aktivan = 1.
+
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class DodavanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public DodavanjeKnjiga()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN, Aktivan) " +
+                               "VALUES (@Naslov, @Autor, @Godina, @ISBN, 1)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno dodana!");
+                this.Close();
+            }
+        }
+    }
+}
+📗 Uređivanje knjige (UredivanjeKnjiga.cs)
+Uređivanje knjige radi samo nad aktivnim knjigama. Ako želiš, možeš dodati i opciju da se knjiga ponovno aktivira (Aktivan = 1).
+
+csharp
+
+
+Kopiraj
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class UredivanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+        private int knjigaID;
+
+        public UredivanjeKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige WHERE Aktivan = 1", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+                txtNaslov.Text = dgvKnjige.Rows[e.RowIndex].Cells["Naslov"].Value.ToString();
+                txtAutor.Text = dgvKnjige.Rows[e.RowIndex].Cells["Autor"].Value.ToString();
+                txtGodina.Text = dgvKnjige.Rows[e.RowIndex].Cells["GodinaIzdavanja"].Value.ToString();
+                txtISBN.Text = dgvKnjige.Rows[e.RowIndex].Cells["ISBN"].Value.ToString();
+            }
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN WHERE KnjigaID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+                cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno ažurirana!");
+                LoadKnjige();
+            }
+        }
+    }
+}
+🖥️ Početna forma (MainForm.cs)
+Glavna forma sada prikazuje samo aktivne knjige i članove.
+Sve metode LoadKnjige i LoadClanovi filtriraju po Aktivan = 1.
+
+csharp
+
+
+Kopiraj
+private void LoadKnjige()
+{
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige WHERE Aktivan = 1", conn);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        dgvKnjige.DataSource = dt;
+    }
+}
+
+private void LoadClanovi()
+{
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi WHERE Aktivan = 1", conn);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        dgvClanovi.DataSource = dt;
+    }
+}
+🎯 Rezultat
+Dodavanje knjige → automatski Aktivan = 1.
+
+Uređivanje knjige → radi samo nad aktivnim knjigama.
+
+Početna forma → prikazuje samo aktivne knjige i članove.
+
+Brisanje knjige/člana → samo postavlja Aktivan = 0, pa se oni više ne prikazuju u glavnoj formi.
+
+👉 Hoćeš da ti napravim i PregledKnjiga formu s opcijom da se prikažu i neaktivne knjige (npr. checkbox "Prikaži arhivu")?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+hm možda nisam htio contextmenustrip. Nego menu strip ako je to ono na vrhu. Daj rađe prilagodi sva 4 programa tome
+Copilot kaže
+Odlično, sad ćemo sve prilagoditi na MenuStrip – to je onaj glavni meni na vrhu forme (File, Edit, Help…), puno pregledniji od ContextMenuStripa. Dakle, početna forma (MainForm) će imati MenuStrip s tri glavna izbornika: Knjige, Članovi, Statistika, a tvoje forme za Dodavanje, Uređivanje i Brisanje knjiga će se otvarati preko tih stavki.
+
+🖥️ Početna forma (MainForm.cs) s MenuStripom
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class MainForm : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitMenuStrip();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+        }
+
+        private void InitMenuStrip()
+        {
+            MenuStrip menuStrip = new MenuStrip();
+
+            // --- KNJIGE ---
+            ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
+            knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Povrat knjige", null, VratiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Pregledaj knjige", null, PregledajKnjige_Click);
+            knjigeMenu.DropDownItems.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Uredi knjigu", null, UrediKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Izbriši knjigu", null, IzbrisiKnjigu_Click);
+
+            // --- ČLANOVI ---
+            ToolStripMenuItem clanoviMenu = new ToolStripMenuItem("Članovi");
+            clanoviMenu.DropDownItems.Add("Pregled članova", null, PregledajClanove_Click);
+            clanoviMenu.DropDownItems.Add("Dodaj člana", null, DodajClana_Click);
+            clanoviMenu.DropDownItems.Add("Uredi člana", null, UrediClana_Click);
+            clanoviMenu.DropDownItems.Add("Izbriši člana", null, IzbrisiClana_Click);
+
+            // --- STATISTIKA ---
+            ToolStripMenuItem statistikaMenu = new ToolStripMenuItem("Statistika");
+            // zasad prazno
+
+            // Dodaj sve u meni
+            menuStrip.Items.Add(knjigeMenu);
+            menuStrip.Items.Add(clanoviMenu);
+            menuStrip.Items.Add(statistikaMenu);
+
+            // Dodaj MenuStrip na formu
+            this.MainMenuStrip = menuStrip;
+            this.Controls.Add(menuStrip);
+        }
+
+        // 🔹 Event handleri
+        private void PosudiKnjigu_Click(object sender, EventArgs e) => new PosudbaKnjiga().ShowDialog();
+        private void VratiKnjigu_Click(object sender, EventArgs e) => new PovratKnjiga().ShowDialog();
+        private void PregledajKnjige_Click(object sender, EventArgs e) => new PregledKnjiga().ShowDialog();
+        private void DodajKnjigu_Click(object sender, EventArgs e) => new DodavanjeKnjiga().ShowDialog();
+        private void UrediKnjigu_Click(object sender, EventArgs e) => new UredivanjeKnjiga().ShowDialog();
+        private void IzbrisiKnjigu_Click(object sender, EventArgs e) => new BrisanjeKnjiga().ShowDialog();
+
+        private void PregledajClanove_Click(object sender, EventArgs e) => new PregledClanova().ShowDialog();
+        private void DodajClana_Click(object sender, EventArgs e) => new DodavanjeClanova().ShowDialog();
+        private void UrediClana_Click(object sender, EventArgs e) => new UredivanjeClanova().ShowDialog();
+        private void IzbrisiClana_Click(object sender, EventArgs e) => new BrisanjeClanova().ShowDialog();
+
+        // 🔹 Pregledi (samo aktivni zapisi)
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige WHERE Aktivan = 1", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi WHERE Aktivan = 1", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID
+                                 WHERE k.Aktivan = 1 AND c.Aktivan = 1";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+    }
+}
+📘 Dodavanje knjige (DodavanjeKnjiga.cs)
+csharp
+
+
+Kopiraj
+string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN, Aktivan) " +
+               "VALUES (@Naslov, @Autor, @Godina, @ISBN, 1)";
+📗 Uređivanje knjige (UredivanjeKnjiga.cs)
+Učitava samo aktivne knjige (WHERE Aktivan = 1).
+
+Omogućava izmjenu podataka.
+
+📕 Brisanje knjige (BrisanjeKnjiga.cs)
+Umjesto DELETE, koristi:
+
+csharp
+
+
+Kopiraj
+string query = "UPDATE Knjige SET Aktivan = 0 WHERE KnjigaID=@ID";
+🎯 Rezultat
+MenuStrip na vrhu forme je glavna navigacija.
+
+Dodavanje, Uređivanje, Brisanje knjiga rade s poljem Aktivan.
+
+Glavna forma prikazuje samo aktivne zapise.
+
+Brisanje je logičko (Aktivan = 0), a ne fizičko.
+
+👉 Želiš da ti dam i MenuStrip dizajn za članove (Dodavanje, Uređivanje, Brisanje članova) u istom stilu, da sve bude potpuno paralelno?
+
+
+
+
+
+Uredi na stranici
+Rekli ste
+dobro sljedeće daj da mogu pretražiti knjigu. u brisanje u uređivanje i to po naslovu
+Copilot kaže
+Odlično, idemo sada dodati pretragu po naslovu u forme za Uređivanje i Brisanje knjiga. To znači da korisnik neće morati klikati na red u DataGridViewu, nego može upisati dio naslova i filtrirati rezultate.
+
+📗 Uređivanje knjige (UredivanjeKnjiga.cs)
+Dodaj TextBox (txtPretraga) i gumb Pretraži (btnPretrazi).
+Korisnik upiše naslov ili dio naslova → filtrira se DataGridView.
+
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class UredivanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+        private int knjigaID;
+
+        public UredivanjeKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Knjige WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND Naslov LIKE @Filter";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretraga.Text);
+        }
+
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+                txtNaslov.Text = dgvKnjige.Rows[e.RowIndex].Cells["Naslov"].Value.ToString();
+                txtAutor.Text = dgvKnjige.Rows[e.RowIndex].Cells["Autor"].Value.ToString();
+                txtGodina.Text = dgvKnjige.Rows[e.RowIndex].Cells["GodinaIzdavanja"].Value.ToString();
+                txtISBN.Text = dgvKnjige.Rows[e.RowIndex].Cells["ISBN"].Value.ToString();
+            }
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN WHERE KnjigaID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+                cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno ažurirana!");
+                LoadKnjige();
+            }
+        }
+    }
+}
+📕 Brisanje knjige (BrisanjeKnjiga.cs)
+Dodaj TextBox (txtPretraga) i gumb Pretraži (btnPretrazi).
+Korisnik upiše naslov → filtrira se DataGridView.
+
+csharp
+
+
+Kopiraj
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace KnjiznicaApp
+{
+    public partial class BrisanjeKnjiga : Form
+    {
+        private string connectionString = "Server=localhost;Database=Knjiznica;Trusted_Connection=True;";
+        private int knjigaID;
+
+        public BrisanjeKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Knjige WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND Naslov LIKE @Filter";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretraga.Text);
+        }
+
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+            }
+        }
+
+        private void btnIzbrisi_Click(object sender, EventArgs e)
+        {
+            if (knjigaID > 0)
+            {
+                var confirm = MessageBox.Show("Jeste li sigurni da želite označiti knjigu kao neaktivnu?",
+                                              "Potvrda brisanja", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.Yes)
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "UPDATE Knjige SET Aktivan = 0 WHERE KnjigaID=@ID";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+
+                        MessageBox.Show("Knjiga je označena kao neaktivna!");
+                        LoadKnjige();
+                    }
+                }
+            }
+        }
+    }
+}
+🎯 Rezultat
+U formama za Uređivanje i Brisanje knjiga dodan je TextBox za pretragu po naslovu.
+
+Korisnik može upisati dio naslova i kliknuti Pretraži → filtrira se DataGridView.
+
+Nakon odabira knjige iz rezultata, može je urediti ili označiti kao neaktivnu.
+
+👉 Želiš da ti odmah dam i isti princip za članove (pretraga po imenu/prezimenu u formama za uređivanje i brisanje članova)?
+
+
+
+
+
+
+Uredi na stranici
+
+dodaj 
+
 
 
 
