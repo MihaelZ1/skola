@@ -24,8 +24,9 @@ GO
 
 -- Primjer unosa testnih podataka (hash je samo primjer, u praksi koristi SHA256 ili bcrypt)
 INSERT INTO Korisnici (Username, PasswordHash)
-VALUES ('admin', '5f4dcc3b5aa765d61d8327deb882cf99'), -- hash za "password"
-       ('ana', 'e99a18c428cb38d5f260853678922e03'); -- hash za "abc123"
+VALUES ('admin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'), -- hash za "password"
+       ('ana', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090'); -- hash za "abc123"
+--koristi sha256 hash!!!!
 
 INSERT INTO Prava (NazivPrava)
 VALUES ('Admin'),
