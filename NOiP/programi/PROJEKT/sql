@@ -1,0 +1,37 @@
+CREATE TABLE Korisnici (
+    IdKorisnik INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(256) NOT NULL
+);
+GO
+
+-- Tablica Prava
+CREATE TABLE Prava (
+    IdPravo INT IDENTITY(1,1) PRIMARY KEY,
+    NazivPrava NVARCHAR(50) NOT NULL
+);
+GO
+
+-- Povezna tablica KorisniciPrava (many-to-many)
+CREATE TABLE KorisniciPrava (
+    IdKorisnik INT NOT NULL,
+    IdPravo INT NOT NULL,
+    PRIMARY KEY (IdKorisnik, IdPravo),
+    FOREIGN KEY (IdKorisnik) REFERENCES Korisnici(IdKorisnik),
+    FOREIGN KEY (IdPravo) REFERENCES Prava(IdPravo)
+);
+GO
+
+-- Primjer unosa testnih podataka (hash je samo primjer, u praksi koristi SHA256 ili bcrypt)
+INSERT INTO Korisnici (Username, PasswordHash)
+VALUES ('admin', '5f4dcc3b5aa765d61d8327deb882cf99'), -- hash za "password"
+       ('ana', 'e99a18c428cb38d5f260853678922e03'); -- hash za "abc123"
+
+INSERT INTO Prava (NazivPrava)
+VALUES ('Admin'),
+       ('Korisnik');
+
+INSERT INTO KorisniciPrava (IdKorisnik, IdPravo)
+VALUES (1, 1), -- ivan je Admin
+       (2, 2); -- ana je Korisnik
+GO
