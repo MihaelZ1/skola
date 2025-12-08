@@ -1,0 +1,71 @@
+using System;
+using Microsoft.Data.SqlClient;
+
+using System.Security.Cryptography;
+using System.Text;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        string connectionString = @"Data Source=localhost\sqlexpress;Initial Catalog=skladisteDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+
+  --windows autentifikacija
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string username = textBox1.Text;
+            string lozinka = textBox2.Text;
+
+            if (ProvjeriKorisnika(username, lozinka))
+            {
+                // Ako je prijava uspješna, otvori Form2
+                Form2 mainForm = new Form2(username);
+                mainForm.Show();
+                this.Hide();
+            }
+            else
+            {
+                MessageBox.Show("Neispravni podaci! Pokušajte ponovno.");
+            }
+        }
+        private bool ProvjeriKorisnika(string username, string lozinka)
+        {
+            string hash = IzracunajHash(lozinka);
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT COUNT(*) FROM Korisnici WHERE Username=@user AND PasswordHash=@hash";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@user", username);
+                cmd.Parameters.AddWithValue("@hash", hash);
+
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+        private string IzracunajHash(string lozinka)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(lozinka));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                    builder.Append(b.ToString("x2"));
+                return builder.ToString();
+            }
+        }
+    }
+}
