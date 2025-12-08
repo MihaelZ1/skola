@@ -13,9 +13,7 @@ namespace WinFormsApp2
         {
             InitializeComponent();
         }
-        string connectionString = @"Data Source=localhost\sqlexpress;Initial Catalog=skladisteDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
-
-  --windows autentifikacija
+       string connectionString = @"Data Source=localhost\sqlexpress;Initial Catalog=skladisteDB;User ID=zeleznjak;Password=zeleznjak;Encrypt=True;TrustServerCertificate=True";
 
 
         private void Form1_Load(object sender, EventArgs e)
