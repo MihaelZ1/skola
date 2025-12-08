@@ -1,0 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using Microsoft.Data.SqlClient;
+
+
+namespace WinFormsApp2
+{
+    public partial class Form2 : Form
+    {
+        private string prijavljeniKorisnik;
+        public Form2(string username)
+        {
+            InitializeComponent();
+            prijavljeniKorisnik = username;
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            label1.Text = $"Dobrodošao {prijavljeniKorisnik}!";
+        }
+    }
+}
