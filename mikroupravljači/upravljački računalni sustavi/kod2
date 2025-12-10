@@ -1,0 +1,197 @@
+procesing
+
+import controlP5.*;
+import processing.serial.*;
+
+ControlP5 cp5;
+Serial myPort;
+
+int servoPos = 90;
+int stepAngle = 0;
+
+void setup() {
+  size(900, 500);
+  cp5 = new ControlP5(this);
+  myPort = new Serial(this, "COM5", 9600); // promijeni COM port po potrebi
+
+  // Servo motor
+  cp5.addSlider("servoPos").setRange(0, 180).setPosition(50, 280).setSize(300, 25).setValue(90);
+  cp5.addNumberbox("servoPosBox").setPosition(370, 275).setSize(60, 35).setRange(0, 180).setValue(90);
+  cp5.addButton("servoPlus").setLabel("+5°").setPosition(450, 275).setSize(50, 35);
+  cp5.addButton("servoMinus").setLabel("-5°").setPosition(510, 275).setSize(50, 35);
+
+  // Stepper motor
+  cp5.addButton("stepH").setLabel("H.S").setPosition(650, 80).setSize(60, 50);
+  cp5.addButton("stepF").setLabel("F.S").setPosition(750, 80).setSize(60, 50);
+
+  cp5.addButton("angle0").setLabel("0°").setPosition(600, 260).setSize(50, 50);
+  cp5.addButton("angle90").setLabel("90°").setPosition(660, 260).setSize(50, 50);
+  cp5.addButton("angle180").setLabel("180°").setPosition(720, 260).setSize(60, 50);
+  cp5.addButton("angle270").setLabel("270°").setPosition(790, 260).setSize(60, 50);
+
+  cp5.addSlider("stepAngle").setRange(0, 360).setPosition(600, 330).setSize(250, 25).setValue(0);
+}
+
+void draw() {
+  background(255);
+}
+
+void controlEvent(ControlEvent e) {
+  String name = e.getName();
+
+  // Servo motor
+  if (name.equals("servoPos")) {
+    servoPos = (int)e.getValue();
+    myPort.write("S:" + servoPos + "\n");
+  }
+  if (name.equals("servoPosBox")) {
+    servoPos = (int)e.getValue();
+    cp5.get(Slider.class, "servoPos").setValue(servoPos);
+    myPort.write("S:" + servoPos + "\n");
+  }
+  if (name.equals("servoPlus")) {
+    servoPos = constrain(servoPos + 5, 0, 180);
+    cp5.get(Slider.class, "servoPos").setValue(servoPos);
+    myPort.write("S:" + servoPos + "\n");
+  }
+  if (name.equals("servoMinus")) {
+    servoPos = constrain(servoPos - 5, 0, 180);
+    cp5.get(Slider.class, "servoPos").setValue(servoPos);
+    myPort.write("S:" + servoPos + "\n");
+  }
+
+  // Stepper motor
+  if (name.equals("stepAngle")) {
+    stepAngle = (int)e.getValue();
+    myPort.write("STEP:" + stepAngle + "\n");
+  }
+
+  if (name.equals("angle0"))   { stepAngle = 0;   cp5.get(Slider.class, "stepAngle").setValue(stepAngle); myPort.write("STEP:" + stepAngle + "\n"); }
+  if (name.equals("angle90"))  { stepAngle = 90;  cp5.get(Slider.class, "stepAngle").setValue(stepAngle); myPort.write("STEP:" + stepAngle + "\n"); }
+  if (name.equals("angle180")) { stepAngle = 180; cp5.get(Slider.class, "stepAngle").setValue(stepAngle); myPort.write("STEP:" + stepAngle + "\n"); }
+  if (name.equals("angle270")) { stepAngle = 270; cp5.get(Slider.class, "stepAngle").setValue(stepAngle); myPort.write("STEP:" + stepAngle + "\n"); }
+
+  // Mode
+  if (name.equals("stepH")) myPort.write("MODE:HS\n");
+  if (name.equals("stepF")) myPort.write("MODE:FS\n");
+}
+
+
+
+
+
+ide
+
+#include <Servo.h>
+
+Servo myServo;
+
+// PINS
+const int dcMotorPin = 5;   // PWM za DC motor
+const int servoPin   = 6;   // Servo motor
+const int IN1 = 8;
+const int IN2 = 9;
+const int IN3 = 10;
+const int IN4 = 11;
+
+// STEPPER SETTINGS
+int modeHS = 1; // 1 = Half-step ; 0 = Full-step
+long currentStep = 0;
+long targetStep = 0;
+
+const int stepsPerRevHS = 4096;
+const int stepsPerRevFS = 2048;
+
+int hs_seq[8][4] = {
+  {1,0,0,0},
+  {1,1,0,0},
+  {0,1,0,0},
+  {0,1,1,0},
+  {0,0,1,0},
+  {0,0,1,1},
+  {0,0,0,1},
+  {1,0,0,1}
+};
+
+int fs_seq[4][4] = {
+  {1,1,0,0},
+  {0,1,1,0},
+  {0,0,1,1},
+  {1,0,0,1}
+};
+
+int currentAngle = 0;
+int lastServoPos = -1;
+
+void stepMotor(int index) {
+  if (modeHS) {
+    digitalWrite(IN1, hs_seq[index][0]);
+    digitalWrite(IN2, hs_seq[index][1]);
+    digitalWrite(IN3, hs_seq[index][2]);
+    digitalWrite(IN4, hs_seq[index][3]);
+  } else {
+    digitalWrite(IN1, fs_seq[index][0]);
+    digitalWrite(IN2, fs_seq[index][1]);
+    digitalWrite(IN3, fs_seq[index][2]);
+    digitalWrite(IN4, fs_seq[index][3]);
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  myServo.attach(servoPin);
+
+  pinMode(dcMotorPin, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+}
+
+void loop() {
+  if (Serial.available()) {
+    String cmd = Serial.readStringUntil('\n');
+
+/*     // DC motor
+    if (cmd.startsWith("DC:")) {
+      int val = constrain(abs(cmd.substring(3).toInt()), 0, 255);
+      analogWrite(dcMotorPin, val);
+    } */
+
+    // Servo
+    if (cmd.startsWith("S:")) {
+      int pos = constrain(cmd.substring(2).toInt(), 0, 180);
+      if (pos != lastServoPos) {
+        myServo.write(pos);
+        lastServoPos = pos;
+        delay(15);
+      }
+    }
+
+    // Stepper
+    if (cmd.startsWith("STEP:")) {
+      int desiredAngle = constrain(cmd.substring(5).toInt(), 0, 360);
+      int stepsPerDeg = modeHS ? stepsPerRevHS / 360 : stepsPerRevFS / 360;
+      targetStep = (long)desiredAngle * stepsPerDeg;
+    }
+
+    // Mode
+    if (cmd.startsWith("MODE:HS")) modeHS = 1;
+    if (cmd.startsWith("MODE:FS")) modeHS = 0;
+  }
+
+  // Stepper pomicanje
+  if (currentStep != targetStep) {
+    currentStep += (currentStep < targetStep) ? 1 : -1;
+
+    int seqLen = modeHS ? 8 : 4;
+    int index = currentStep % seqLen;
+    if (index < 0) index += seqLen;
+
+    stepMotor(index);
+    delay(2);
+
+    int stepsPerDeg = modeHS ? stepsPerRevHS / 360 : stepsPerRevFS / 360;
+    currentAngle = currentStep / stepsPerDeg;
+  }
+}
