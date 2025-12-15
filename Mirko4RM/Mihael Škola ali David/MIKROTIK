@@ -43,3 +43,13 @@ rebinding-renewing-searching-stopped
 na pola vremena ide van iz bound.onda renewing
 na 30sec rebinding(multicast)
 koristi unicast za produljivanje
+
+ip/firewall/filter/add action=add-src-to-address-list chain=input address-list=neWEB protocol=icmp address-list-timeout=1m
+ip/firewall/filter/add action=add-src-to-address-list chain=input address-list=neTCP protocol=tcp address-list-timeout=5m port=80
+
+
+
+
+
+
+
