@@ -1,0 +1,15 @@
+<?php
+   if(isset($_GET["action"]) && $_GET["action"]=="zbroj_u_datoteku") {
+        $x = $_GET['x'];
+        $y = $_GET['y'];
+        $myfile = fopen("file.txt", "a") or die("Unable to open file!");
+        fwrite($myfile, "$x + $y = ".($x + $y)."\n"); // upis i skok u novi red;  
+        fclose($myfile);
+        header("Location: index.php?poruka=Upisano u datoteku.");
+
+    } else if(isset($_GET["action"]) && $_GET["action"]=="brisi_auto_iz_baze") {
+        $id = $_GET['id'];
+        print("$id  ");
+      
+    }
+?>
