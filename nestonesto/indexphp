@@ -1,0 +1,59 @@
+<?php
+
+$mysqli = mysqli_connect("localhost", "root", "", "automobili");    
+
+
+	if(!mysqli_connect_errno(   )) {         
+                                                                                                   
+		  $sql = "SELECT * FROM auto";
+		  
+		  $result = mysqli_query($mysqli, $sql);     // izvršavanje upita
+
+		  if($result==True) {
+           if($mysqli->affected_rows==0) {
+              echo "Nema nijedne stavke u bazi."; 
+           } else {
+
+			  print("<table border='1'>");
+              print("<th>id</th> <th>marka      <a href='?sort=asc'>&#9650;</a>      <a href='?sort=desc'>&#9660;</a></th> <th>max_brzina</th> <th>god_proizvodnje</th> <th>edit</th> <th>briši</th> <th>briši</th>");
+              if(isset($_GET["sort"]) && $_GET["sort"] == "asc") {  // u index.php
+            $sql = "SELECT * FROM auto ORDER BY marka ASC"; 
+            }
+            else if(isset($_GET["sort"]) && $_GET["sort"] == "asc"){
+                 $sql = "SELECT * FROM auto ORDER BY marka DESC"; 
+            }
+            $result = mysqli_query($mysqli, $sql);
+
+			  while($row = mysqli_fetch_assoc($result)) { // dohvat svakog retka iz $result
+				print("<tr>");
+				print("
+    <td>{$row['id']}</td> 
+    <td>{$row['marka']}</td> 
+    <td>{$row['max_brzina']}</td> 
+    <td>{$row['god_proizvodnje']}</td> 
+    <td><a href='edit_auto_forma.php?id={$row['id']}'>edit</a></td> 
+    <td><a href='action.php?action=brisi_auto_iz_baze&id={$row['id']}'> briši </a></td>
+    <td> 
+        <form action='action.php' method='GET'> 
+            <input type='hidden' name='id' value='{$row['id']}' /> 
+            <input type='hidden' name='action' value='brisi_auto_iz_baze' /> 
+            <input type='submit' name='Submit' value='Briši' />
+        </form>
+    </td>
+");
+
+
+				print("</tr>");                  // ispis svakog retka
+			  }
+			  print("</table>");
+			  mysqli_free_result($result);  // oslobađanje memorije
+		     }
+
+		  } else {
+			print(" Upit je neuspješno izvršen! ");
+		  }	
+
+	} else {
+		      print(" Greška kod spajanja na bazu! " . mysqli_connect_error());
+	}
+?>                                             
