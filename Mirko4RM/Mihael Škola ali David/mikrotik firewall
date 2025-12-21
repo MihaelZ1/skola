@@ -1,0 +1,4 @@
+ip firewall filter add chain=input action=add-src-to-address-list address-list=lista protocol=icmp address-list-timeout=30s
+ip firewall filter add chain=input action=add-src-to-address-list address-list=lista2 protocol=tcp port=80 address-list-timeout=1m
+ip firewall filter add chain=input action=drop protocol=tcp src-address-list=lista port=80
+ip firewall filter add chain=input action=drop protocol=icmp src-address-list=lista 2
