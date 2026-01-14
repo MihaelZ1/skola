@@ -21,13 +21,11 @@ namespace Dnevnik
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadKnjige();
             LoadClanovi();
             LoadPosudbe();
-
             MenuStrip menuStrip = new MenuStrip();
             ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
             knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
@@ -46,12 +44,9 @@ namespace Dnevnik
             menuStrip.Items.Add(knjigeMenu);
             menuStrip.Items.Add(clanoviMenu);
             menuStrip.Items.Add(statistikaMenu); 
-
             this.MainMenuStrip = menuStrip;
             this.Controls.Add(menuStrip);
         }
-        
-
         private void LoadKnjige()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -72,8 +67,6 @@ namespace Dnevnik
                 dgvClanovi.DataSource = dt;
             }
         }
-
-
         private void LoadPosudbe()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -91,7 +84,6 @@ namespace Dnevnik
                 dgvPosudbe.DataSource = dt;
             }
         }
-
         private void PosudiKnjigu_Click(object sender, EventArgs e)
         {
             using (var f = new PosudbaKnjiga())
@@ -101,7 +93,6 @@ namespace Dnevnik
                 LoadPosudbe();
             }
         }
-
         private void VratiKnjigu_Click(object sender, EventArgs e)
         {
             using (var f = new PovratKnjiga())
@@ -120,7 +111,6 @@ namespace Dnevnik
                 LoadKnjige();
             }
         }
-
         private void DodajKnjigu_Click(object sender, EventArgs e)
         {
             using (var f = new DodavanjeKnjiga())
@@ -129,7 +119,6 @@ namespace Dnevnik
                 LoadKnjige();
             }
         }
-
         private void UrediKnjigu_Click(object sender, EventArgs e)
         {
             using (var f = new UredivanjeKnjiga())
@@ -138,7 +127,6 @@ namespace Dnevnik
                 LoadKnjige();
             }
         }
-
         private void IzbrisiKnjigu_Click(object sender, EventArgs e)
         {
             using (var f = new BrisanjeKnjiga())
@@ -147,7 +135,6 @@ namespace Dnevnik
                 LoadKnjige();
             }
         }
-
         private void PregledajClanove_Click(object sender, EventArgs e)
         {
             using (var f = new PregledClanova())
@@ -156,7 +143,6 @@ namespace Dnevnik
                 LoadClanovi();
             }
         }
-
         private void DodajClana_Click(object sender, EventArgs e)
         {
             using (var f = new DodavanjeClanova())
@@ -165,7 +151,6 @@ namespace Dnevnik
                 LoadClanovi();
             }
         }
-
         private void UrediClana_Click(object sender, EventArgs e)
         {
             using (var f = new UredivanjeClanova())
@@ -174,7 +159,6 @@ namespace Dnevnik
                 LoadClanovi();
             }
         }
-
         private void IzbrisiClana_Click(object sender, EventArgs e)
         {
             using (var f = new BrisanjeClanova())
@@ -190,26 +174,8 @@ namespace Dnevnik
                 f.ShowDialog();
             }
         }
-
-
-        private void dodajKnjiguToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
     }
-}
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Dnevnik
+}namespace Dnevnik
 {
     public partial class DodavanjeKnjiga : Form
     {
@@ -254,19 +220,7 @@ namespace Dnevnik
             }
         }
     }
-}
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Dnevnik
+}namespace Dnevnik
 {
     public partial class UredivanjeKnjiga : Form
     {
@@ -353,19 +307,7 @@ namespace Dnevnik
             LoadKnjige(txtPretraga.Text);
         }
     }
-}
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Dnevnik
+}namespace Dnevnik
 {
     public partial class BrisanjeKnjiga : Form
     {
@@ -450,15 +392,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-
 namespace Dnevnik
 {
     public partial class UredivanjeClanova : Form
@@ -535,12 +468,7 @@ namespace Dnevnik
             }
         }
     }
-}using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-
-namespace Dnevnik
+}namespace Dnevnik
 {
     public partial class BrisanjeClanova : Form
     {
@@ -625,14 +553,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-
 namespace Dnevnik
 {
     public partial class DodavanjeClanova : Form
@@ -677,17 +597,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
 namespace Dnevnik
 {
     public partial class PregledClanova : Form
@@ -731,14 +640,7 @@ namespace Dnevnik
             LoadClanovi(txtPretraga.Text);
         }
     }
-}using System;
-using System.Collections.Generic;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-
-namespace Dnevnik
+}namespace Dnevnik
 {
     public partial class PregledKnjiga : Form
     {
@@ -787,11 +689,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-
 namespace Dnevnik
 {
     public partial class PosudbaKnjiga : Form
@@ -905,11 +802,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
-
 namespace Dnevnik
 {
     public partial class PovratKnjiga : Form
@@ -987,17 +879,6 @@ namespace Dnevnik
         }
     }
 }
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
 namespace Dnevnik
 {
     public partial class Statistika : Form
@@ -1106,18 +987,12 @@ namespace Dnevnik
             this.tabPosudbe.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(335, 32);
             this.lblTitle.Text = "Sustav Knjižnice";
-            // 
-            // tabControl
-            // 
             this.tabControl.Controls.Add(this.tabKnjige);
             this.tabControl.Controls.Add(this.tabClanovi);
             this.tabControl.Controls.Add(this.tabPosudbe);
@@ -1125,9 +1000,6 @@ namespace Dnevnik
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(950, 450);
-            // 
-            // tabKnjige
-            // 
             this.tabKnjige.Controls.Add(this.dgvKnjige);
             this.tabKnjige.Location = new System.Drawing.Point(4, 24);
             this.tabKnjige.Name = "tabKnjige";
@@ -1135,18 +1007,12 @@ namespace Dnevnik
             this.tabKnjige.Size = new System.Drawing.Size(942, 422);
             this.tabKnjige.Text = "Knjige";
             this.tabKnjige.UseVisualStyleBackColor = true;
-            // 
-            // dgvKnjige
-            // 
             this.dgvKnjige.AllowUserToAddRows = false;
             this.dgvKnjige.AllowUserToDeleteRows = false;
             this.dgvKnjige.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvKnjige.ReadOnly = true;
             this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvKnjige.MultiSelect = false;
-            // 
-            // tabClanovi
-            // 
             this.tabClanovi.Controls.Add(this.dgvClanovi);
             this.tabClanovi.Location = new System.Drawing.Point(4, 24);
             this.tabClanovi.Name = "tabClanovi";
@@ -1154,18 +1020,12 @@ namespace Dnevnik
             this.tabClanovi.Size = new System.Drawing.Size(942, 422);
             this.tabClanovi.Text = "Članovi";
             this.tabClanovi.UseVisualStyleBackColor = true;
-            // 
-            // dgvClanovi
-            // 
             this.dgvClanovi.AllowUserToAddRows = false;
             this.dgvClanovi.AllowUserToDeleteRows = false;
             this.dgvClanovi.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvClanovi.ReadOnly = true;
             this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvClanovi.MultiSelect = false;
-            // 
-            // tabPosudbe
-            // 
             this.tabPosudbe.Controls.Add(this.dgvPosudbe);
             this.tabPosudbe.Location = new System.Drawing.Point(4, 24);
             this.tabPosudbe.Name = "tabPosudbe";
@@ -1173,18 +1033,12 @@ namespace Dnevnik
             this.tabPosudbe.Size = new System.Drawing.Size(942, 422);
             this.tabPosudbe.Text = "Posudbe";
             this.tabPosudbe.UseVisualStyleBackColor = true;
-            // 
-            // dgvPosudbe
-            // 
             this.dgvPosudbe.AllowUserToAddRows = false;
             this.dgvPosudbe.AllowUserToDeleteRows = false;
             this.dgvPosudbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvPosudbe.ReadOnly = true;
             this.dgvPosudbe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPosudbe.MultiSelect = false;
-            // 
-            // Form1
-            // 
             this.ClientSize = new System.Drawing.Size(1000, 550);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.tabControl);
@@ -1244,18 +1098,12 @@ namespace Dnevnik
             this.btnDodaj = new System.Windows.Forms.Button();
             this.grpUnos.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(230, 30);
             this.lblTitle.Text = "Dodavanje knjige";
-            // 
-            // grpUnos
-            // 
             this.grpUnos.Controls.Add(this.txtNaslov);
             this.grpUnos.Controls.Add(this.txtAutor);
             this.grpUnos.Controls.Add(this.txtGodina);
@@ -1268,57 +1116,30 @@ namespace Dnevnik
             this.grpUnos.Name = "grpUnos";
             this.grpUnos.Size = new System.Drawing.Size(360, 230);
             this.grpUnos.Text = "Podaci o knjizi";
-            // 
-            // txtNaslov
-            // 
             this.txtNaslov.Location = new System.Drawing.Point(140, 30);
             this.txtNaslov.Name = "txtNaslov";
             this.txtNaslov.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtAutor
-            // 
             this.txtAutor.Location = new System.Drawing.Point(140, 70);
             this.txtAutor.Name = "txtAutor";
             this.txtAutor.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtGodina
-            // 
             this.txtGodina.Location = new System.Drawing.Point(140, 110);
             this.txtGodina.Name = "txtGodina";
             this.txtGodina.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtISBN
-            // 
             this.txtISBN.Location = new System.Drawing.Point(140, 150);
             this.txtISBN.Name = "txtISBN";
             this.txtISBN.Size = new System.Drawing.Size(200, 22);
-            // 
-            // labelNaslov
-            // 
             this.labelNaslov.AutoSize = true;
             this.labelNaslov.Location = new System.Drawing.Point(20, 33);
             this.labelNaslov.Text = "Naslov:";
-            // 
-            // labelAutor
-            // 
             this.labelAutor.AutoSize = true;
             this.labelAutor.Location = new System.Drawing.Point(20, 73);
             this.labelAutor.Text = "Autor:";
-            // 
-            // labelGodina
-            // 
             this.labelGodina.AutoSize = true;
             this.labelGodina.Location = new System.Drawing.Point(20, 113);
             this.labelGodina.Text = "Godina izdavanja:";
-            // 
-            // labelISBN
-            // 
             this.labelISBN.AutoSize = true;
             this.labelISBN.Location = new System.Drawing.Point(20, 153);
             this.labelISBN.Text = "ISBN:";
-            // 
-            // btnDodaj
-            // 
             this.btnDodaj.BackColor = System.Drawing.Color.SeaGreen;
             this.btnDodaj.ForeColor = System.Drawing.Color.White;
             this.btnDodaj.Location = new System.Drawing.Point(25, 330);
@@ -1327,9 +1148,6 @@ namespace Dnevnik
             this.btnDodaj.Text = "Dodaj knjigu";
             this.btnDodaj.UseVisualStyleBackColor = false;
             this.btnDodaj.Click += new System.EventHandler(this.btnDodaj_Click);
-            // 
-            // DodavanjeKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(420, 400);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.grpUnos);
@@ -1361,15 +1179,7 @@ namespace Dnevnik
 {
     partial class UredivanjeKnjiga
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -1398,9 +1208,6 @@ namespace Dnevnik
             this.lblPretraga = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
             this.SuspendLayout();
-            // 
-            // dgvKnjige
-            // 
             this.dgvKnjige.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvKnjige.Location = new System.Drawing.Point(12, 62);
             this.dgvKnjige.Name = "dgvKnjige";
@@ -1408,16 +1215,10 @@ namespace Dnevnik
             this.dgvKnjige.Size = new System.Drawing.Size(776, 200);
             this.dgvKnjige.TabIndex = 0;
             this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(87, 15);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(150, 20);
             this.txtPretraga.TabIndex = 1;
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(243, 13);
             this.btnPretrazi.Name = "btnPretrazi";
             this.btnPretrazi.Size = new System.Drawing.Size(75, 23);
@@ -1425,37 +1226,22 @@ namespace Dnevnik
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.UseVisualStyleBackColor = true;
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // txtNaslov
-            // 
             this.txtNaslov.Location = new System.Drawing.Point(87, 275);
             this.txtNaslov.Name = "txtNaslov";
             this.txtNaslov.Size = new System.Drawing.Size(200, 20);
             this.txtNaslov.TabIndex = 3;
-            // 
-            // txtAutor
-            // 
             this.txtAutor.Location = new System.Drawing.Point(87, 301);
             this.txtAutor.Name = "txtAutor";
             this.txtAutor.Size = new System.Drawing.Size(200, 20);
             this.txtAutor.TabIndex = 4;
-            // 
-            // txtGodina
-            // 
             this.txtGodina.Location = new System.Drawing.Point(87, 327);
             this.txtGodina.Name = "txtGodina";
             this.txtGodina.Size = new System.Drawing.Size(200, 20);
             this.txtGodina.TabIndex = 5;
-            // 
-            // txtISBN
-            // 
             this.txtISBN.Location = new System.Drawing.Point(87, 353);
             this.txtISBN.Name = "txtISBN";
             this.txtISBN.Size = new System.Drawing.Size(200, 20);
             this.txtISBN.TabIndex = 6;
-            // 
-            // btnUredi
-            // 
             this.btnUredi.Location = new System.Drawing.Point(87, 379);
             this.btnUredi.Name = "btnUredi";
             this.btnUredi.Size = new System.Drawing.Size(75, 23);
@@ -1463,54 +1249,36 @@ namespace Dnevnik
             this.btnUredi.Text = "Spremi";
             this.btnUredi.UseVisualStyleBackColor = true;
             this.btnUredi.Click += new System.EventHandler(this.btnUredi_Click);
-            // 
-            // lblNaslov
-            // 
             this.lblNaslov.AutoSize = true;
             this.lblNaslov.Location = new System.Drawing.Point(12, 278);
             this.lblNaslov.Name = "lblNaslov";
             this.lblNaslov.Size = new System.Drawing.Size(44, 13);
             this.lblNaslov.TabIndex = 8;
             this.lblNaslov.Text = "Naslov:";
-            // 
-            // lblAutor
-            // 
             this.lblAutor.AutoSize = true;
             this.lblAutor.Location = new System.Drawing.Point(12, 304);
             this.lblAutor.Name = "lblAutor";
             this.lblAutor.Size = new System.Drawing.Size(35, 13);
             this.lblAutor.TabIndex = 9;
             this.lblAutor.Text = "Autor:";
-            // 
-            // lblGodina
-            // 
             this.lblGodina.AutoSize = true;
             this.lblGodina.Location = new System.Drawing.Point(12, 330);
             this.lblGodina.Name = "lblGodina";
             this.lblGodina.Size = new System.Drawing.Size(70, 13);
             this.lblGodina.TabIndex = 10;
             this.lblGodina.Text = "Godina izd.:";
-            // 
-            // lblISBN
-            // 
             this.lblISBN.AutoSize = true;
             this.lblISBN.Location = new System.Drawing.Point(12, 356);
             this.lblISBN.Name = "lblISBN";
             this.lblISBN.Size = new System.Drawing.Size(35, 13);
             this.lblISBN.TabIndex = 11;
             this.lblISBN.Text = "ISBN:";
-            // 
-            // lblPretraga
-            // 
             this.lblPretraga.AutoSize = true;
             this.lblPretraga.Location = new System.Drawing.Point(12, 18);
             this.lblPretraga.Name = "lblPretraga";
             this.lblPretraga.Size = new System.Drawing.Size(69, 13);
             this.lblPretraga.TabIndex = 12;
             this.lblPretraga.Text = "Pretraga naziv:";
-            // 
-            // UredivanjeKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.lblPretraga);
             this.Controls.Add(this.lblISBN);
@@ -1583,32 +1351,20 @@ namespace Dnevnik
             ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
             this.grpDetalji.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(198, 30);
             this.lblTitle.Text = "Brisanje knjiga";
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(25, 70);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(250, 22);
             this.txtPretraga.TextChanged += new System.EventHandler(this.txtPretraga_TextChanged);
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
             this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // dgvKnjige
-            // 
             this.dgvKnjige.AllowUserToAddRows = false;
             this.dgvKnjige.AllowUserToDeleteRows = false;
             this.dgvKnjige.ReadOnly = true;
@@ -1617,9 +1373,6 @@ namespace Dnevnik
             this.dgvKnjige.Location = new System.Drawing.Point(25, 110);
             this.dgvKnjige.Size = new System.Drawing.Size(500, 300);
             this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
-            // 
-            // grpDetalji
-            // 
             this.grpDetalji.Controls.Add(this.txtNaslov);
             this.grpDetalji.Controls.Add(this.txtAutor);
             this.grpDetalji.Controls.Add(this.txtGodina);
@@ -1631,49 +1384,22 @@ namespace Dnevnik
             this.grpDetalji.Location = new System.Drawing.Point(550, 110);
             this.grpDetalji.Size = new System.Drawing.Size(300, 200);
             this.grpDetalji.Text = "Detalji knjige";
-            // 
-            // txtNaslov
-            // 
             this.txtNaslov.Location = new System.Drawing.Point(120, 30);
             this.txtNaslov.ReadOnly = true;
-            // 
-            // txtAutor
-            // 
             this.txtAutor.Location = new System.Drawing.Point(120, 60);
             this.txtAutor.ReadOnly = true;
-            // 
-            // txtGodina
-            // 
             this.txtGodina.Location = new System.Drawing.Point(120, 90);
             this.txtGodina.ReadOnly = true;
-            // 
-            // txtISBN
-            // 
             this.txtISBN.Location = new System.Drawing.Point(120, 120);
             this.txtISBN.ReadOnly = true;
-            // 
-            // labelNaslov
-            // 
             this.labelNaslov.Location = new System.Drawing.Point(15, 30);
             this.labelNaslov.Text = "Naslov:";
-            // 
-            // labelAutor
-            // 
             this.labelAutor.Location = new System.Drawing.Point(15, 60);
             this.labelAutor.Text = "Autor:";
-            // 
-            // labelGodina
-            // 
             this.labelGodina.Location = new System.Drawing.Point(15, 90);
             this.labelGodina.Text = "Godina:";
-            // 
-            // labelISBN
-            // 
             this.labelISBN.Location = new System.Drawing.Point(15, 120);
             this.labelISBN.Text = "ISBN:";
-            // 
-            // btnIzbrisi
-            // 
             this.btnIzbrisi.BackColor = System.Drawing.Color.IndianRed;
             this.btnIzbrisi.ForeColor = System.Drawing.Color.White;
             this.btnIzbrisi.Location = new System.Drawing.Point(550, 330);
@@ -1681,9 +1407,6 @@ namespace Dnevnik
             this.btnIzbrisi.Text = "Označi knjigu kao neaktivnu";
             this.btnIzbrisi.UseVisualStyleBackColor = false;
             this.btnIzbrisi.Click += new System.EventHandler(this.btnIzbrisi_Click);
-            // 
-            // BrisanjeKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(900, 450);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtPretraga);
@@ -1754,9 +1477,6 @@ namespace Dnevnik
             this.lblPretraga = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
             this.SuspendLayout();
-            // 
-            // dgvClanovi
-            // 
             this.dgvClanovi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvClanovi.Location = new System.Drawing.Point(12, 62);
             this.dgvClanovi.Name = "dgvClanovi";
@@ -1764,17 +1484,11 @@ namespace Dnevnik
             this.dgvClanovi.Size = new System.Drawing.Size(776, 200);
             this.dgvClanovi.TabIndex = 0;
             this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
-            this.dgvClanovi.ReadOnly = true;  // ONEMOGUĆAVANJE EDITOVANJA
-            // 
-            // txtPretraga
-            // 
+            this.dgvClanovi.ReadOnly = true;  
             this.txtPretraga.Location = new System.Drawing.Point(87, 15);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(150, 20);
             this.txtPretraga.TabIndex = 1;
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(243, 13);
             this.btnPretrazi.Name = "btnPretrazi";
             this.btnPretrazi.Size = new System.Drawing.Size(75, 23);
@@ -1782,45 +1496,27 @@ namespace Dnevnik
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.UseVisualStyleBackColor = true;
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // txtIme
-            // 
             this.txtIme.Location = new System.Drawing.Point(87, 275);
             this.txtIme.Name = "txtIme";
             this.txtIme.Size = new System.Drawing.Size(200, 20);
             this.txtIme.TabIndex = 3;
-            // 
-            // txtPrezime
-            // 
             this.txtPrezime.Location = new System.Drawing.Point(87, 301);
             this.txtPrezime.Name = "txtPrezime";
             this.txtPrezime.Size = new System.Drawing.Size(200, 20);
             this.txtPrezime.TabIndex = 4;
-            // 
-            // txtEmail
-            // 
             this.txtEmail.Location = new System.Drawing.Point(87, 327);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(200, 20);
             this.txtEmail.TabIndex = 5;
-            // 
-            // txtTelefon
-            // 
             this.txtTelefon.Location = new System.Drawing.Point(87, 353);
             this.txtTelefon.Name = "txtTelefon";
             this.txtTelefon.Size = new System.Drawing.Size(200, 20);
             this.txtTelefon.TabIndex = 6;
-            // 
-            // txtDatumUclanjenja
-            // 
             this.txtDatumUclanjenja.Location = new System.Drawing.Point(87, 379);
             this.txtDatumUclanjenja.Name = "txtDatumUclanjenja";
             this.txtDatumUclanjenja.ReadOnly = true;
             this.txtDatumUclanjenja.Size = new System.Drawing.Size(200, 20);
             this.txtDatumUclanjenja.TabIndex = 7;
-            // 
-            // btnSpremi
-            // 
             this.btnSpremi.Location = new System.Drawing.Point(87, 405);
             this.btnSpremi.Name = "btnSpremi";
             this.btnSpremi.Size = new System.Drawing.Size(75, 23);
@@ -1828,63 +1524,42 @@ namespace Dnevnik
             this.btnSpremi.Text = "Spremi";
             this.btnSpremi.UseVisualStyleBackColor = true;
             this.btnSpremi.Click += new System.EventHandler(this.btnSpremi_Click);
-            // 
-            // lblIme
-            // 
             this.lblIme.AutoSize = true;
             this.lblIme.Location = new System.Drawing.Point(12, 278);
             this.lblIme.Name = "lblIme";
             this.lblIme.Size = new System.Drawing.Size(29, 13);
             this.lblIme.TabIndex = 9;
             this.lblIme.Text = "Ime:";
-            // 
-            // lblPrezime
-            // 
             this.lblPrezime.AutoSize = true;
             this.lblPrezime.Location = new System.Drawing.Point(12, 304);
             this.lblPrezime.Name = "lblPrezime";
             this.lblPrezime.Size = new System.Drawing.Size(52, 13);
             this.lblPrezime.TabIndex = 10;
             this.lblPrezime.Text = "Prezime:";
-            // 
-            // lblEmail
-            // 
             this.lblEmail.AutoSize = true;
             this.lblEmail.Location = new System.Drawing.Point(12, 330);
             this.lblEmail.Name = "lblEmail";
             this.lblEmail.Size = new System.Drawing.Size(35, 13);
             this.lblEmail.TabIndex = 11;
             this.lblEmail.Text = "Email:";
-            // 
-            // lblTelefon
-            // 
             this.lblTelefon.AutoSize = true;
             this.lblTelefon.Location = new System.Drawing.Point(12, 356);
             this.lblTelefon.Name = "lblTelefon";
             this.lblTelefon.Size = new System.Drawing.Size(49, 13);
             this.lblTelefon.TabIndex = 12;
             this.lblTelefon.Text = "Telefon:";
-            // 
-            // lblDatumUclanjenja
-            // 
             this.lblDatumUclanjenja.AutoSize = true;
             this.lblDatumUclanjenja.Location = new System.Drawing.Point(12, 382);
             this.lblDatumUclanjenja.Name = "lblDatumUclanjenja";
             this.lblDatumUclanjenja.Size = new System.Drawing.Size(92, 13);
             this.lblDatumUclanjenja.TabIndex = 13;
             this.lblDatumUclanjenja.Text = "Dan učlanjenja:";
-            // 
-            // lblPretraga
-            // 
             this.lblPretraga.AutoSize = true;
             this.lblPretraga.Location = new System.Drawing.Point(12, 18);
             this.lblPretraga.Name = "lblPretraga";
             this.lblPretraga.Size = new System.Drawing.Size(69, 13);
             this.lblPretraga.TabIndex = 14;
             this.lblPretraga.Text = "Pretraga ime:";
-            // 
-            // UredivanjeClanova
-            // 
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.lblPretraga);
             this.Controls.Add(this.lblDatumUclanjenja);
@@ -1963,31 +1638,19 @@ namespace Dnevnik
             ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
             this.grpDetalji.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(210, 30);
             this.lblTitle.Text = "Brisanje članova";
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(25, 70);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(250, 22);
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
             this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // dgvClanovi
-            // 
             this.dgvClanovi.AllowUserToAddRows = false;
             this.dgvClanovi.AllowUserToDeleteRows = false;
             this.dgvClanovi.ReadOnly = true;
@@ -1996,9 +1659,6 @@ namespace Dnevnik
             this.dgvClanovi.Location = new System.Drawing.Point(25, 110);
             this.dgvClanovi.Size = new System.Drawing.Size(500, 300);
             this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
-            // 
-            // grpDetalji
-            // 
             this.grpDetalji.Controls.Add(this.txtIme);
             this.grpDetalji.Controls.Add(this.txtPrezime);
             this.grpDetalji.Controls.Add(this.txtEmail);
@@ -2012,59 +1672,26 @@ namespace Dnevnik
             this.grpDetalji.Location = new System.Drawing.Point(550, 110);
             this.grpDetalji.Size = new System.Drawing.Size(300, 230);
             this.grpDetalji.Text = "Detalji člana";
-            // 
-            // txtIme
-            // 
             this.txtIme.Location = new System.Drawing.Point(120, 30);
             this.txtIme.ReadOnly = true;
-            // 
-            // txtPrezime
-            // 
             this.txtPrezime.Location = new System.Drawing.Point(120, 60);
             this.txtPrezime.ReadOnly = true;
-            // 
-            // txtEmail
-            // 
             this.txtEmail.Location = new System.Drawing.Point(120, 90);
             this.txtEmail.ReadOnly = true;
-            // 
-            // txtTelefon
-            // 
             this.txtTelefon.Location = new System.Drawing.Point(120, 120);
             this.txtTelefon.ReadOnly = true;
-            // 
-            // txtDatumUclanjenja
-            // 
             this.txtDatumUclanjenja.Location = new System.Drawing.Point(120, 150);
             this.txtDatumUclanjenja.ReadOnly = true;
-            // 
-            // labelIme
-            // 
             this.labelIme.Location = new System.Drawing.Point(15, 30);
             this.labelIme.Text = "Ime:";
-            // 
-            // labelPrezime
-            // 
             this.labelPrezime.Location = new System.Drawing.Point(15, 60);
             this.labelPrezime.Text = "Prezime:";
-            // 
-            // labelEmail
-            // 
             this.labelEmail.Location = new System.Drawing.Point(15, 90);
             this.labelEmail.Text = "Email:";
-            // 
-            // labelTelefon
-            // 
             this.labelTelefon.Location = new System.Drawing.Point(15, 120);
             this.labelTelefon.Text = "Telefon:";
-            // 
-            // labelDatum
-            // 
             this.labelDatum.Location = new System.Drawing.Point(15, 150);
             this.labelDatum.Text = "Datum učlanjenja:";
-            // 
-            // btnIzbrisi
-            // 
             this.btnIzbrisi.BackColor = System.Drawing.Color.IndianRed;
             this.btnIzbrisi.ForeColor = System.Drawing.Color.White;
             this.btnIzbrisi.Location = new System.Drawing.Point(550, 360);
@@ -2072,9 +1699,6 @@ namespace Dnevnik
             this.btnIzbrisi.Text = "Označi člana kao neaktivnog";
             this.btnIzbrisi.UseVisualStyleBackColor = false;
             this.btnIzbrisi.Click += new System.EventHandler(this.btnIzbrisi_Click);
-            // 
-            // BrisanjeClanova
-            // 
             this.ClientSize = new System.Drawing.Size(900, 450);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtPretraga);
@@ -2141,18 +1765,12 @@ namespace Dnevnik
             this.btnDodaj = new System.Windows.Forms.Button();
             this.grpUnos.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(215, 30);
             this.lblTitle.Text = "Dodavanje člana";
-            // 
-            // grpUnos
-            // 
             this.grpUnos.Controls.Add(this.txtIme);
             this.grpUnos.Controls.Add(this.txtPrezime);
             this.grpUnos.Controls.Add(this.txtEmail);
@@ -2165,57 +1783,30 @@ namespace Dnevnik
             this.grpUnos.Name = "grpUnos";
             this.grpUnos.Size = new System.Drawing.Size(350, 200);
             this.grpUnos.Text = "Podaci o članu";
-            // 
-            // txtIme
-            // 
             this.txtIme.Location = new System.Drawing.Point(120, 30);
             this.txtIme.Name = "txtIme";
             this.txtIme.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtPrezime
-            // 
             this.txtPrezime.Location = new System.Drawing.Point(120, 65);
             this.txtPrezime.Name = "txtPrezime";
             this.txtPrezime.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtEmail
-            // 
             this.txtEmail.Location = new System.Drawing.Point(120, 100);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(200, 22);
-            // 
-            // txtTelefon
-            // 
             this.txtTelefon.Location = new System.Drawing.Point(120, 135);
             this.txtTelefon.Name = "txtTelefon";
             this.txtTelefon.Size = new System.Drawing.Size(200, 22);
-            // 
-            // labelIme
-            // 
             this.labelIme.AutoSize = true;
             this.labelIme.Location = new System.Drawing.Point(20, 33);
             this.labelIme.Text = "Ime:";
-            // 
-            // labelPrezime
-            // 
             this.labelPrezime.AutoSize = true;
             this.labelPrezime.Location = new System.Drawing.Point(20, 68);
             this.labelPrezime.Text = "Prezime:";
-            // 
-            // labelEmail
-            // 
             this.labelEmail.AutoSize = true;
             this.labelEmail.Location = new System.Drawing.Point(20, 103);
             this.labelEmail.Text = "Email:";
-            // 
-            // labelTelefon
-            // 
             this.labelTelefon.AutoSize = true;
             this.labelTelefon.Location = new System.Drawing.Point(20, 138);
             this.labelTelefon.Text = "Telefon:";
-            // 
-            // btnDodaj
-            // 
             this.btnDodaj.BackColor = System.Drawing.Color.SeaGreen;
             this.btnDodaj.ForeColor = System.Drawing.Color.White;
             this.btnDodaj.Location = new System.Drawing.Point(25, 300);
@@ -2224,9 +1815,6 @@ namespace Dnevnik
             this.btnDodaj.Text = "Dodaj člana";
             this.btnDodaj.UseVisualStyleBackColor = false;
             this.btnDodaj.Click += new System.EventHandler(this.btnDodaj_Click);
-            // 
-            // DodavanjeClanova
-            // 
             this.ClientSize = new System.Drawing.Size(420, 380);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.grpUnos);
@@ -2277,33 +1865,21 @@ namespace Dnevnik
             this.dgvClanovi = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(215, 30);
             this.lblTitle.Text = "Pregled članova";
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(25, 70);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(250, 22);
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
             this.btnPretrazi.Name = "btnPretrazi";
             this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.UseVisualStyleBackColor = true;
             this.btnPretrazi.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // dgvClanovi
-            // 
             this.dgvClanovi.AllowUserToAddRows = false;
             this.dgvClanovi.AllowUserToDeleteRows = false;
             this.dgvClanovi.ReadOnly = true;
@@ -2313,9 +1889,6 @@ namespace Dnevnik
             this.dgvClanovi.Name = "dgvClanovi";
             this.dgvClanovi.Size = new System.Drawing.Size(650, 300);
             this.dgvClanovi.TabIndex = 3;
-            // 
-            // PregledClanova
-            // 
             this.ClientSize = new System.Drawing.Size(710, 440);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtPretraga);
@@ -2360,33 +1933,21 @@ namespace Dnevnik
             this.dgvKnjige = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(207, 30);
             this.lblTitle.Text = "Pregled knjiga";
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(25, 70);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(280, 22);
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(320, 68);
             this.btnPretrazi.Name = "btnPretrazi";
             this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.UseVisualStyleBackColor = true;
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // dgvKnjige
-            // 
             this.dgvKnjige.AllowUserToAddRows = false;
             this.dgvKnjige.AllowUserToDeleteRows = false;
             this.dgvKnjige.ReadOnly = true;
@@ -2396,9 +1957,6 @@ namespace Dnevnik
             this.dgvKnjige.Location = new System.Drawing.Point(25, 110);
             this.dgvKnjige.Name = "dgvKnjige";
             this.dgvKnjige.Size = new System.Drawing.Size(750, 320);
-            // 
-            // PregledKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(810, 460);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.txtPretraga);
@@ -2452,18 +2010,12 @@ namespace Dnevnik
             this.grpKnjige.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(215, 30);
             this.lblTitle.Text = "Posudba knjige";
-            // 
-            // grpClanovi
-            // 
             this.grpClanovi.Controls.Add(this.txtPretragaClan);
             this.grpClanovi.Controls.Add(this.btnPretraziClan);
             this.grpClanovi.Controls.Add(this.dgvClanovi);
@@ -2471,22 +2023,13 @@ namespace Dnevnik
             this.grpClanovi.Name = "grpClanovi";
             this.grpClanovi.Size = new System.Drawing.Size(420, 320);
             this.grpClanovi.Text = "Odabir člana";
-            // 
-            // txtPretragaClan
-            // 
             this.txtPretragaClan.Location = new System.Drawing.Point(15, 25);
             this.txtPretragaClan.Name = "txtPretragaClan";
             this.txtPretragaClan.Size = new System.Drawing.Size(260, 22);
-            // 
-            // btnPretraziClan
-            // 
             this.btnPretraziClan.Location = new System.Drawing.Point(290, 23);
             this.btnPretraziClan.Size = new System.Drawing.Size(100, 26);
             this.btnPretraziClan.Text = "Pretraži";
             this.btnPretraziClan.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // dgvClanovi
-            // 
             this.dgvClanovi.AllowUserToAddRows = false;
             this.dgvClanovi.AllowUserToDeleteRows = false;
             this.dgvClanovi.ReadOnly = true;
@@ -2495,9 +2038,6 @@ namespace Dnevnik
             this.dgvClanovi.Location = new System.Drawing.Point(15, 60);
             this.dgvClanovi.Size = new System.Drawing.Size(375, 240);
             this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
-            // 
-            // grpKnjige
-            // 
             this.grpKnjige.Controls.Add(this.txtPretragaKnjiga);
             this.grpKnjige.Controls.Add(this.btnPretraziKnjiga);
             this.grpKnjige.Controls.Add(this.dgvKnjige);
@@ -2505,22 +2045,13 @@ namespace Dnevnik
             this.grpKnjige.Name = "grpKnjige";
             this.grpKnjige.Size = new System.Drawing.Size(420, 320);
             this.grpKnjige.Text = "Odabir knjige";
-            // 
-            // txtPretragaKnjiga
-            // 
             this.txtPretragaKnjiga.Location = new System.Drawing.Point(15, 25);
             this.txtPretragaKnjiga.Name = "txtPretragaKnjiga";
             this.txtPretragaKnjiga.Size = new System.Drawing.Size(260, 22);
-            // 
-            // btnPretraziKnjiga
-            // 
             this.btnPretraziKnjiga.Location = new System.Drawing.Point(290, 23);
             this.btnPretraziKnjiga.Size = new System.Drawing.Size(100, 26);
             this.btnPretraziKnjiga.Text = "Pretraži";
             this.btnPretraziKnjiga.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // dgvKnjige
-            // 
             this.dgvKnjige.AllowUserToAddRows = false;
             this.dgvKnjige.AllowUserToDeleteRows = false;
             this.dgvKnjige.ReadOnly = true;
@@ -2529,9 +2060,6 @@ namespace Dnevnik
             this.dgvKnjige.Location = new System.Drawing.Point(15, 60);
             this.dgvKnjige.Size = new System.Drawing.Size(375, 240);
             this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
-            // 
-            // btnPosudi
-            // 
             this.btnPosudi.BackColor = System.Drawing.Color.SteelBlue;
             this.btnPosudi.ForeColor = System.Drawing.Color.White;
             this.btnPosudi.Location = new System.Drawing.Point(25, 410);
@@ -2540,9 +2068,6 @@ namespace Dnevnik
             this.btnPosudi.Text = "Posudi odabranu knjigu";
             this.btnPosudi.UseVisualStyleBackColor = false;
             this.btnPosudi.Click += new System.EventHandler(this.btnPosudi_Click);
-            // 
-            // PosudbaKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(920, 480);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.grpClanovi);
@@ -2600,18 +2125,12 @@ namespace Dnevnik
             this.grpPosudbe.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(205, 30);
             this.lblTitle.Text = "Povrat knjige";
-            // 
-            // grpPosudbe
-            // 
             this.grpPosudbe.Controls.Add(this.txtPretraga);
             this.grpPosudbe.Controls.Add(this.btnPretrazi);
             this.grpPosudbe.Controls.Add(this.dgvPosudbe);
@@ -2619,22 +2138,13 @@ namespace Dnevnik
             this.grpPosudbe.Name = "grpPosudbe";
             this.grpPosudbe.Size = new System.Drawing.Size(850, 320);
             this.grpPosudbe.Text = "Aktivne posudbe";
-            // 
-            // txtPretraga
-            // 
             this.txtPretraga.Location = new System.Drawing.Point(15, 25);
             this.txtPretraga.Name = "txtPretraga";
             this.txtPretraga.Size = new System.Drawing.Size(260, 22);
-            // 
-            // btnPretrazi
-            // 
             this.btnPretrazi.Location = new System.Drawing.Point(290, 23);
             this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
             this.btnPretrazi.Text = "Pretraži";
             this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
-            // 
-            // dgvPosudbe
-            // 
             this.dgvPosudbe.AllowUserToAddRows = false;
             this.dgvPosudbe.AllowUserToDeleteRows = false;
             this.dgvPosudbe.ReadOnly = true;
@@ -2643,9 +2153,6 @@ namespace Dnevnik
             this.dgvPosudbe.Location = new System.Drawing.Point(15, 60);
             this.dgvPosudbe.Size = new System.Drawing.Size(815, 240);
             this.dgvPosudbe.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPosudbe_CellClick);
-            // 
-            // btnVrati
-            // 
             this.btnVrati.BackColor = System.Drawing.Color.SeaGreen;
             this.btnVrati.ForeColor = System.Drawing.Color.White;
             this.btnVrati.Location = new System.Drawing.Point(25, 410);
@@ -2654,9 +2161,6 @@ namespace Dnevnik
             this.btnVrati.Text = "Vrati odabranu knjigu";
             this.btnVrati.UseVisualStyleBackColor = false;
             this.btnVrati.Click += new System.EventHandler(this.btnVrati_Click);
-            // 
-            // PovratKnjiga
-            // 
             this.ClientSize = new System.Drawing.Size(900, 480);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.grpPosudbe);
@@ -2707,22 +2211,14 @@ namespace Dnevnik
             this.lblNeaktivniClanovi = new System.Windows.Forms.Label();
             this.lblProsjecnoTrajanje = new System.Windows.Forms.Label();
             this.lblNevraceneKnjige = new System.Windows.Forms.Label();
-
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
-
-            // 
-            // lblTitle
-            // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitle.Location = new System.Drawing.Point(25, 20);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(118, 30);
             this.lblTitle.Text = "Statistika";
-            // 
-            // tableLayoutPanel
-            // 
             this.tableLayoutPanel.ColumnCount = 2;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
@@ -2747,58 +2243,30 @@ namespace Dnevnik
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.tableLayoutPanel.Size = new System.Drawing.Size(450, 320);
             this.tableLayoutPanel.TabIndex = 1;
-
-            // 
-            // lblBrojKnjiga
-            // 
             this.lblBrojKnjiga.AutoSize = true;
             this.lblBrojKnjiga.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblBrojKnjiga.Text = "Aktivne knjige: 0";
-            // 
-            // lblBrojClanova
-            // 
             this.lblBrojClanova.AutoSize = true;
             this.lblBrojClanova.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblBrojClanova.Text = "Aktivni članovi: 0";
-            // 
-            // lblPosudjene
-            // 
             this.lblPosudjene.AutoSize = true;
             this.lblPosudjene.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblPosudjene.Text = "Posuđene knjige: 0";
-            // 
-            // lblUkupnoPosudbi
-            // 
             this.lblUkupnoPosudbi.AutoSize = true;
             this.lblUkupnoPosudbi.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblUkupnoPosudbi.Text = "Ukupno posudbi: 0";
-            // 
-            // lblPosudbePoKnjigama
-            // 
             this.lblPosudbePoKnjigama.AutoSize = true;
             this.lblPosudbePoKnjigama.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblPosudbePoKnjigama.Text = "Posudbe po knjigama:";
-            // 
-            // lblNeaktivniClanovi
-            // 
             this.lblNeaktivniClanovi.AutoSize = true;
             this.lblNeaktivniClanovi.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblNeaktivniClanovi.Text = "Neaktivni članovi: 0";
-            // 
-            // lblProsjecnoTrajanje
-            // 
             this.lblProsjecnoTrajanje.AutoSize = true;
             this.lblProsjecnoTrajanje.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblProsjecnoTrajanje.Text = "Prosječno trajanje posudbe:";
-            // 
-            // lblNevraceneKnjige
-            // 
             this.lblNevraceneKnjige.AutoSize = true;
             this.lblNevraceneKnjige.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblNevraceneKnjige.Text = "Nevraćene knjige: 0";
-            // 
-            // Statistika
-            // 
             this.ClientSize = new System.Drawing.Size(500, 420);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.tableLayoutPanel);
@@ -2810,9 +2278,7 @@ namespace Dnevnik
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
         #endregion
-
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Label lblBrojKnjiga;
@@ -2826,10 +2292,6 @@ namespace Dnevnik
     }
 }
 
-
-
-
-
 Zatim sam dodao ovo u bazu
 CREATE TABLE [dbo].[Clanarina] (
     [ClanarinaID] [int] IDENTITY(1,1) NOT NULL,
@@ -2840,8 +2302,6 @@ CREATE TABLE [dbo].[Clanarina] (
     PRIMARY KEY CLUSTERED ([ClanarinaID] ASC) 
         ON [PRIMARY]
 );
-
--- Dodavanje vanjskog ključa koji povezuje tablicu Clanarina s Clanovi
 ALTER TABLE [dbo].[Clanarina]
 ADD CONSTRAINT FK_Clanarina_Clanovi FOREIGN KEY ([ClanID]) REFERENCES [dbo].[Clanovi]([ClanID]);
 
