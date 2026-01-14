@@ -1,0 +1,2848 @@
+Evo ti moj trenutni kod i baza: 
+USE [master] GO /****** Object: Database [KNJIZNICA] Script Date: 14.1.2026. 11:05:03 ******/ CREATE DATABASE [KNJIZNICA] CONTAINMENT = NONE ON PRIMARY ( NAME = N'KNJIZNICA', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\KNJIZNICA.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 10%) LOG ON ( NAME = N'KNJIZNICA_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\KNJIZNICA_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%) WITH CATALOG_COLLATION = DATABASE_DEFAULT GO ALTER DATABASE [KNJIZNICA] SET COMPATIBILITY_LEVEL = 150 GO IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled')) begin EXEC [KNJIZNICA].[dbo].[sp_fulltext_database] @action = 'enable' end GO ALTER DATABASE [KNJIZNICA] SET ANSI_NULL_DEFAULT OFF GO ALTER DATABASE [KNJIZNICA] SET ANSI_NULLS OFF GO ALTER DATABASE [KNJIZNICA] SET ANSI_PADDING OFF GO ALTER DATABASE [KNJIZNICA] SET ANSI_WARNINGS OFF GO ALTER DATABASE [KNJIZNICA] SET ARITHABORT OFF GO ALTER DATABASE [KNJIZNICA] SET AUTO_CLOSE OFF GO ALTER DATABASE [KNJIZNICA] SET AUTO_SHRINK OFF GO ALTER DATABASE [KNJIZNICA] SET AUTO_UPDATE_STATISTICS ON GO ALTER DATABASE [KNJIZNICA] SET CURSOR_CLOSE_ON_COMMIT OFF GO ALTER DATABASE [KNJIZNICA] SET CURSOR_DEFAULT GLOBAL GO ALTER DATABASE [KNJIZNICA] SET CONCAT_NULL_YIELDS_NULL OFF GO ALTER DATABASE [KNJIZNICA] SET NUMERIC_ROUNDABORT OFF GO ALTER DATABASE [KNJIZNICA] SET QUOTED_IDENTIFIER OFF GO ALTER DATABASE [KNJIZNICA] SET RECURSIVE_TRIGGERS OFF GO ALTER DATABASE [KNJIZNICA] SET DISABLE_BROKER GO ALTER DATABASE [KNJIZNICA] SET AUTO_UPDATE_STATISTICS_ASYNC OFF GO ALTER DATABASE [KNJIZNICA] SET DATE_CORRELATION_OPTIMIZATION OFF GO ALTER DATABASE [KNJIZNICA] SET TRUSTWORTHY OFF GO ALTER DATABASE [KNJIZNICA] SET ALLOW_SNAPSHOT_ISOLATION OFF GO ALTER DATABASE [KNJIZNICA] SET PARAMETERIZATION SIMPLE GO ALTER DATABASE [KNJIZNICA] SET READ_COMMITTED_SNAPSHOT OFF GO ALTER DATABASE [KNJIZNICA] SET HONOR_BROKER_PRIORITY OFF GO ALTER DATABASE [KNJIZNICA] SET RECOVERY SIMPLE GO ALTER DATABASE [KNJIZNICA] SET MULTI_USER GO ALTER DATABASE [KNJIZNICA] SET PAGE_VERIFY CHECKSUM GO ALTER DATABASE [KNJIZNICA] SET DB_CHAINING OFF GO ALTER DATABASE [KNJIZNICA] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) GO ALTER DATABASE [KNJIZNICA] SET TARGET_RECOVERY_TIME = 0 SECONDS GO ALTER DATABASE [KNJIZNICA] SET DELAYED_DURABILITY = DISABLED GO ALTER DATABASE [KNJIZNICA] SET ACCELERATED_DATABASE_RECOVERY = OFF GO ALTER DATABASE [KNJIZNICA] SET QUERY_STORE = OFF GO USE [KNJIZNICA] GO /****** Object: Table [dbo].[Clanovi] Script Date: 14.1.2026. 11:05:03 ******/ SET ANSI_NULLS ON GO SET QUOTED_IDENTIFIER ON GO CREATE TABLE [dbo].[Clanovi]( [ClanID] [int] IDENTITY(1,1) NOT NULL, [Ime] [nvarchar](50) NOT NULL, [Prezime] [nvarchar](50) NOT NULL, [Email] [nvarchar](100) NULL, [Telefon] [nvarchar](20) NULL, [DatumUclanjenja] [date] NULL, [Aktivan] [bit] NULL, PRIMARY KEY CLUSTERED ( [ClanID] ASC )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY] ) ON [PRIMARY] GO /****** Object: Table [dbo].[Knjige] Script Date: 14.1.2026. 11:05:03 ******/ SET ANSI_NULLS ON GO SET QUOTED_IDENTIFIER ON GO CREATE TABLE [dbo].[Knjige]( [KnjigaID] [int] IDENTITY(1,1) NOT NULL, [Naslov] [nvarchar](100) NOT NULL, [Autor] [nvarchar](100) NOT NULL, [GodinaIzdavanja] [int] NULL, [ISBN] [nvarchar](20) NULL, [Status] [nvarchar](20) NULL, [Aktivan] [bit] NULL, PRIMARY KEY CLUSTERED ( [KnjigaID] ASC )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY], UNIQUE NONCLUSTERED ( [ISBN] ASC )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY] ) ON [PRIMARY] GO /****** Object: Table [dbo].[Posudbe] Script Date: 14.1.2026. 11:05:03 ******/ SET ANSI_NULLS ON GO SET QUOTED_IDENTIFIER ON GO CREATE TABLE [dbo].[Posudbe]( [PosudbaID] [int] IDENTITY(1,1) NOT NULL, [ClanID] [int] NOT NULL, [KnjigaID] [int] NOT NULL, [DatumPosudbe] [date] NOT NULL, [DatumPovratka] [date] NULL, [Vracena] [bit] NULL, PRIMARY KEY CLUSTERED ( [PosudbaID] ASC )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY] ) ON [PRIMARY] GO ALTER TABLE [dbo].[Clanovi] ADD DEFAULT (getdate()) FOR [DatumUclanjenja] GO ALTER TABLE [dbo].[Clanovi] ADD DEFAULT ((1)) FOR [Aktivan] GO ALTER TABLE [dbo].[Knjige] ADD DEFAULT ('Dostupna') FOR [Status] GO ALTER TABLE [dbo].[Knjige] ADD DEFAULT ((1)) FOR [Aktivan] GO ALTER TABLE [dbo].[Posudbe] ADD DEFAULT ((0)) FOR [Vracena] GO ALTER TABLE [dbo].[Posudbe] WITH CHECK ADD FOREIGN KEY([ClanID]) REFERENCES [dbo].[Clanovi] ([ClanID]) GO ALTER TABLE [dbo].[Posudbe] WITH CHECK ADD FOREIGN KEY([KnjigaID]) REFERENCES [dbo].[Knjige] ([KnjigaID]) GO USE [master] GO ALTER DATABASE [KNJIZNICA] SET READ_WRITE GO
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace Dnevnik
+{
+    public partial class Form1 : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadKnjige();
+            LoadClanovi();
+            LoadPosudbe();
+
+            MenuStrip menuStrip = new MenuStrip();
+            ToolStripMenuItem knjigeMenu = new ToolStripMenuItem("Knjige");
+            knjigeMenu.DropDownItems.Add("Posudi knjigu", null, PosudiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Povrat knjige", null, VratiKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Pregledaj knjige", null, PregledajKnjige_Click);
+            knjigeMenu.DropDownItems.Add("Dodaj knjigu", null, DodajKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Uredi knjigu", null, UrediKnjigu_Click);
+            knjigeMenu.DropDownItems.Add("Izbriši knjigu", null, IzbrisiKnjigu_Click);
+            ToolStripMenuItem clanoviMenu = new ToolStripMenuItem("Članovi");
+            clanoviMenu.DropDownItems.Add("Pregled članova", null, PregledajClanove_Click);
+            clanoviMenu.DropDownItems.Add("Dodaj člana", null, DodajClana_Click);
+            clanoviMenu.DropDownItems.Add("Uredi člana", null, UrediClana_Click);
+            clanoviMenu.DropDownItems.Add("Izbriši člana", null, IzbrisiClana_Click);
+            ToolStripMenuItem statistikaMenu = new ToolStripMenuItem("Statistika");
+            statistikaMenu.Click += StatistikaMenu_Click;  
+            menuStrip.Items.Add(knjigeMenu);
+            menuStrip.Items.Add(clanoviMenu);
+            menuStrip.Items.Add(statistikaMenu); 
+
+            this.MainMenuStrip = menuStrip;
+            this.Controls.Add(menuStrip);
+        }
+        
+
+        private void LoadKnjige()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Knjige WHERE Aktivan = 1", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+        private void LoadClanovi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Clanovi WHERE Aktivan = 1", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+
+
+        private void LoadPosudbe()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, 
+                                        p.DatumPosudbe, p.DatumPovratka, p.Vracena
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID
+                                 WHERE k.Aktivan = 1 AND c.Aktivan = 1";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+
+        private void PosudiKnjigu_Click(object sender, EventArgs e)
+        {
+            using (var f = new PosudbaKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+                LoadPosudbe();
+            }
+        }
+
+        private void VratiKnjigu_Click(object sender, EventArgs e)
+        {
+            using (var f = new PovratKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+                LoadPosudbe();
+            }
+        }
+
+        private void PregledajKnjige_Click(object sender, EventArgs e)
+        {
+            using (var f = new PregledKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+            }
+        }
+
+        private void DodajKnjigu_Click(object sender, EventArgs e)
+        {
+            using (var f = new DodavanjeKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+            }
+        }
+
+        private void UrediKnjigu_Click(object sender, EventArgs e)
+        {
+            using (var f = new UredivanjeKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+            }
+        }
+
+        private void IzbrisiKnjigu_Click(object sender, EventArgs e)
+        {
+            using (var f = new BrisanjeKnjiga())
+            {
+                f.ShowDialog();
+                LoadKnjige();
+            }
+        }
+
+        private void PregledajClanove_Click(object sender, EventArgs e)
+        {
+            using (var f = new PregledClanova())
+            {
+                f.ShowDialog();
+                LoadClanovi();
+            }
+        }
+
+        private void DodajClana_Click(object sender, EventArgs e)
+        {
+            using (var f = new DodavanjeClanova())
+            {
+                f.ShowDialog();
+                LoadClanovi();
+            }
+        }
+
+        private void UrediClana_Click(object sender, EventArgs e)
+        {
+            using (var f = new UredivanjeClanova())
+            {
+                f.ShowDialog();
+                LoadClanovi();
+            }
+        }
+
+        private void IzbrisiClana_Click(object sender, EventArgs e)
+        {
+            using (var f = new BrisanjeClanova())
+            {
+                f.ShowDialog();
+                LoadClanovi();
+            }
+        }
+        private void StatistikaMenu_Click(object sender, EventArgs e)
+        {
+            using (var f = new Statistika())
+            {
+                f.ShowDialog();
+            }
+        }
+
+
+        private void dodajKnjiguToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class DodavanjeKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public DodavanjeKnjiga()
+        {
+            InitializeComponent();
+        }
+
+        private void DodavanjeKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+       
+
+        private void btnDodaj_Click(object sender, EventArgs e)
+        {
+            int godina;
+            if (!int.TryParse(txtGodina.Text, out godina))
+            {
+                MessageBox.Show("Godina mora biti broj.");
+                return;
+            }
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN, Aktivan) " +
+               "VALUES (@Naslov, @Autor, @Godina, @ISBN, 1)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno dodana!");
+                this.Close();
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class UredivanjeKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int knjigaID;
+        public UredivanjeKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Knjige WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Naslov LIKE @Filter OR Autor LIKE @Filter)"; 
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+
+                dgvKnjige.ReadOnly = true; 
+                dgvKnjige.AllowUserToAddRows = false; 
+                dgvKnjige.AllowUserToDeleteRows = false; 
+            }
+        }
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dgvKnjige.Rows[e.RowIndex];
+                knjigaID = Convert.ToInt32(row.Cells["KnjigaID"].Value);
+                txtNaslov.Text = row.Cells["Naslov"].Value.ToString();
+                txtAutor.Text = row.Cells["Autor"].Value.ToString();
+                txtGodina.Text = row.Cells["GodinaIzdavanja"].Value.ToString();
+                txtISBN.Text = row.Cells["ISBN"].Value.ToString();
+            }
+        }
+
+
+        private void UredivanjeKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnUredi_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtNaslov.Text) || string.IsNullOrEmpty(txtAutor.Text) ||
+                string.IsNullOrEmpty(txtGodina.Text) || string.IsNullOrEmpty(txtISBN.Text))
+            {
+                MessageBox.Show("Sva polja moraju biti popunjena!");
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Knjige SET Naslov=@Naslov, Autor=@Autor, GodinaIzdavanja=@Godina, ISBN=@ISBN WHERE KnjigaID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
+                cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
+                cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
+                cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
+                cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Knjiga uspješno ažurirana!");
+                LoadKnjige();
+            }
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretraga.Text);
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class BrisanjeKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int knjigaID;
+        public BrisanjeKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Knjige WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND Naslov LIKE @Filter";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+            }
+        }
+
+        private void BrisanjeKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnIzbrisi_Click(object sender, EventArgs e)
+        {
+            if (knjigaID > 0)
+            {
+                var confirm = MessageBox.Show("Jeste li sigurni da želite označiti knjigu kao neaktivnu?",
+                                              "Potvrda brisanja", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.Yes)
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "UPDATE Knjige SET Aktivan = 0 WHERE KnjigaID=@ID";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@ID", knjigaID);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+
+                        MessageBox.Show("Knjiga je označena kao neaktivna!");
+                        LoadKnjige();
+                    }
+                }
+            }
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretraga.Text);
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtPretraga_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
+namespace Dnevnik
+{
+    public partial class UredivanjeClanova : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int clanID;
+        public UredivanjeClanova()
+        {
+            InitializeComponent();
+            LoadClanovi();
+        }
+
+        private void UredivanjeClanova_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void LoadClanovi(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Clanovi WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Ime LIKE @Filter OR Prezime LIKE @Filter)";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+                dgvClanovi.Columns["ClanID"].Visible = false;
+            }
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadClanovi(txtPretraga.Text);
+        }
+        private void dgvClanovi_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                clanID = Convert.ToInt32(dgvClanovi.Rows[e.RowIndex].Cells["ClanID"].Value);
+                txtIme.Text = dgvClanovi.Rows[e.RowIndex].Cells["Ime"].Value.ToString();
+                txtPrezime.Text = dgvClanovi.Rows[e.RowIndex].Cells["Prezime"].Value.ToString();
+                txtEmail.Text = dgvClanovi.Rows[e.RowIndex].Cells["Email"].Value.ToString();
+                txtTelefon.Text = dgvClanovi.Rows[e.RowIndex].Cells["Telefon"].Value.ToString();
+                txtDatumUclanjenja.Text = dgvClanovi.Rows[e.RowIndex].Cells["DatumUclanjenja"].Value.ToString();
+            }
+        }
+
+        private void btnSpremi_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Clanovi SET Ime=@Ime, Prezime=@Prezime, Email=@Email, Telefon=@Telefon WHERE ClanID=@ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Ime", txtIme.Text);
+                cmd.Parameters.AddWithValue("@Prezime", txtPrezime.Text);
+                cmd.Parameters.AddWithValue("@Email", txtEmail.Text);
+                cmd.Parameters.AddWithValue("@Telefon", txtTelefon.Text);
+                cmd.Parameters.AddWithValue("@ID", clanID);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Član uspješno ažuriran!");
+                LoadClanovi();
+            }
+        }
+    }
+}using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class BrisanjeClanova : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int clanID;
+        public BrisanjeClanova()
+        {
+            InitializeComponent();
+            LoadClanovi();
+        }
+        private void LoadClanovi(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT ClanID, Ime, Prezime, Email, Telefon, DatumUclanjenja FROM Clanovi WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Ime LIKE @Filter OR Prezime LIKE @Filter)";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+                dgvClanovi.Columns["ClanID"].Visible = false; 
+            }
+        }
+        private void dgvClanovi_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dgvClanovi.Rows[e.RowIndex];
+                clanID = Convert.ToInt32(row.Cells["ClanID"].Value);
+                txtIme.Text = row.Cells["Ime"].Value.ToString();
+                txtPrezime.Text = row.Cells["Prezime"].Value.ToString();
+                txtEmail.Text = row.Cells["Email"].Value.ToString();
+                txtTelefon.Text = row.Cells["Telefon"].Value.ToString();
+                txtDatumUclanjenja.Text = row.Cells["DatumUclanjenja"].Value.ToString();
+            }
+        }
+        private void BrisanjeClanova_Load(object sender, EventArgs e)
+        {
+            LoadClanovi();
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadClanovi(txtPretraga.Text);
+        }
+
+        private void btnIzbrisi_Click(object sender, EventArgs e)
+        {
+            if (clanID > 0)
+            {
+                var confirm = MessageBox.Show("Jeste li sigurni da želite označiti člana kao neaktivnog?",
+                                              "Potvrda brisanja", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.Yes)
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "UPDATE Clanovi SET Aktivan = 0 WHERE ClanID=@ID";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@ID", clanID);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+
+                        MessageBox.Show("Član je označen kao neaktivan!");
+                        LoadClanovi(); 
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Morate odabrati člana iz tablice prije nego što ga označite kao neaktivnog.");
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
+namespace Dnevnik
+{
+    public partial class DodavanjeClanova : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public DodavanjeClanova()
+        {
+            InitializeComponent();
+        }
+
+        private void DodavanjeClanova_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDodaj_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"INSERT INTO Clanovi (Ime, Prezime, Email, Telefon, DatumUclanjenja, Aktivan) 
+                                 VALUES (@Ime, @Prezime, @Email, @Telefon, GETDATE(), 1)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Ime", txtIme.Text);
+                cmd.Parameters.AddWithValue("@Prezime", txtPrezime.Text);
+                cmd.Parameters.AddWithValue("@Email", txtEmail.Text);
+                cmd.Parameters.AddWithValue("@Telefon", txtTelefon.Text);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                MessageBox.Show("Član uspješno dodan!");
+
+                // očisti polja nakon dodavanja
+                txtIme.Clear();
+                txtPrezime.Clear();
+                txtEmail.Clear();
+                txtTelefon.Clear();
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class PregledClanova : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public PregledClanova()
+        {
+            InitializeComponent();
+            LoadClanovi();
+        }
+        private void LoadClanovi(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT ClanID, Ime, Prezime, Email, Telefon, DatumUclanjenja FROM Clanovi WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Ime LIKE @Filter OR Prezime LIKE @Filter)";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+
+                dgvClanovi.Columns["ClanID"].Visible = false;
+            }
+        }
+
+        private void PregledClanova_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LoadClanovi(txtPretraga.Text);
+        }
+    }
+}using System;
+using System.Collections.Generic;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class PregledKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public PregledKnjiga()
+        {
+            InitializeComponent();
+            LoadKnjige();
+        }
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT KnjigaID, Naslov, Autor, GodinaIzdavanja, ISBN, Status FROM Knjige WHERE Aktivan = 1";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Naslov LIKE @Filter OR Autor LIKE @Filter)";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+
+                dgvKnjige.Columns["KnjigaID"].Visible = false;
+                dgvKnjige.Columns["ISBN"].HeaderText = "ISBN broj";
+                dgvKnjige.Columns["GodinaIzdavanja"].HeaderText = "Godina";
+                dgvKnjige.ReadOnly = true;  
+                dgvKnjige.AllowUserToAddRows = false; 
+                dgvKnjige.AllowUserToDeleteRows = false;  
+
+            }
+        }
+        private void PregledKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretraga.Text);
+        }
+    }
+}
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class PosudbaKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int clanID;
+        private int knjigaID;
+        public PosudbaKnjiga()
+        {
+            InitializeComponent();
+            LoadClanovi();
+            LoadKnjige();
+        }
+
+        private void PosudbaKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void LoadClanovi(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT ClanID, Ime, Prezime, Email FROM Clanovi WHERE Aktivan = 1";
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND (Ime LIKE @Filter OR Prezime LIKE @Filter)";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvClanovi.DataSource = dt;
+            }
+        }
+        private void LoadKnjige(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT KnjigaID, Naslov, Autor, Status FROM Knjige WHERE Aktivan = 1 AND Status='Dostupna'";
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND Naslov LIKE @Filter";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvKnjige.DataSource = dt;
+            }
+        }
+
+        private void btnPosudi_Click(object sender, EventArgs e)
+        {
+            if (clanID <= 0 || knjigaID <= 0)
+            {
+                MessageBox.Show("Morate odabrati člana i knjigu prije posudbe.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return; 
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = @"
+                INSERT INTO Posudbe (ClanID, KnjigaID, DatumPosudbe, Vracena) 
+                VALUES (@ClanID, @KnjigaID, GETDATE(), 0);  -- 0 označava da knjiga nije vraćena
+
+                UPDATE Knjige SET Status='Posuđena' WHERE KnjigaID=@KnjigaID;
+            ";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ClanID", clanID);
+                    cmd.Parameters.AddWithValue("@KnjigaID", knjigaID);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+
+                    MessageBox.Show("Knjiga uspješno posuđena!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadKnjige(); 
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Došlo je do pogreške prilikom posudbe knjige: " + ex.Message, "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LoadClanovi(txtPretragaClan.Text);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LoadKnjige(txtPretragaKnjiga.Text);
+        }
+        private void dgvClanovi_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+                clanID = Convert.ToInt32(dgvClanovi.Rows[e.RowIndex].Cells["ClanID"].Value);
+        }
+
+        private void dgvKnjige_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+                knjigaID = Convert.ToInt32(dgvKnjige.Rows[e.RowIndex].Cells["KnjigaID"].Value);
+        }
+    }
+}
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class PovratKnjiga : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        private int posudbaID;
+        public PovratKnjiga()
+        {
+            InitializeComponent();
+            LoadPosudbe();
+        }
+        private void LoadPosudbe(string filter = "")
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = @"SELECT p.PosudbaID, c.Ime, c.Prezime, k.Naslov, p.DatumPosudbe 
+                                 FROM Posudbe p
+                                 JOIN Clanovi c ON p.ClanID = c.ClanID
+                                 JOIN Knjige k ON p.KnjigaID = k.KnjigaID
+                                 WHERE p.Vracena = 0";
+
+                if (!string.IsNullOrEmpty(filter))
+                    query += " AND k.Naslov LIKE @Filter";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                if (!string.IsNullOrEmpty(filter))
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filter + "%");
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dgvPosudbe.DataSource = dt;
+            }
+        }
+        private void dgvPosudbe_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+                posudbaID = Convert.ToInt32(dgvPosudbe.Rows[e.RowIndex].Cells["PosudbaID"].Value);
+        }
+
+        private void PovratKnjiga_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPretrazi_Click(object sender, EventArgs e)
+        {
+            LoadPosudbe(txtPretraga.Text);
+        }
+
+        private void btnVrati_Click(object sender, EventArgs e)
+        {
+            if (posudbaID > 0)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = @"UPDATE Posudbe 
+                                     SET DatumPovratka = GETDATE(), Vracena = 1 
+                                     WHERE PosudbaID=@PosudbaID;
+
+                                     UPDATE Knjige SET Status='Dostupna' 
+                                     WHERE KnjigaID=(SELECT KnjigaID FROM Posudbe WHERE PosudbaID=@PosudbaID)";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@PosudbaID", posudbaID);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+
+                    MessageBox.Show("Knjiga uspješno vraćena!");
+                    LoadPosudbe(); 
+                }
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Dnevnik
+{
+    public partial class Statistika : Form
+    {
+        private string connectionString =
+            "Server=localhost\\sqlexpress;Database=Knjiznica;User ID=DavidJambrosic;Password=ManCity33;Trusted_Connection=True;";
+        public Statistika()
+        {
+            InitializeComponent();
+            LoadStatistika();
+        }
+
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void LoadStatistika()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                SqlCommand cmdKnjige = new SqlCommand("SELECT COUNT(*) FROM Knjige WHERE Aktivan = 1", conn);
+                int brojKnjiga = (int)cmdKnjige.ExecuteScalar();
+                lblBrojKnjiga.Text = $"Aktivne knjige: {brojKnjiga}";
+
+                SqlCommand cmdClanovi = new SqlCommand("SELECT COUNT(*) FROM Clanovi WHERE Aktivan = 1", conn);
+                int brojClanova = (int)cmdClanovi.ExecuteScalar();
+                lblBrojClanova.Text = $"Aktivni članovi: {brojClanova}";
+
+                SqlCommand cmdPosudjene = new SqlCommand("SELECT COUNT(*) FROM Knjige WHERE Status = 'Posuđena' AND Aktivan = 1", conn);
+                int brojPosudjenih = (int)cmdPosudjene.ExecuteScalar();
+                lblPosudjene.Text = $"Posuđene knjige: {brojPosudjenih}";
+
+                SqlCommand cmdUkupnoPosudbi = new SqlCommand("SELECT COUNT(*) FROM Posudbe", conn);
+                int ukupnoPosudbi = (int)cmdUkupnoPosudbi.ExecuteScalar();
+                lblUkupnoPosudbi.Text = $"Ukupno posudbi: {ukupnoPosudbi}";
+
+                SqlCommand cmdPosudbePoKnjigama = new SqlCommand(@"SELECT k.Naslov, COUNT(p.PosudbaID) AS Posudbe
+                                                                FROM Posudbe p
+                                                                JOIN Knjige k ON p.KnjigaID = k.KnjigaID
+                                                                WHERE k.Aktivan = 1
+                                                                GROUP BY k.Naslov", conn);
+                SqlDataReader reader = cmdPosudbePoKnjigama.ExecuteReader();
+                StringBuilder sb = new StringBuilder();
+                while (reader.Read())
+                {
+                    sb.AppendLine($"{reader["Naslov"]}: {reader["Posudbe"]} posudbi");
+                }
+                reader.Close();
+                lblPosudbePoKnjigama.Text = sb.ToString();
+
+                SqlCommand cmdNeaktivniClanovi = new SqlCommand("SELECT COUNT(*) FROM Clanovi WHERE Aktivan = 0", conn);
+                int brojNeaktivnihClanova = (int)cmdNeaktivniClanovi.ExecuteScalar();
+                lblNeaktivniClanovi.Text = $"Neaktivni članovi: {brojNeaktivnihClanova}";
+
+                SqlCommand cmdProsjecnoTrajanje = new SqlCommand(@"SELECT AVG(DATEDIFF(DAY, p.DatumPosudbe, p.DatumPovratka)) 
+                                                                FROM Posudbe p
+                                                                WHERE p.DatumPovratka IS NOT NULL", conn);
+                object result = cmdProsjecnoTrajanje.ExecuteScalar();
+                if (result != DBNull.Value)
+                {
+                    int prosječnoTrajanje = (int)result;
+                    lblProsjecnoTrajanje.Text = $"Prosječno trajanje posudbe: {prosječnoTrajanje} dana";
+                }
+
+                SqlCommand cmdNevraceneKnjige = new SqlCommand("SELECT COUNT(*) FROM Posudbe WHERE Vracena = 0", conn);
+                int brojNevracenih = (int)cmdNevraceneKnjige.ExecuteScalar();
+                lblNevraceneKnjige.Text = $"Nevraćene knjige: {brojNevracenih}";
+
+                conn.Close();
+            }
+        }
+    }
+}
+namespace Dnevnik
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabKnjige = new System.Windows.Forms.TabPage();
+            this.dgvKnjige = new System.Windows.Forms.DataGridView();
+            this.tabClanovi = new System.Windows.Forms.TabPage();
+            this.dgvClanovi = new System.Windows.Forms.DataGridView();
+            this.tabPosudbe = new System.Windows.Forms.TabPage();
+            this.dgvPosudbe = new System.Windows.Forms.DataGridView();
+            this.tabControl.SuspendLayout();
+            this.tabKnjige.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
+            this.tabClanovi.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
+            this.tabPosudbe.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(335, 32);
+            this.lblTitle.Text = "Sustav Knjižnice";
+            // 
+            // tabControl
+            // 
+            this.tabControl.Controls.Add(this.tabKnjige);
+            this.tabControl.Controls.Add(this.tabClanovi);
+            this.tabControl.Controls.Add(this.tabPosudbe);
+            this.tabControl.Location = new System.Drawing.Point(25, 70);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(950, 450);
+            // 
+            // tabKnjige
+            // 
+            this.tabKnjige.Controls.Add(this.dgvKnjige);
+            this.tabKnjige.Location = new System.Drawing.Point(4, 24);
+            this.tabKnjige.Name = "tabKnjige";
+            this.tabKnjige.Padding = new System.Windows.Forms.Padding(10);
+            this.tabKnjige.Size = new System.Drawing.Size(942, 422);
+            this.tabKnjige.Text = "Knjige";
+            this.tabKnjige.UseVisualStyleBackColor = true;
+            // 
+            // dgvKnjige
+            // 
+            this.dgvKnjige.AllowUserToAddRows = false;
+            this.dgvKnjige.AllowUserToDeleteRows = false;
+            this.dgvKnjige.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvKnjige.ReadOnly = true;
+            this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvKnjige.MultiSelect = false;
+            // 
+            // tabClanovi
+            // 
+            this.tabClanovi.Controls.Add(this.dgvClanovi);
+            this.tabClanovi.Location = new System.Drawing.Point(4, 24);
+            this.tabClanovi.Name = "tabClanovi";
+            this.tabClanovi.Padding = new System.Windows.Forms.Padding(10);
+            this.tabClanovi.Size = new System.Drawing.Size(942, 422);
+            this.tabClanovi.Text = "Članovi";
+            this.tabClanovi.UseVisualStyleBackColor = true;
+            // 
+            // dgvClanovi
+            // 
+            this.dgvClanovi.AllowUserToAddRows = false;
+            this.dgvClanovi.AllowUserToDeleteRows = false;
+            this.dgvClanovi.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvClanovi.ReadOnly = true;
+            this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvClanovi.MultiSelect = false;
+            // 
+            // tabPosudbe
+            // 
+            this.tabPosudbe.Controls.Add(this.dgvPosudbe);
+            this.tabPosudbe.Location = new System.Drawing.Point(4, 24);
+            this.tabPosudbe.Name = "tabPosudbe";
+            this.tabPosudbe.Padding = new System.Windows.Forms.Padding(10);
+            this.tabPosudbe.Size = new System.Drawing.Size(942, 422);
+            this.tabPosudbe.Text = "Posudbe";
+            this.tabPosudbe.UseVisualStyleBackColor = true;
+            // 
+            // dgvPosudbe
+            // 
+            this.dgvPosudbe.AllowUserToAddRows = false;
+            this.dgvPosudbe.AllowUserToDeleteRows = false;
+            this.dgvPosudbe.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvPosudbe.ReadOnly = true;
+            this.dgvPosudbe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvPosudbe.MultiSelect = false;
+            // 
+            // Form1
+            // 
+            this.ClientSize = new System.Drawing.Size(1000, 550);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.tabControl);
+            this.Name = "Form1";
+            this.Text = "Knjižnica – Glavni izbornik";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.tabControl.ResumeLayout(false);
+            this.tabKnjige.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).EndInit();
+            this.tabClanovi.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).EndInit();
+            this.tabPosudbe.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage tabKnjige;
+        private System.Windows.Forms.TabPage tabClanovi;
+        private System.Windows.Forms.TabPage tabPosudbe;
+        private System.Windows.Forms.DataGridView dgvKnjige;
+        private System.Windows.Forms.DataGridView dgvClanovi;
+        private System.Windows.Forms.DataGridView dgvPosudbe;
+    }
+}
+namespace Dnevnik
+{
+    partial class DodavanjeKnjiga
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.grpUnos = new System.Windows.Forms.GroupBox();
+            this.txtNaslov = new System.Windows.Forms.TextBox();
+            this.txtAutor = new System.Windows.Forms.TextBox();
+            this.txtGodina = new System.Windows.Forms.TextBox();
+            this.txtISBN = new System.Windows.Forms.TextBox();
+            this.labelNaslov = new System.Windows.Forms.Label();
+            this.labelAutor = new System.Windows.Forms.Label();
+            this.labelGodina = new System.Windows.Forms.Label();
+            this.labelISBN = new System.Windows.Forms.Label();
+            this.btnDodaj = new System.Windows.Forms.Button();
+            this.grpUnos.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(230, 30);
+            this.lblTitle.Text = "Dodavanje knjige";
+            // 
+            // grpUnos
+            // 
+            this.grpUnos.Controls.Add(this.txtNaslov);
+            this.grpUnos.Controls.Add(this.txtAutor);
+            this.grpUnos.Controls.Add(this.txtGodina);
+            this.grpUnos.Controls.Add(this.txtISBN);
+            this.grpUnos.Controls.Add(this.labelNaslov);
+            this.grpUnos.Controls.Add(this.labelAutor);
+            this.grpUnos.Controls.Add(this.labelGodina);
+            this.grpUnos.Controls.Add(this.labelISBN);
+            this.grpUnos.Location = new System.Drawing.Point(25, 80);
+            this.grpUnos.Name = "grpUnos";
+            this.grpUnos.Size = new System.Drawing.Size(360, 230);
+            this.grpUnos.Text = "Podaci o knjizi";
+            // 
+            // txtNaslov
+            // 
+            this.txtNaslov.Location = new System.Drawing.Point(140, 30);
+            this.txtNaslov.Name = "txtNaslov";
+            this.txtNaslov.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtAutor
+            // 
+            this.txtAutor.Location = new System.Drawing.Point(140, 70);
+            this.txtAutor.Name = "txtAutor";
+            this.txtAutor.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtGodina
+            // 
+            this.txtGodina.Location = new System.Drawing.Point(140, 110);
+            this.txtGodina.Name = "txtGodina";
+            this.txtGodina.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtISBN
+            // 
+            this.txtISBN.Location = new System.Drawing.Point(140, 150);
+            this.txtISBN.Name = "txtISBN";
+            this.txtISBN.Size = new System.Drawing.Size(200, 22);
+            // 
+            // labelNaslov
+            // 
+            this.labelNaslov.AutoSize = true;
+            this.labelNaslov.Location = new System.Drawing.Point(20, 33);
+            this.labelNaslov.Text = "Naslov:";
+            // 
+            // labelAutor
+            // 
+            this.labelAutor.AutoSize = true;
+            this.labelAutor.Location = new System.Drawing.Point(20, 73);
+            this.labelAutor.Text = "Autor:";
+            // 
+            // labelGodina
+            // 
+            this.labelGodina.AutoSize = true;
+            this.labelGodina.Location = new System.Drawing.Point(20, 113);
+            this.labelGodina.Text = "Godina izdavanja:";
+            // 
+            // labelISBN
+            // 
+            this.labelISBN.AutoSize = true;
+            this.labelISBN.Location = new System.Drawing.Point(20, 153);
+            this.labelISBN.Text = "ISBN:";
+            // 
+            // btnDodaj
+            // 
+            this.btnDodaj.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnDodaj.ForeColor = System.Drawing.Color.White;
+            this.btnDodaj.Location = new System.Drawing.Point(25, 330);
+            this.btnDodaj.Name = "btnDodaj";
+            this.btnDodaj.Size = new System.Drawing.Size(360, 45);
+            this.btnDodaj.Text = "Dodaj knjigu";
+            this.btnDodaj.UseVisualStyleBackColor = false;
+            this.btnDodaj.Click += new System.EventHandler(this.btnDodaj_Click);
+            // 
+            // DodavanjeKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(420, 400);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.grpUnos);
+            this.Controls.Add(this.btnDodaj);
+            this.Text = "Dodavanje knjiga";
+            this.Load += new System.EventHandler(this.DodavanjeKnjiga_Load);
+            this.grpUnos.ResumeLayout(false);
+            this.grpUnos.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.GroupBox grpUnos;
+        private System.Windows.Forms.TextBox txtNaslov;
+        private System.Windows.Forms.TextBox txtAutor;
+        private System.Windows.Forms.TextBox txtGodina;
+        private System.Windows.Forms.TextBox txtISBN;
+        private System.Windows.Forms.Label labelNaslov;
+        private System.Windows.Forms.Label labelAutor;
+        private System.Windows.Forms.Label labelGodina;
+        private System.Windows.Forms.Label labelISBN;
+        private System.Windows.Forms.Button btnDodaj;
+    }
+}
+namespace Dnevnik
+{
+    partial class UredivanjeKnjiga
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.dgvKnjige = new System.Windows.Forms.DataGridView();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.txtNaslov = new System.Windows.Forms.TextBox();
+            this.txtAutor = new System.Windows.Forms.TextBox();
+            this.txtGodina = new System.Windows.Forms.TextBox();
+            this.txtISBN = new System.Windows.Forms.TextBox();
+            this.btnUredi = new System.Windows.Forms.Button();
+            this.lblNaslov = new System.Windows.Forms.Label();
+            this.lblAutor = new System.Windows.Forms.Label();
+            this.lblGodina = new System.Windows.Forms.Label();
+            this.lblISBN = new System.Windows.Forms.Label();
+            this.lblPretraga = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // dgvKnjige
+            // 
+            this.dgvKnjige.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvKnjige.Location = new System.Drawing.Point(12, 62);
+            this.dgvKnjige.Name = "dgvKnjige";
+            this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvKnjige.Size = new System.Drawing.Size(776, 200);
+            this.dgvKnjige.TabIndex = 0;
+            this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(87, 15);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(150, 20);
+            this.txtPretraga.TabIndex = 1;
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(243, 13);
+            this.btnPretrazi.Name = "btnPretrazi";
+            this.btnPretrazi.Size = new System.Drawing.Size(75, 23);
+            this.btnPretrazi.TabIndex = 2;
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.UseVisualStyleBackColor = true;
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // txtNaslov
+            // 
+            this.txtNaslov.Location = new System.Drawing.Point(87, 275);
+            this.txtNaslov.Name = "txtNaslov";
+            this.txtNaslov.Size = new System.Drawing.Size(200, 20);
+            this.txtNaslov.TabIndex = 3;
+            // 
+            // txtAutor
+            // 
+            this.txtAutor.Location = new System.Drawing.Point(87, 301);
+            this.txtAutor.Name = "txtAutor";
+            this.txtAutor.Size = new System.Drawing.Size(200, 20);
+            this.txtAutor.TabIndex = 4;
+            // 
+            // txtGodina
+            // 
+            this.txtGodina.Location = new System.Drawing.Point(87, 327);
+            this.txtGodina.Name = "txtGodina";
+            this.txtGodina.Size = new System.Drawing.Size(200, 20);
+            this.txtGodina.TabIndex = 5;
+            // 
+            // txtISBN
+            // 
+            this.txtISBN.Location = new System.Drawing.Point(87, 353);
+            this.txtISBN.Name = "txtISBN";
+            this.txtISBN.Size = new System.Drawing.Size(200, 20);
+            this.txtISBN.TabIndex = 6;
+            // 
+            // btnUredi
+            // 
+            this.btnUredi.Location = new System.Drawing.Point(87, 379);
+            this.btnUredi.Name = "btnUredi";
+            this.btnUredi.Size = new System.Drawing.Size(75, 23);
+            this.btnUredi.TabIndex = 7;
+            this.btnUredi.Text = "Spremi";
+            this.btnUredi.UseVisualStyleBackColor = true;
+            this.btnUredi.Click += new System.EventHandler(this.btnUredi_Click);
+            // 
+            // lblNaslov
+            // 
+            this.lblNaslov.AutoSize = true;
+            this.lblNaslov.Location = new System.Drawing.Point(12, 278);
+            this.lblNaslov.Name = "lblNaslov";
+            this.lblNaslov.Size = new System.Drawing.Size(44, 13);
+            this.lblNaslov.TabIndex = 8;
+            this.lblNaslov.Text = "Naslov:";
+            // 
+            // lblAutor
+            // 
+            this.lblAutor.AutoSize = true;
+            this.lblAutor.Location = new System.Drawing.Point(12, 304);
+            this.lblAutor.Name = "lblAutor";
+            this.lblAutor.Size = new System.Drawing.Size(35, 13);
+            this.lblAutor.TabIndex = 9;
+            this.lblAutor.Text = "Autor:";
+            // 
+            // lblGodina
+            // 
+            this.lblGodina.AutoSize = true;
+            this.lblGodina.Location = new System.Drawing.Point(12, 330);
+            this.lblGodina.Name = "lblGodina";
+            this.lblGodina.Size = new System.Drawing.Size(70, 13);
+            this.lblGodina.TabIndex = 10;
+            this.lblGodina.Text = "Godina izd.:";
+            // 
+            // lblISBN
+            // 
+            this.lblISBN.AutoSize = true;
+            this.lblISBN.Location = new System.Drawing.Point(12, 356);
+            this.lblISBN.Name = "lblISBN";
+            this.lblISBN.Size = new System.Drawing.Size(35, 13);
+            this.lblISBN.TabIndex = 11;
+            this.lblISBN.Text = "ISBN:";
+            // 
+            // lblPretraga
+            // 
+            this.lblPretraga.AutoSize = true;
+            this.lblPretraga.Location = new System.Drawing.Point(12, 18);
+            this.lblPretraga.Name = "lblPretraga";
+            this.lblPretraga.Size = new System.Drawing.Size(69, 13);
+            this.lblPretraga.TabIndex = 12;
+            this.lblPretraga.Text = "Pretraga naziv:";
+            // 
+            // UredivanjeKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblPretraga);
+            this.Controls.Add(this.lblISBN);
+            this.Controls.Add(this.lblGodina);
+            this.Controls.Add(this.lblAutor);
+            this.Controls.Add(this.lblNaslov);
+            this.Controls.Add(this.btnUredi);
+            this.Controls.Add(this.txtISBN);
+            this.Controls.Add(this.txtGodina);
+            this.Controls.Add(this.txtAutor);
+            this.Controls.Add(this.txtNaslov);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.dgvKnjige);
+            this.Name = "UredivanjeKnjiga";
+            this.Text = "Uređivanje knjiga";
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.DataGridView dgvKnjige;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.TextBox txtNaslov;
+        private System.Windows.Forms.TextBox txtAutor;
+        private System.Windows.Forms.TextBox txtGodina;
+        private System.Windows.Forms.TextBox txtISBN;
+        private System.Windows.Forms.Button btnUredi;
+        private System.Windows.Forms.Label lblNaslov;
+        private System.Windows.Forms.Label lblAutor;
+        private System.Windows.Forms.Label lblGodina;
+        private System.Windows.Forms.Label lblISBN;
+        private System.Windows.Forms.Label lblPretraga;
+    }
+}
+namespace Dnevnik
+{
+    partial class BrisanjeKnjiga
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.dgvKnjige = new System.Windows.Forms.DataGridView();
+            this.grpDetalji = new System.Windows.Forms.GroupBox();
+            this.txtNaslov = new System.Windows.Forms.TextBox();
+            this.txtAutor = new System.Windows.Forms.TextBox();
+            this.txtGodina = new System.Windows.Forms.TextBox();
+            this.txtISBN = new System.Windows.Forms.TextBox();
+            this.labelNaslov = new System.Windows.Forms.Label();
+            this.labelAutor = new System.Windows.Forms.Label();
+            this.labelGodina = new System.Windows.Forms.Label();
+            this.labelISBN = new System.Windows.Forms.Label();
+            this.btnIzbrisi = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
+            this.grpDetalji.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(198, 30);
+            this.lblTitle.Text = "Brisanje knjiga";
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(25, 70);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(250, 22);
+            this.txtPretraga.TextChanged += new System.EventHandler(this.txtPretraga_TextChanged);
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
+            this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // dgvKnjige
+            // 
+            this.dgvKnjige.AllowUserToAddRows = false;
+            this.dgvKnjige.AllowUserToDeleteRows = false;
+            this.dgvKnjige.ReadOnly = true;
+            this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvKnjige.MultiSelect = false;
+            this.dgvKnjige.Location = new System.Drawing.Point(25, 110);
+            this.dgvKnjige.Size = new System.Drawing.Size(500, 300);
+            this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
+            // 
+            // grpDetalji
+            // 
+            this.grpDetalji.Controls.Add(this.txtNaslov);
+            this.grpDetalji.Controls.Add(this.txtAutor);
+            this.grpDetalji.Controls.Add(this.txtGodina);
+            this.grpDetalji.Controls.Add(this.txtISBN);
+            this.grpDetalji.Controls.Add(this.labelNaslov);
+            this.grpDetalji.Controls.Add(this.labelAutor);
+            this.grpDetalji.Controls.Add(this.labelGodina);
+            this.grpDetalji.Controls.Add(this.labelISBN);
+            this.grpDetalji.Location = new System.Drawing.Point(550, 110);
+            this.grpDetalji.Size = new System.Drawing.Size(300, 200);
+            this.grpDetalji.Text = "Detalji knjige";
+            // 
+            // txtNaslov
+            // 
+            this.txtNaslov.Location = new System.Drawing.Point(120, 30);
+            this.txtNaslov.ReadOnly = true;
+            // 
+            // txtAutor
+            // 
+            this.txtAutor.Location = new System.Drawing.Point(120, 60);
+            this.txtAutor.ReadOnly = true;
+            // 
+            // txtGodina
+            // 
+            this.txtGodina.Location = new System.Drawing.Point(120, 90);
+            this.txtGodina.ReadOnly = true;
+            // 
+            // txtISBN
+            // 
+            this.txtISBN.Location = new System.Drawing.Point(120, 120);
+            this.txtISBN.ReadOnly = true;
+            // 
+            // labelNaslov
+            // 
+            this.labelNaslov.Location = new System.Drawing.Point(15, 30);
+            this.labelNaslov.Text = "Naslov:";
+            // 
+            // labelAutor
+            // 
+            this.labelAutor.Location = new System.Drawing.Point(15, 60);
+            this.labelAutor.Text = "Autor:";
+            // 
+            // labelGodina
+            // 
+            this.labelGodina.Location = new System.Drawing.Point(15, 90);
+            this.labelGodina.Text = "Godina:";
+            // 
+            // labelISBN
+            // 
+            this.labelISBN.Location = new System.Drawing.Point(15, 120);
+            this.labelISBN.Text = "ISBN:";
+            // 
+            // btnIzbrisi
+            // 
+            this.btnIzbrisi.BackColor = System.Drawing.Color.IndianRed;
+            this.btnIzbrisi.ForeColor = System.Drawing.Color.White;
+            this.btnIzbrisi.Location = new System.Drawing.Point(550, 330);
+            this.btnIzbrisi.Size = new System.Drawing.Size(300, 50);
+            this.btnIzbrisi.Text = "Označi knjigu kao neaktivnu";
+            this.btnIzbrisi.UseVisualStyleBackColor = false;
+            this.btnIzbrisi.Click += new System.EventHandler(this.btnIzbrisi_Click);
+            // 
+            // BrisanjeKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(900, 450);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.dgvKnjige);
+            this.Controls.Add(this.grpDetalji);
+            this.Controls.Add(this.btnIzbrisi);
+            this.Text = "Brisanje knjiga";
+            this.Load += new System.EventHandler(this.BrisanjeKnjiga_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).EndInit();
+            this.grpDetalji.ResumeLayout(false);
+            this.grpDetalji.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.DataGridView dgvKnjige;
+        private System.Windows.Forms.GroupBox grpDetalji;
+        private System.Windows.Forms.TextBox txtNaslov;
+        private System.Windows.Forms.TextBox txtAutor;
+        private System.Windows.Forms.TextBox txtGodina;
+        private System.Windows.Forms.TextBox txtISBN;
+        private System.Windows.Forms.Label labelNaslov;
+        private System.Windows.Forms.Label labelAutor;
+        private System.Windows.Forms.Label labelGodina;
+        private System.Windows.Forms.Label labelISBN;
+        private System.Windows.Forms.Button btnIzbrisi;
+    }
+}
+namespace Dnevnik
+{
+    partial class UredivanjeClanova
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.dgvClanovi = new System.Windows.Forms.DataGridView();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.txtIme = new System.Windows.Forms.TextBox();
+            this.txtPrezime = new System.Windows.Forms.TextBox();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtTelefon = new System.Windows.Forms.TextBox();
+            this.txtDatumUclanjenja = new System.Windows.Forms.TextBox();
+            this.btnSpremi = new System.Windows.Forms.Button();
+            this.lblIme = new System.Windows.Forms.Label();
+            this.lblPrezime = new System.Windows.Forms.Label();
+            this.lblEmail = new System.Windows.Forms.Label();
+            this.lblTelefon = new System.Windows.Forms.Label();
+            this.lblDatumUclanjenja = new System.Windows.Forms.Label();
+            this.lblPretraga = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // dgvClanovi
+            // 
+            this.dgvClanovi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvClanovi.Location = new System.Drawing.Point(12, 62);
+            this.dgvClanovi.Name = "dgvClanovi";
+            this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvClanovi.Size = new System.Drawing.Size(776, 200);
+            this.dgvClanovi.TabIndex = 0;
+            this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
+            this.dgvClanovi.ReadOnly = true;  // ONEMOGUĆAVANJE EDITOVANJA
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(87, 15);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(150, 20);
+            this.txtPretraga.TabIndex = 1;
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(243, 13);
+            this.btnPretrazi.Name = "btnPretrazi";
+            this.btnPretrazi.Size = new System.Drawing.Size(75, 23);
+            this.btnPretrazi.TabIndex = 2;
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.UseVisualStyleBackColor = true;
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // txtIme
+            // 
+            this.txtIme.Location = new System.Drawing.Point(87, 275);
+            this.txtIme.Name = "txtIme";
+            this.txtIme.Size = new System.Drawing.Size(200, 20);
+            this.txtIme.TabIndex = 3;
+            // 
+            // txtPrezime
+            // 
+            this.txtPrezime.Location = new System.Drawing.Point(87, 301);
+            this.txtPrezime.Name = "txtPrezime";
+            this.txtPrezime.Size = new System.Drawing.Size(200, 20);
+            this.txtPrezime.TabIndex = 4;
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(87, 327);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(200, 20);
+            this.txtEmail.TabIndex = 5;
+            // 
+            // txtTelefon
+            // 
+            this.txtTelefon.Location = new System.Drawing.Point(87, 353);
+            this.txtTelefon.Name = "txtTelefon";
+            this.txtTelefon.Size = new System.Drawing.Size(200, 20);
+            this.txtTelefon.TabIndex = 6;
+            // 
+            // txtDatumUclanjenja
+            // 
+            this.txtDatumUclanjenja.Location = new System.Drawing.Point(87, 379);
+            this.txtDatumUclanjenja.Name = "txtDatumUclanjenja";
+            this.txtDatumUclanjenja.ReadOnly = true;
+            this.txtDatumUclanjenja.Size = new System.Drawing.Size(200, 20);
+            this.txtDatumUclanjenja.TabIndex = 7;
+            // 
+            // btnSpremi
+            // 
+            this.btnSpremi.Location = new System.Drawing.Point(87, 405);
+            this.btnSpremi.Name = "btnSpremi";
+            this.btnSpremi.Size = new System.Drawing.Size(75, 23);
+            this.btnSpremi.TabIndex = 8;
+            this.btnSpremi.Text = "Spremi";
+            this.btnSpremi.UseVisualStyleBackColor = true;
+            this.btnSpremi.Click += new System.EventHandler(this.btnSpremi_Click);
+            // 
+            // lblIme
+            // 
+            this.lblIme.AutoSize = true;
+            this.lblIme.Location = new System.Drawing.Point(12, 278);
+            this.lblIme.Name = "lblIme";
+            this.lblIme.Size = new System.Drawing.Size(29, 13);
+            this.lblIme.TabIndex = 9;
+            this.lblIme.Text = "Ime:";
+            // 
+            // lblPrezime
+            // 
+            this.lblPrezime.AutoSize = true;
+            this.lblPrezime.Location = new System.Drawing.Point(12, 304);
+            this.lblPrezime.Name = "lblPrezime";
+            this.lblPrezime.Size = new System.Drawing.Size(52, 13);
+            this.lblPrezime.TabIndex = 10;
+            this.lblPrezime.Text = "Prezime:";
+            // 
+            // lblEmail
+            // 
+            this.lblEmail.AutoSize = true;
+            this.lblEmail.Location = new System.Drawing.Point(12, 330);
+            this.lblEmail.Name = "lblEmail";
+            this.lblEmail.Size = new System.Drawing.Size(35, 13);
+            this.lblEmail.TabIndex = 11;
+            this.lblEmail.Text = "Email:";
+            // 
+            // lblTelefon
+            // 
+            this.lblTelefon.AutoSize = true;
+            this.lblTelefon.Location = new System.Drawing.Point(12, 356);
+            this.lblTelefon.Name = "lblTelefon";
+            this.lblTelefon.Size = new System.Drawing.Size(49, 13);
+            this.lblTelefon.TabIndex = 12;
+            this.lblTelefon.Text = "Telefon:";
+            // 
+            // lblDatumUclanjenja
+            // 
+            this.lblDatumUclanjenja.AutoSize = true;
+            this.lblDatumUclanjenja.Location = new System.Drawing.Point(12, 382);
+            this.lblDatumUclanjenja.Name = "lblDatumUclanjenja";
+            this.lblDatumUclanjenja.Size = new System.Drawing.Size(92, 13);
+            this.lblDatumUclanjenja.TabIndex = 13;
+            this.lblDatumUclanjenja.Text = "Dan učlanjenja:";
+            // 
+            // lblPretraga
+            // 
+            this.lblPretraga.AutoSize = true;
+            this.lblPretraga.Location = new System.Drawing.Point(12, 18);
+            this.lblPretraga.Name = "lblPretraga";
+            this.lblPretraga.Size = new System.Drawing.Size(69, 13);
+            this.lblPretraga.TabIndex = 14;
+            this.lblPretraga.Text = "Pretraga ime:";
+            // 
+            // UredivanjeClanova
+            // 
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblPretraga);
+            this.Controls.Add(this.lblDatumUclanjenja);
+            this.Controls.Add(this.lblTelefon);
+            this.Controls.Add(this.lblEmail);
+            this.Controls.Add(this.lblPrezime);
+            this.Controls.Add(this.lblIme);
+            this.Controls.Add(this.btnSpremi);
+            this.Controls.Add(this.txtDatumUclanjenja);
+            this.Controls.Add(this.txtTelefon);
+            this.Controls.Add(this.txtEmail);
+            this.Controls.Add(this.txtPrezime);
+            this.Controls.Add(this.txtIme);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.dgvClanovi);
+            this.Name = "UredivanjeClanova";
+            this.Text = "Uređivanje članova";
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.DataGridView dgvClanovi;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.TextBox txtIme;
+        private System.Windows.Forms.TextBox txtPrezime;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.TextBox txtTelefon;
+        private System.Windows.Forms.TextBox txtDatumUclanjenja;
+        private System.Windows.Forms.Button btnSpremi;
+        private System.Windows.Forms.Label lblIme;
+        private System.Windows.Forms.Label lblPrezime;
+        private System.Windows.Forms.Label lblEmail;
+        private System.Windows.Forms.Label lblTelefon;
+        private System.Windows.Forms.Label lblDatumUclanjenja;
+        private System.Windows.Forms.Label lblPretraga;
+    }
+}
+namespace Dnevnik
+{
+    partial class BrisanjeClanova
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.dgvClanovi = new System.Windows.Forms.DataGridView();
+            this.grpDetalji = new System.Windows.Forms.GroupBox();
+            this.txtIme = new System.Windows.Forms.TextBox();
+            this.txtPrezime = new System.Windows.Forms.TextBox();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtTelefon = new System.Windows.Forms.TextBox();
+            this.txtDatumUclanjenja = new System.Windows.Forms.TextBox();
+            this.labelIme = new System.Windows.Forms.Label();
+            this.labelPrezime = new System.Windows.Forms.Label();
+            this.labelEmail = new System.Windows.Forms.Label();
+            this.labelTelefon = new System.Windows.Forms.Label();
+            this.labelDatum = new System.Windows.Forms.Label();
+            this.btnIzbrisi = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
+            this.grpDetalji.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(210, 30);
+            this.lblTitle.Text = "Brisanje članova";
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(25, 70);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(250, 22);
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
+            this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // dgvClanovi
+            // 
+            this.dgvClanovi.AllowUserToAddRows = false;
+            this.dgvClanovi.AllowUserToDeleteRows = false;
+            this.dgvClanovi.ReadOnly = true;
+            this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvClanovi.MultiSelect = false;
+            this.dgvClanovi.Location = new System.Drawing.Point(25, 110);
+            this.dgvClanovi.Size = new System.Drawing.Size(500, 300);
+            this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
+            // 
+            // grpDetalji
+            // 
+            this.grpDetalji.Controls.Add(this.txtIme);
+            this.grpDetalji.Controls.Add(this.txtPrezime);
+            this.grpDetalji.Controls.Add(this.txtEmail);
+            this.grpDetalji.Controls.Add(this.txtTelefon);
+            this.grpDetalji.Controls.Add(this.txtDatumUclanjenja);
+            this.grpDetalji.Controls.Add(this.labelIme);
+            this.grpDetalji.Controls.Add(this.labelPrezime);
+            this.grpDetalji.Controls.Add(this.labelEmail);
+            this.grpDetalji.Controls.Add(this.labelTelefon);
+            this.grpDetalji.Controls.Add(this.labelDatum);
+            this.grpDetalji.Location = new System.Drawing.Point(550, 110);
+            this.grpDetalji.Size = new System.Drawing.Size(300, 230);
+            this.grpDetalji.Text = "Detalji člana";
+            // 
+            // txtIme
+            // 
+            this.txtIme.Location = new System.Drawing.Point(120, 30);
+            this.txtIme.ReadOnly = true;
+            // 
+            // txtPrezime
+            // 
+            this.txtPrezime.Location = new System.Drawing.Point(120, 60);
+            this.txtPrezime.ReadOnly = true;
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(120, 90);
+            this.txtEmail.ReadOnly = true;
+            // 
+            // txtTelefon
+            // 
+            this.txtTelefon.Location = new System.Drawing.Point(120, 120);
+            this.txtTelefon.ReadOnly = true;
+            // 
+            // txtDatumUclanjenja
+            // 
+            this.txtDatumUclanjenja.Location = new System.Drawing.Point(120, 150);
+            this.txtDatumUclanjenja.ReadOnly = true;
+            // 
+            // labelIme
+            // 
+            this.labelIme.Location = new System.Drawing.Point(15, 30);
+            this.labelIme.Text = "Ime:";
+            // 
+            // labelPrezime
+            // 
+            this.labelPrezime.Location = new System.Drawing.Point(15, 60);
+            this.labelPrezime.Text = "Prezime:";
+            // 
+            // labelEmail
+            // 
+            this.labelEmail.Location = new System.Drawing.Point(15, 90);
+            this.labelEmail.Text = "Email:";
+            // 
+            // labelTelefon
+            // 
+            this.labelTelefon.Location = new System.Drawing.Point(15, 120);
+            this.labelTelefon.Text = "Telefon:";
+            // 
+            // labelDatum
+            // 
+            this.labelDatum.Location = new System.Drawing.Point(15, 150);
+            this.labelDatum.Text = "Datum učlanjenja:";
+            // 
+            // btnIzbrisi
+            // 
+            this.btnIzbrisi.BackColor = System.Drawing.Color.IndianRed;
+            this.btnIzbrisi.ForeColor = System.Drawing.Color.White;
+            this.btnIzbrisi.Location = new System.Drawing.Point(550, 360);
+            this.btnIzbrisi.Size = new System.Drawing.Size(300, 50);
+            this.btnIzbrisi.Text = "Označi člana kao neaktivnog";
+            this.btnIzbrisi.UseVisualStyleBackColor = false;
+            this.btnIzbrisi.Click += new System.EventHandler(this.btnIzbrisi_Click);
+            // 
+            // BrisanjeClanova
+            // 
+            this.ClientSize = new System.Drawing.Size(900, 450);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.dgvClanovi);
+            this.Controls.Add(this.grpDetalji);
+            this.Controls.Add(this.btnIzbrisi);
+            this.Text = "Brisanje članova";
+            this.Load += new System.EventHandler(this.BrisanjeClanova_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).EndInit();
+            this.grpDetalji.ResumeLayout(false);
+            this.grpDetalji.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.DataGridView dgvClanovi;
+        private System.Windows.Forms.GroupBox grpDetalji;
+        private System.Windows.Forms.TextBox txtIme;
+        private System.Windows.Forms.TextBox txtPrezime;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.TextBox txtTelefon;
+        private System.Windows.Forms.TextBox txtDatumUclanjenja;
+        private System.Windows.Forms.Label labelIme;
+        private System.Windows.Forms.Label labelPrezime;
+        private System.Windows.Forms.Label labelEmail;
+        private System.Windows.Forms.Label labelTelefon;
+        private System.Windows.Forms.Label labelDatum;
+        private System.Windows.Forms.Button btnIzbrisi;
+    }
+}
+namespace Dnevnik
+{
+    partial class DodavanjeClanova
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.grpUnos = new System.Windows.Forms.GroupBox();
+            this.txtIme = new System.Windows.Forms.TextBox();
+            this.txtPrezime = new System.Windows.Forms.TextBox();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtTelefon = new System.Windows.Forms.TextBox();
+            this.labelIme = new System.Windows.Forms.Label();
+            this.labelPrezime = new System.Windows.Forms.Label();
+            this.labelEmail = new System.Windows.Forms.Label();
+            this.labelTelefon = new System.Windows.Forms.Label();
+            this.btnDodaj = new System.Windows.Forms.Button();
+            this.grpUnos.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(215, 30);
+            this.lblTitle.Text = "Dodavanje člana";
+            // 
+            // grpUnos
+            // 
+            this.grpUnos.Controls.Add(this.txtIme);
+            this.grpUnos.Controls.Add(this.txtPrezime);
+            this.grpUnos.Controls.Add(this.txtEmail);
+            this.grpUnos.Controls.Add(this.txtTelefon);
+            this.grpUnos.Controls.Add(this.labelIme);
+            this.grpUnos.Controls.Add(this.labelPrezime);
+            this.grpUnos.Controls.Add(this.labelEmail);
+            this.grpUnos.Controls.Add(this.labelTelefon);
+            this.grpUnos.Location = new System.Drawing.Point(25, 80);
+            this.grpUnos.Name = "grpUnos";
+            this.grpUnos.Size = new System.Drawing.Size(350, 200);
+            this.grpUnos.Text = "Podaci o članu";
+            // 
+            // txtIme
+            // 
+            this.txtIme.Location = new System.Drawing.Point(120, 30);
+            this.txtIme.Name = "txtIme";
+            this.txtIme.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtPrezime
+            // 
+            this.txtPrezime.Location = new System.Drawing.Point(120, 65);
+            this.txtPrezime.Name = "txtPrezime";
+            this.txtPrezime.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(120, 100);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(200, 22);
+            // 
+            // txtTelefon
+            // 
+            this.txtTelefon.Location = new System.Drawing.Point(120, 135);
+            this.txtTelefon.Name = "txtTelefon";
+            this.txtTelefon.Size = new System.Drawing.Size(200, 22);
+            // 
+            // labelIme
+            // 
+            this.labelIme.AutoSize = true;
+            this.labelIme.Location = new System.Drawing.Point(20, 33);
+            this.labelIme.Text = "Ime:";
+            // 
+            // labelPrezime
+            // 
+            this.labelPrezime.AutoSize = true;
+            this.labelPrezime.Location = new System.Drawing.Point(20, 68);
+            this.labelPrezime.Text = "Prezime:";
+            // 
+            // labelEmail
+            // 
+            this.labelEmail.AutoSize = true;
+            this.labelEmail.Location = new System.Drawing.Point(20, 103);
+            this.labelEmail.Text = "Email:";
+            // 
+            // labelTelefon
+            // 
+            this.labelTelefon.AutoSize = true;
+            this.labelTelefon.Location = new System.Drawing.Point(20, 138);
+            this.labelTelefon.Text = "Telefon:";
+            // 
+            // btnDodaj
+            // 
+            this.btnDodaj.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnDodaj.ForeColor = System.Drawing.Color.White;
+            this.btnDodaj.Location = new System.Drawing.Point(25, 300);
+            this.btnDodaj.Name = "btnDodaj";
+            this.btnDodaj.Size = new System.Drawing.Size(350, 45);
+            this.btnDodaj.Text = "Dodaj člana";
+            this.btnDodaj.UseVisualStyleBackColor = false;
+            this.btnDodaj.Click += new System.EventHandler(this.btnDodaj_Click);
+            // 
+            // DodavanjeClanova
+            // 
+            this.ClientSize = new System.Drawing.Size(420, 380);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.grpUnos);
+            this.Controls.Add(this.btnDodaj);
+            this.Text = "Dodavanje članova";
+            this.Load += new System.EventHandler(this.DodavanjeClanova_Load);
+            this.grpUnos.ResumeLayout(false);
+            this.grpUnos.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.GroupBox grpUnos;
+        private System.Windows.Forms.TextBox txtIme;
+        private System.Windows.Forms.TextBox txtPrezime;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.TextBox txtTelefon;
+        private System.Windows.Forms.Label labelIme;
+        private System.Windows.Forms.Label labelPrezime;
+        private System.Windows.Forms.Label labelEmail;
+        private System.Windows.Forms.Label labelTelefon;
+        private System.Windows.Forms.Button btnDodaj;
+    }
+}
+namespace Dnevnik
+{
+    partial class PregledClanova
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.dgvClanovi = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(215, 30);
+            this.lblTitle.Text = "Pregled članova";
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(25, 70);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(250, 22);
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(290, 68);
+            this.btnPretrazi.Name = "btnPretrazi";
+            this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.UseVisualStyleBackColor = true;
+            this.btnPretrazi.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dgvClanovi
+            // 
+            this.dgvClanovi.AllowUserToAddRows = false;
+            this.dgvClanovi.AllowUserToDeleteRows = false;
+            this.dgvClanovi.ReadOnly = true;
+            this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvClanovi.MultiSelect = false;
+            this.dgvClanovi.Location = new System.Drawing.Point(25, 110);
+            this.dgvClanovi.Name = "dgvClanovi";
+            this.dgvClanovi.Size = new System.Drawing.Size(650, 300);
+            this.dgvClanovi.TabIndex = 3;
+            // 
+            // PregledClanova
+            // 
+            this.ClientSize = new System.Drawing.Size(710, 440);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.dgvClanovi);
+            this.Name = "PregledClanova";
+            this.Text = "Pregled članova";
+            this.Load += new System.EventHandler(this.PregledClanova_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.DataGridView dgvClanovi;
+    }
+}
+namespace Dnevnik
+{
+    partial class PregledKnjiga
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.dgvKnjige = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(207, 30);
+            this.lblTitle.Text = "Pregled knjiga";
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(25, 70);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(280, 22);
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(320, 68);
+            this.btnPretrazi.Name = "btnPretrazi";
+            this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.UseVisualStyleBackColor = true;
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // dgvKnjige
+            // 
+            this.dgvKnjige.AllowUserToAddRows = false;
+            this.dgvKnjige.AllowUserToDeleteRows = false;
+            this.dgvKnjige.ReadOnly = true;
+            this.dgvKnjige.MultiSelect = false;
+            this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvKnjige.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvKnjige.Location = new System.Drawing.Point(25, 110);
+            this.dgvKnjige.Name = "dgvKnjige";
+            this.dgvKnjige.Size = new System.Drawing.Size(750, 320);
+            // 
+            // PregledKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(810, 460);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.txtPretraga);
+            this.Controls.Add(this.btnPretrazi);
+            this.Controls.Add(this.dgvKnjige);
+            this.Name = "PregledKnjiga";
+            this.Text = "Pregled knjiga";
+            this.Load += new System.EventHandler(this.PregledKnjiga_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.DataGridView dgvKnjige;
+    }
+}
+namespace Dnevnik
+{
+    partial class PosudbaKnjiga
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.grpClanovi = new System.Windows.Forms.GroupBox();
+            this.txtPretragaClan = new System.Windows.Forms.TextBox();
+            this.btnPretraziClan = new System.Windows.Forms.Button();
+            this.dgvClanovi = new System.Windows.Forms.DataGridView();
+            this.grpKnjige = new System.Windows.Forms.GroupBox();
+            this.txtPretragaKnjiga = new System.Windows.Forms.TextBox();
+            this.btnPretraziKnjiga = new System.Windows.Forms.Button();
+            this.dgvKnjige = new System.Windows.Forms.DataGridView();
+            this.btnPosudi = new System.Windows.Forms.Button();
+            this.grpClanovi.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).BeginInit();
+            this.grpKnjige.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(215, 30);
+            this.lblTitle.Text = "Posudba knjige";
+            // 
+            // grpClanovi
+            // 
+            this.grpClanovi.Controls.Add(this.txtPretragaClan);
+            this.grpClanovi.Controls.Add(this.btnPretraziClan);
+            this.grpClanovi.Controls.Add(this.dgvClanovi);
+            this.grpClanovi.Location = new System.Drawing.Point(25, 70);
+            this.grpClanovi.Name = "grpClanovi";
+            this.grpClanovi.Size = new System.Drawing.Size(420, 320);
+            this.grpClanovi.Text = "Odabir člana";
+            // 
+            // txtPretragaClan
+            // 
+            this.txtPretragaClan.Location = new System.Drawing.Point(15, 25);
+            this.txtPretragaClan.Name = "txtPretragaClan";
+            this.txtPretragaClan.Size = new System.Drawing.Size(260, 22);
+            // 
+            // btnPretraziClan
+            // 
+            this.btnPretraziClan.Location = new System.Drawing.Point(290, 23);
+            this.btnPretraziClan.Size = new System.Drawing.Size(100, 26);
+            this.btnPretraziClan.Text = "Pretraži";
+            this.btnPretraziClan.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dgvClanovi
+            // 
+            this.dgvClanovi.AllowUserToAddRows = false;
+            this.dgvClanovi.AllowUserToDeleteRows = false;
+            this.dgvClanovi.ReadOnly = true;
+            this.dgvClanovi.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvClanovi.MultiSelect = false;
+            this.dgvClanovi.Location = new System.Drawing.Point(15, 60);
+            this.dgvClanovi.Size = new System.Drawing.Size(375, 240);
+            this.dgvClanovi.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvClanovi_CellClick);
+            // 
+            // grpKnjige
+            // 
+            this.grpKnjige.Controls.Add(this.txtPretragaKnjiga);
+            this.grpKnjige.Controls.Add(this.btnPretraziKnjiga);
+            this.grpKnjige.Controls.Add(this.dgvKnjige);
+            this.grpKnjige.Location = new System.Drawing.Point(470, 70);
+            this.grpKnjige.Name = "grpKnjige";
+            this.grpKnjige.Size = new System.Drawing.Size(420, 320);
+            this.grpKnjige.Text = "Odabir knjige";
+            // 
+            // txtPretragaKnjiga
+            // 
+            this.txtPretragaKnjiga.Location = new System.Drawing.Point(15, 25);
+            this.txtPretragaKnjiga.Name = "txtPretragaKnjiga";
+            this.txtPretragaKnjiga.Size = new System.Drawing.Size(260, 22);
+            // 
+            // btnPretraziKnjiga
+            // 
+            this.btnPretraziKnjiga.Location = new System.Drawing.Point(290, 23);
+            this.btnPretraziKnjiga.Size = new System.Drawing.Size(100, 26);
+            this.btnPretraziKnjiga.Text = "Pretraži";
+            this.btnPretraziKnjiga.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // dgvKnjige
+            // 
+            this.dgvKnjige.AllowUserToAddRows = false;
+            this.dgvKnjige.AllowUserToDeleteRows = false;
+            this.dgvKnjige.ReadOnly = true;
+            this.dgvKnjige.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvKnjige.MultiSelect = false;
+            this.dgvKnjige.Location = new System.Drawing.Point(15, 60);
+            this.dgvKnjige.Size = new System.Drawing.Size(375, 240);
+            this.dgvKnjige.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKnjige_CellClick);
+            // 
+            // btnPosudi
+            // 
+            this.btnPosudi.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnPosudi.ForeColor = System.Drawing.Color.White;
+            this.btnPosudi.Location = new System.Drawing.Point(25, 410);
+            this.btnPosudi.Name = "btnPosudi";
+            this.btnPosudi.Size = new System.Drawing.Size(865, 45);
+            this.btnPosudi.Text = "Posudi odabranu knjigu";
+            this.btnPosudi.UseVisualStyleBackColor = false;
+            this.btnPosudi.Click += new System.EventHandler(this.btnPosudi_Click);
+            // 
+            // PosudbaKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(920, 480);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.grpClanovi);
+            this.Controls.Add(this.grpKnjige);
+            this.Controls.Add(this.btnPosudi);
+            this.Text = "Posudba knjige";
+            this.Load += new System.EventHandler(this.PosudbaKnjiga_Load);
+            this.grpClanovi.ResumeLayout(false);
+            this.grpClanovi.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvClanovi)).EndInit();
+            this.grpKnjige.ResumeLayout(false);
+            this.grpKnjige.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvKnjige)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.GroupBox grpClanovi;
+        private System.Windows.Forms.TextBox txtPretragaClan;
+        private System.Windows.Forms.Button btnPretraziClan;
+        private System.Windows.Forms.DataGridView dgvClanovi;
+        private System.Windows.Forms.GroupBox grpKnjige;
+        private System.Windows.Forms.TextBox txtPretragaKnjiga;
+        private System.Windows.Forms.Button btnPretraziKnjiga;
+        private System.Windows.Forms.DataGridView dgvKnjige;
+        private System.Windows.Forms.Button btnPosudi;
+    }
+}
+namespace Dnevnik
+{
+    partial class PovratKnjiga
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.grpPosudbe = new System.Windows.Forms.GroupBox();
+            this.txtPretraga = new System.Windows.Forms.TextBox();
+            this.btnPretrazi = new System.Windows.Forms.Button();
+            this.dgvPosudbe = new System.Windows.Forms.DataGridView();
+            this.btnVrati = new System.Windows.Forms.Button();
+            this.grpPosudbe.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(20, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(205, 30);
+            this.lblTitle.Text = "Povrat knjige";
+            // 
+            // grpPosudbe
+            // 
+            this.grpPosudbe.Controls.Add(this.txtPretraga);
+            this.grpPosudbe.Controls.Add(this.btnPretrazi);
+            this.grpPosudbe.Controls.Add(this.dgvPosudbe);
+            this.grpPosudbe.Location = new System.Drawing.Point(25, 70);
+            this.grpPosudbe.Name = "grpPosudbe";
+            this.grpPosudbe.Size = new System.Drawing.Size(850, 320);
+            this.grpPosudbe.Text = "Aktivne posudbe";
+            // 
+            // txtPretraga
+            // 
+            this.txtPretraga.Location = new System.Drawing.Point(15, 25);
+            this.txtPretraga.Name = "txtPretraga";
+            this.txtPretraga.Size = new System.Drawing.Size(260, 22);
+            // 
+            // btnPretrazi
+            // 
+            this.btnPretrazi.Location = new System.Drawing.Point(290, 23);
+            this.btnPretrazi.Size = new System.Drawing.Size(100, 26);
+            this.btnPretrazi.Text = "Pretraži";
+            this.btnPretrazi.Click += new System.EventHandler(this.btnPretrazi_Click);
+            // 
+            // dgvPosudbe
+            // 
+            this.dgvPosudbe.AllowUserToAddRows = false;
+            this.dgvPosudbe.AllowUserToDeleteRows = false;
+            this.dgvPosudbe.ReadOnly = true;
+            this.dgvPosudbe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvPosudbe.MultiSelect = false;
+            this.dgvPosudbe.Location = new System.Drawing.Point(15, 60);
+            this.dgvPosudbe.Size = new System.Drawing.Size(815, 240);
+            this.dgvPosudbe.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPosudbe_CellClick);
+            // 
+            // btnVrati
+            // 
+            this.btnVrati.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnVrati.ForeColor = System.Drawing.Color.White;
+            this.btnVrati.Location = new System.Drawing.Point(25, 410);
+            this.btnVrati.Name = "btnVrati";
+            this.btnVrati.Size = new System.Drawing.Size(850, 45);
+            this.btnVrati.Text = "Vrati odabranu knjigu";
+            this.btnVrati.UseVisualStyleBackColor = false;
+            this.btnVrati.Click += new System.EventHandler(this.btnVrati_Click);
+            // 
+            // PovratKnjiga
+            // 
+            this.ClientSize = new System.Drawing.Size(900, 480);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.grpPosudbe);
+            this.Controls.Add(this.btnVrati);
+            this.Text = "Povrat knjige";
+            this.Load += new System.EventHandler(this.PovratKnjiga_Load);
+            this.grpPosudbe.ResumeLayout(false);
+            this.grpPosudbe.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPosudbe)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.GroupBox grpPosudbe;
+        private System.Windows.Forms.TextBox txtPretraga;
+        private System.Windows.Forms.Button btnPretrazi;
+        private System.Windows.Forms.DataGridView dgvPosudbe;
+        private System.Windows.Forms.Button btnVrati;
+    }
+}
+namespace Dnevnik
+{
+    partial class Statistika
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.lblBrojKnjiga = new System.Windows.Forms.Label();
+            this.lblBrojClanova = new System.Windows.Forms.Label();
+            this.lblPosudjene = new System.Windows.Forms.Label();
+            this.lblUkupnoPosudbi = new System.Windows.Forms.Label();
+            this.lblPosudbePoKnjigama = new System.Windows.Forms.Label();
+            this.lblNeaktivniClanovi = new System.Windows.Forms.Label();
+            this.lblProsjecnoTrajanje = new System.Windows.Forms.Label();
+            this.lblNevraceneKnjige = new System.Windows.Forms.Label();
+
+            this.tableLayoutPanel.SuspendLayout();
+            this.SuspendLayout();
+
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Location = new System.Drawing.Point(25, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(118, 30);
+            this.lblTitle.Text = "Statistika";
+            // 
+            // tableLayoutPanel
+            // 
+            this.tableLayoutPanel.ColumnCount = 2;
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel.Controls.Add(this.lblBrojKnjiga, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.lblBrojClanova, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.lblPosudjene, 1, 2);
+            this.tableLayoutPanel.Controls.Add(this.lblUkupnoPosudbi, 1, 3);
+            this.tableLayoutPanel.Controls.Add(this.lblPosudbePoKnjigama, 1, 4);
+            this.tableLayoutPanel.Controls.Add(this.lblNeaktivniClanovi, 1, 5);
+            this.tableLayoutPanel.Controls.Add(this.lblProsjecnoTrajanje, 1, 6);
+            this.tableLayoutPanel.Controls.Add(this.lblNevraceneKnjige, 1, 7);
+            this.tableLayoutPanel.Location = new System.Drawing.Point(25, 70);
+            this.tableLayoutPanel.Name = "tableLayoutPanel";
+            this.tableLayoutPanel.RowCount = 8;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel.Size = new System.Drawing.Size(450, 320);
+            this.tableLayoutPanel.TabIndex = 1;
+
+            // 
+            // lblBrojKnjiga
+            // 
+            this.lblBrojKnjiga.AutoSize = true;
+            this.lblBrojKnjiga.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblBrojKnjiga.Text = "Aktivne knjige: 0";
+            // 
+            // lblBrojClanova
+            // 
+            this.lblBrojClanova.AutoSize = true;
+            this.lblBrojClanova.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblBrojClanova.Text = "Aktivni članovi: 0";
+            // 
+            // lblPosudjene
+            // 
+            this.lblPosudjene.AutoSize = true;
+            this.lblPosudjene.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblPosudjene.Text = "Posuđene knjige: 0";
+            // 
+            // lblUkupnoPosudbi
+            // 
+            this.lblUkupnoPosudbi.AutoSize = true;
+            this.lblUkupnoPosudbi.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblUkupnoPosudbi.Text = "Ukupno posudbi: 0";
+            // 
+            // lblPosudbePoKnjigama
+            // 
+            this.lblPosudbePoKnjigama.AutoSize = true;
+            this.lblPosudbePoKnjigama.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblPosudbePoKnjigama.Text = "Posudbe po knjigama:";
+            // 
+            // lblNeaktivniClanovi
+            // 
+            this.lblNeaktivniClanovi.AutoSize = true;
+            this.lblNeaktivniClanovi.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblNeaktivniClanovi.Text = "Neaktivni članovi: 0";
+            // 
+            // lblProsjecnoTrajanje
+            // 
+            this.lblProsjecnoTrajanje.AutoSize = true;
+            this.lblProsjecnoTrajanje.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblProsjecnoTrajanje.Text = "Prosječno trajanje posudbe:";
+            // 
+            // lblNevraceneKnjige
+            // 
+            this.lblNevraceneKnjige.AutoSize = true;
+            this.lblNevraceneKnjige.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.lblNevraceneKnjige.Text = "Nevraćene knjige: 0";
+            // 
+            // Statistika
+            // 
+            this.ClientSize = new System.Drawing.Size(500, 420);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.tableLayoutPanel);
+            this.Name = "Statistika";
+            this.Text = "Statistika";
+            this.Load += new System.EventHandler(this.Statistika_Load);
+            this.tableLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.Label lblBrojKnjiga;
+        private System.Windows.Forms.Label lblBrojClanova;
+        private System.Windows.Forms.Label lblPosudjene;
+        private System.Windows.Forms.Label lblUkupnoPosudbi;
+        private System.Windows.Forms.Label lblPosudbePoKnjigama;
+        private System.Windows.Forms.Label lblNeaktivniClanovi;
+        private System.Windows.Forms.Label lblProsjecnoTrajanje;
+        private System.Windows.Forms.Label lblNevraceneKnjige;
+    }
+}
+
+
+
+
+
+Zatim sam dodao ovo u bazu
+CREATE TABLE [dbo].[Clanarina] (
+    [ClanarinaID] [int] IDENTITY(1,1) NOT NULL,
+    [ClanID] [int] NOT NULL,  -- Povezivanje s tablicom Clanovi
+    [Iznos] [decimal](10,2) NOT NULL,  -- Iznos članarine (npr. 5.00 EUR)
+    [DatumPlacanja] [date] NOT NULL,  -- Datum kada je članarina plaćena
+    [SljedecaNaplata] [date] NOT NULL,  -- Datum sljedeće naplate
+    PRIMARY KEY CLUSTERED ([ClanarinaID] ASC) 
+        ON [PRIMARY]
+);
+
+-- Dodavanje vanjskog ključa koji povezuje tablicu Clanarina s Clanovi
+ALTER TABLE [dbo].[Clanarina]
+ADD CONSTRAINT FK_Clanarina_Clanovi FOREIGN KEY ([ClanID]) REFERENCES [dbo].[Clanovi]([ClanID]);
+
+Želim da prilagodiš sve kodove tome i da možda napraviš neke nove tj placanje clanarine, gdje odaberemo je li platio članarinu... dodaš u statistiku, izmjeniš UI po potrebi itd itd
