@@ -184,15 +184,7 @@ namespace Dnevnik
         public DodavanjeKnjiga()
         {
             InitializeComponent();
-        }
-
-        private void DodavanjeKnjiga_Load(object sender, EventArgs e)
-        {
-
-        }
-       
-
-        private void btnDodaj_Click(object sender, EventArgs e)
+        }private void btnDodaj_Click(object sender, EventArgs e)
         {
             int godina;
             if (!int.TryParse(txtGodina.Text, out godina))
@@ -204,17 +196,14 @@ namespace Dnevnik
             {
                 string query = "INSERT INTO Knjige (Naslov, Autor, GodinaIzdavanja, ISBN, Aktivan) " +
                "VALUES (@Naslov, @Autor, @Godina, @ISBN, 1)";
-
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Naslov", txtNaslov.Text);
                 cmd.Parameters.AddWithValue("@Autor", txtAutor.Text);
                 cmd.Parameters.AddWithValue("@Godina", int.Parse(txtGodina.Text));
                 cmd.Parameters.AddWithValue("@ISBN", txtISBN.Text);
-
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 MessageBox.Show("Knjiga uspješno dodana!");
                 this.Close();
             }
