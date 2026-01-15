@@ -9,7 +9,53 @@
 
     } else if(isset($_GET["action"]) && $_GET["action"]=="brisi_auto_iz_baze") {
         $id = $_GET['id'];
-        print("$id  ");
+          $mysqli = mysqli_connect("localhost", "root", "", "automobili");
+
+        if (!mysqli_connect_errno()) {
+      $sql = " DELETE FROM AUTO WHERE id = $id;";
+         $result = mysqli_query($mysqli, $sql);
+
       
     }
+      
+    }
+
+    else if(isset($_GET["action"]) && $_GET["action"]=="edit_auto_iz_baze") {
+        $id = $_GET['id'];
+        $marka = $_GET['marka'];
+        $godina = $_GET['god_proizvodnje'];
+        $brz = $_GET['max_brzina'];
+      
+
+        $mysqli = mysqli_connect("localhost", "root", "", "automobili");
+
+        if (!mysqli_connect_errno()) {
+      $sql = "
+        UPDATE Auto
+        SET marka = '$marka', max_brzina = '$brz', god_proizvodnje = '$godina'
+        WHERE id = $id;";
+         $result = mysqli_query($mysqli, $sql);
+
+      
+    }
+
+    }
+     else if(isset($_GET["action"]) && $_GET["action"] == "action_auto_unos_u_bazu") {
+
+      
+      $marka = $_GET['marka'];
+      $god = $_GET['god_proizvodnje'];
+      $brz = $_GET['max_brzina'];
+       $mysqli = mysqli_connect("localhost", "root", "", "automobili");
+
+        if (!mysqli_connect_errno()) {
+
+    $sql = "INSERT INTO Auto (marka, max_brzina, god_proizvodnje)
+    VALUES ('$marka', '$god', '$brz');";
+    $result = mysqli_query($mysqli, $sql);
+
+
+     }
+     }
+    header("Location: index.php");
 ?>
