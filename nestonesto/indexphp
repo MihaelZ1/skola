@@ -16,11 +16,11 @@ $mysqli = mysqli_connect("localhost", "root", "", "automobili");
 
 			  print("<table border='1'>");
               print("<th>id</th> <th>marka      <a href='?sort=asc'>&#9650;</a>      <a href='?sort=desc'>&#9660;</a></th> <th>max_brzina</th> <th>god_proizvodnje</th> <th>edit</th> <th>briši</th> <th>briši</th>");
-              if(isset($_GET["sort"]) && $_GET["sort"] == "asc") {  // u index.php
+            if(isset($_GET["sort"]) && $_GET["sort"] == "asc") {  // u index.php
             $sql = "SELECT * FROM auto ORDER BY marka ASC"; 
             }
             else if(isset($_GET["sort"]) && $_GET["sort"] == "asc"){
-                 $sql = "SELECT * FROM auto ORDER BY marka DESC"; 
+            $sql = "SELECT * FROM auto ORDER BY marka DESC"; 
             }
             $result = mysqli_query($mysqli, $sql);
 
@@ -48,6 +48,10 @@ $mysqli = mysqli_connect("localhost", "root", "", "automobili");
 			  print("</table>");
 			  mysqli_free_result($result);  // oslobađanje memorije
 		     }
+             print("<a href='novi_auto_forma.php'> Unos novog auta </a> <br>");
+             print("<a href='trazilica.php'> Tražilica </a>");
+
+
 
 		  } else {
 			print(" Upit je neuspješno izvršen! ");
@@ -56,4 +60,4 @@ $mysqli = mysqli_connect("localhost", "root", "", "automobili");
 	} else {
 		      print(" Greška kod spajanja na bazu! " . mysqli_connect_error());
 	}
-?>                                             
+?>    
