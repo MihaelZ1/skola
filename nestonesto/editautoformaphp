@@ -1,5 +1,30 @@
 <?php
+$mysqli = mysqli_connect("localhost", "root", "", "automobili");
 
-print("bolan jaran");
+if (!mysqli_connect_errno()) {
 
+    $id = $_GET['id'];
+
+    $sql = "SELECT * FROM auto WHERE id = $id";
+    $result = mysqli_query($mysqli, $sql);
+
+    // Fetch row from database
+    $row = mysqli_fetch_assoc($result);
+    $marka = $row['marka'];
+    $god_proizvodnje = $row['god_proizvodnje'];
+    $max_brzina = $row['max_brzina'];
+
+    print("
+        <form action='action.php' method='GET'> 
+            Marka: <input type='text' name='marka' value='$marka' /><br/>
+            Godina proizvodnje: <input type='text' name='god_proizvodnje' value='$god_proizvodnje' /><br/>
+            Max brzina: <input type='text' name='max_brzina' value='$max_brzina' /><br/>
+            <input type='hidden' name='id' value='$id' /> 
+            <input type='hidden' name='action' value='edit_auto_iz_baze' /> 
+            <input type='submit' name='Submit' value='Edit' />  
+        </form>
+    ");
+}
 ?>
+
+
