@@ -1,0 +1,20 @@
+<?php
+$mysqli = mysqli_connect("localhost", "root", "", "automobili");
+
+if (!mysqli_connect_errno()) {
+
+    
+
+    print("
+        <form action='action.php' method='GET'> 
+            Marka: <input type='text' name='marka'  /><br/>
+            Godina proizvodnje: <input type='text' name='god_proizvodnje'  /><br/>
+            Max brzina: <input type='text' name='max_brzina' /><br/>
+            <input type='hidden' name='action' value='action_auto_unos_u_bazu' />
+            <input type='submit' name='Submit' value='Unesi' />  
+        </form>
+    ");
+
+   
+}
+?>
