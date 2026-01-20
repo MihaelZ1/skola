@@ -55,7 +55,7 @@ ppp profile add name=pptp-profile local-address=10.10.10.1 remote-address=10.10.
 /interface pptp-client add name=pptp-to-R3 \ connect-to=192.168.0.5 \ user=vpn1 \ password=1234 \profile=default-encryption \ disabled=no
 /ip route add dst-address=192.168.200.0/24 gateway=pptp-to-R3
 
-
+ip/firewall/nat/add chain=srcnat out-interface=ether2 action=masquarade
 
 
 
