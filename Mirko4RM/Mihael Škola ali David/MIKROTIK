@@ -65,3 +65,145 @@ ip/firewall/nat/add chain=srcnat out-interface=ether2 action=masquarade
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CA cert
+Name: ca-cert
+Common Name: ca
+Key Size: 4096
+Days Valid: 3650
+Key Usage: key-cert-sign, crl-sign
+
+
+→ Sign
+
+2️⃣ Server cert
+Name: server-cert
+Common Name: vpn.tvojddns.net   (ILI javna IP)
+Key Usage: digital-signature, key-encipherment, tls-server
+
+
+→ Sign
+→ CA: ca-cert
+
+3️⃣ Export CA cert (za mobitel)
+
+Select ca-cert
+
+Export
+
+Bez passworda (ili zapamti)
+
+Prebaci .crt na mobitel
+
+🧾 KORAK 2 – IP Pool
+IP → Pool
+Name: ikev2-pool
+Ranges: 10.10.10.10-10.10.10.50
+
+👤 KORAK 3 – User
+PPP → Secrets
+Name: vpnuser
+Password: JAKAPASSWORD
+Service: ike2
+
+🔐 KORAK 4 – IPsec konfiguracija
+Proposal
+IP → IPsec → Proposals
+Auth Algorithms: sha256
+Enc Algorithms: aes-256-cbc
+PFS Group: none
+
+Mode Config
+IP → IPsec → Mode Config
+Name: ikev2-conf
+Address Pool: ikev2-pool
+Split DNS: 0.0.0.0
+
+Profile
+IP → IPsec → Profiles
+Name: ikev2-profile
+Hash Algorithms: sha256
+Enc Algorithms: aes-256
+DH Group: modp2048
+
+Peer
+IP → IPsec → Peers
+Exchange Mode: ike2
+Profile: ikev2-profile
+Passive: yes
+
+Identity
+IP → IPsec → Identities
+Auth Method: digital signature
+Certificate: server-cert
+Remote Certificate: none
+Mode Config: ikev2-conf
+Generate Policy: port-strict
+Username: vpnuser
+Password: MOJPASSWORDZNBAŠVEĆDAVID
+
+🔥 KORAK 5 – Firewall (OBAVEZNO)
+IP → Firewall → Filter Rules
+
+ACCEPT UDP 500,4500
+ACCEPT protocol ipsec-esp
+
+
+I NAT:
+
+IP → Firewall → NAT
+Chain: srcnat
+Src Address: 10.10.10.0/24
+Action: masquerade
+
+📱 KORAK 6 – Mobitel
+
+Instaliraj CA cert
+
+VPN type: IKEv2
+
+Server: vpn.tvojddns.net
+
+Username / Password
+
+Auth: Certificate
+
+→ Connect ✅
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
