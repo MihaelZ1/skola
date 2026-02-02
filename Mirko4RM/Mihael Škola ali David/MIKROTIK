@@ -4,7 +4,7 @@ icmp za ping
 system/reset-configuration no-defaults=yes
 interface/print
 ip/address/add address=192.168.1.10/24 interface=ether1
-ip/route/add gateway=192.168.1.1/24  dst-address=0.0.0.0/0
+ip/route/add gateway=192.168.1.1  dst-address=0.0.0.0/0
 ping 192.168.2.10
 
 ip/firewall/filter/add chain=forward action=log protocol=icmp
@@ -58,8 +58,8 @@ ppp profile add name=pptp-profile local-address=10.10.10.1 remote-address=10.10.
 ip/firewall/nat/add chain=srcnat out-interface=ether2 action=masquarade
 
 
-
-
+PROXY KOMANDE  
+https://help.mikrotik.com/docs/spaces/ROS/pages/132350000/Proxy
 
 
 
