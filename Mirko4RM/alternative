@@ -1,0 +1,81 @@
+Naravno! Evo detaljnijeg pregleda sigurnosnih alternativa za HTTP, FTP, Telnet i DNS, uključujući njihove portove i način na koji svaki od njih osigurava komunikaciju.
+
+---
+
+### 1. **HTTP → HTTPS (Hypertext Transfer Protocol Secure)**
+
+* **Port**: 443
+
+* **Kako osigurava komunikaciju**:
+
+  * **SSL/TLS enkripcija**: HTTPS koristi **SSL (Secure Sockets Layer)** ili **TLS (Transport Layer Security)** za šifriranje podataka koji se razmjenjuju između web servera i klijenta. SSL/TLS omogućuju da svi podaci koji se šalju budu **kriptirani** i **zaštićeni** od presretanja ili manipulacija.
+  * **Autentifikacija**: HTTPS omogućuje autentifikaciju servera putem **digitalnih certifikata**, što omogućava klijentima da budu sigurni da komuniciraju sa stvarnim serverom, a ne s lažnim ("man-in-the-middle" napad).
+  * **Integritet podataka**: HTTPS osigurava da podaci koji se šalju nisu izmijenjeni ili oštećeni. Ako dođe do bilo kakvih promjena, veza će biti prekinuta ili neće moći da se uspostavi.
+  * **Zaštita od napada**: HTTPS sprječava napade poput **"man-in-the-middle"** (presretanje i modifikacija podataka) i **"session hijacking"** (krađa sesijskih podataka).
+
+---
+
+### 2. **FTP → FTPS / SFTP**
+
+#### **FTPS (FTP Secure)**
+
+* **Portovi**: 990 (kontrola), 989 (prijenos podataka)
+
+* **Kako osigurava komunikaciju**:
+
+  * **SSL/TLS enkripcija**: FTPS koristi **SSL/TLS** protokol za šifriranje FTP sesije. To uključuje šifriranje prijenosa datoteka i kontrolnih komandi, što znači da čak i ako napadač presretne komunikaciju, podaci će biti potpuno nečitljivi.
+  * **Autentifikacija**: FTPS koristi **digitalne certifikate** za autentifikaciju servera, a u nekim slučajevima i klijenta, čime se osigurava da samo ovlaštene osobe mogu pristupiti serveru i prijenosu podataka.
+  * **Povećana sigurnost**: S obzirom na to da koristi standardne sigurnosne protokole kao što su SSL i TLS, FTPS može jamčiti visoku razinu sigurnosti za prijenos osjetljivih podataka.
+
+#### **SFTP (SSH File Transfer Protocol)**
+
+* **Port**: 22
+
+* **Kako osigurava komunikaciju**:
+
+  * **SSH (Secure Shell)**: SFTP koristi **SSH protokol**, koji pruža enkripciju i sigurnu autentifikaciju putem **javni/privatni ključ** ili **lozinke**. To znači da je cijeli prijenos datoteka zaštićen od prisluškivanja ili manipulacija.
+  * **Enkripcija svih podataka**: Cijela SFTP sesija (uključujući autentifikaciju i prijenos podataka) šifrirana je s **AES** (Advanced Encryption Standard) ili sličnim algoritmima. Ovo osigurava potpunu privatnost i sigurnost podataka.
+  * **Integritet podataka**: SFTP također koristi **cryptographic hashing** za provjeru integriteta podataka, osiguravajući da podaci nisu oštećeni ili izmijenjeni tijekom prijenosa.
+  * **Povećana otpornost na napade**: SFTP je vrlo otporan na napade kao što su **man-in-the-middle** ili **brute-force** napadi na lozinke, jer koristi snažnu enkripciju i autentifikaciju.
+
+---
+
+### 3. **Telnet → SSH (Secure Shell)**
+
+* **Port**: 22
+
+* **Kako osigurava komunikaciju**:
+
+  * **Enkripcija svih podataka**: SSH pruža **enkripciju svih podataka** koji se prenose između klijenta i servera. Svi unosi, odgovori i podaci o autentifikaciji (lozinke, korisnička imena) šifrirani su, čime se sprječava njihovo presretanje.
+  * **Autentifikacija**: SSH omogućuje **dvofaktorsku autentifikaciju**, **autentifikaciju putem javnog ključa**, ili jednostavno lozinku za sigurno uspostavljanje sesije. Ovo čini SSH sigurnim i otpornim na napade poput **brute-force** pokušaja.
+  * **Sigurno upravljanje daljinskim sustavima**: SSH omogućuje **sigurno daljinsko upravljanje** računalima ili serverima, čime administratorima omogućava kontrolu sustava bez rizika od napada.
+  * **Zaštita od napada**: SSH štiti od svih vrsta napada koje su povezane s Telnetom, kao što su **sniffing** (presluškivanje) i **man-in-the-middle** (intercepcija).
+
+---
+
+### 4. **DNS → DNSSEC (DNS Security Extensions)**
+
+* **Port**: 53
+
+* **Kako osigurava komunikaciju**:
+
+  * **Autentifikacija DNS odgovora**: DNSSEC dodaje **digitalne potpise** za DNS odgovore, omogućujući korisnicima da provjere autentičnost DNS podataka. To znači da korisnici mogu biti sigurni da dobivaju točne DNS informacije, a ne manipulirane ili lažne.
+  * **Integritet podataka**: DNSSEC koristi **kriptografske hash funkcije** za provjeru integriteta DNS odgovora, čime se sprječava njihovo mijenjanje ili presretanje od strane napadača.
+  * **Sprječavanje DNS napada**: DNSSEC štiti od napada poput **DNS cache poisoning**, gdje napadači mogu manipulirati DNS odgovorima kako bi preusmjerili promet na zlonamjerne web stranice. Sa DNSSEC-om, svaki DNS odgovor je digitalno potpisan, čime se osigurava da je odgovor došao s pravog izvora i nije promijenjen.
+  * **Otkrivanje lažnih DNS zapisa**: DNSSEC omogućuje otkrivanje lažnih DNS zapisa i blokiranje zlonamjernih pokušaja preusmjeravanja prometa.
+
+---
+
+### Sažetak (Detaljno):
+
+| Protokol   | Sigurnosna alternativa | Port                            | Kako osigurava                                                                                                                                  |
+| ---------- | ---------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **HTTP**   | **HTTPS**              | 443                             | SSL/TLS enkripcija, autentifikacija putem certifikata, integritet podataka. Sprječava napade "man-in-the-middle" i krađu podataka.              |
+| **FTP**    | **FTPS**               | 990 (kontrola) / 989 (prijenos) | SSL/TLS enkripcija, autentifikacija putem certifikata. Sigurno šifriranje podataka i sprječavanje presretanja.                                  |
+|            | **SFTP**               | 22                              | SSH enkripcija, autentifikacija putem javnog ključa ili lozinke. Osiguranje svih podataka i komandi. Otporno na napade poput man-in-the-middle. |
+| **Telnet** | **SSH**                | 22                              | Enkripcija svih podataka, dvofaktorska autentifikacija, zaštita od napada "sniffing" i "man-in-the-middle".                                     |
+| **DNS**    | **DNSSEC**             | 53                              | Digitalni potpisi i kriptografski hash za autentifikaciju i integritet DNS podataka. Sprječava DNS spoofing i cache poisoning.                  |
+
+---
+
+Svaka od ovih sigurnosnih alternativa koristi moderne tehnologije enkripcije i autentifikacije kako bi štitila osjetljive podatke od napada, osigurala integritet i osigurala privatnost komunikacije između korisnika i servera.
