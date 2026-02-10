@@ -62,11 +62,11 @@ PROXY KOMANDE
 https://help.mikrotik.com/docs/spaces/ROS/pages/132350000/Proxy
 
 
-
-
-
-
-
+/system ntp server set enabled=yes
+/system ntp client set enabled=yes primary-ntp=192.168.1.1         <-MIKROTIK VERZIJA 7
+/system clock set time=10:30:00
+/system clock print
+/system ntp client set enabled=no
 
 
 
