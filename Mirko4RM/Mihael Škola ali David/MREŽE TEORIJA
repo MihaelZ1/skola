@@ -1,0 +1,22 @@
+NTP(Network Time Protocol) je mrežni protokol za sinkronizaciju vremena između računala preko IP mreže. 
+Cilj je da sva računala imaju točno i usklađeno vrijeme, s odstupanjem manjim od 1ms u LAN-u i nekoliko ms preko interneta.
+
+Hijerarhija - 
+  Razina 0-atomski satovi, GPS, radio satovi
+  Razina 1-server spojeni na 0-tu razinu
+  Razina 2-Server sinkronizirani sa stratum 1
+  Razina 3-15-druge razine
+  Razina 16-nesikronizirani uređaj
+
+Radi preko UDP port 123
+
+SNTP(Simple NTP)-pojednostavljena verzija, za embedded uređaje
+PTP(Precision Time Protocol)-precizniji, koristi se u industriji i telekomunikaciji
+Chrony-modernija implementacija na Linuxu
+
+NTS(Network Time Security) - kriptografska zaštita NTP-a, koristi TLS, moderni standard
+RTT(Round Trip Time) - vrijeme koje treba paketu da dođe do servera, klijent ga izračunava i onda ga dodaje vremenu kojeg je server poslao
+
+
+Način rada: klijent šalje zahtjev, server prima, server šalje odgovor, klijent prima, klijent izračunava round-trip time i usklađuje vrijeme prema njemu(postepeno, bez skoka)
+Gdje se koristi: bankarski sustavi, telekomunikacije, logovi, SIEM sustavi, distribucija certifikata, IoT
