@@ -1,0 +1,217 @@
+java
+
+package com.example.myapplication2;
+
+import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends Activity {
+
+    SQLiteDatabase myDB;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Otvori ili kreiraj bazu
+        myDB = this.openOrCreateDatabase("faks", MODE_PRIVATE, null);
+
+        // Kreiraj tablicu ako ne postoji
+        myDB.execSQL("CREATE TABLE IF NOT EXISTS auto (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "marka TEXT, " +
+                "god_proizv INTEGER, " +
+                "max_brzina INTEGER);");
+
+        // Gumb za unos
+        Button btn = findViewById(R.id.gumb);
+        btn.setOnClickListener(v -> clickButton());
+
+        // Učitaj listu odmah pri pokretanju
+        loadList();
+    }
+
+    // Klik gumba → unos u bazu
+    public void clickButton() {
+
+        EditText e1 = findViewById(R.id.edit_message1);
+        EditText e2 = findViewById(R.id.edit_message2);
+        EditText e3 = findViewById(R.id.edit_message3);
+
+        String marka = e1.getText().toString();
+        String godina = e2.getText().toString();
+        String brzina = e3.getText().toString();
+
+        if (marka.isEmpty() || godina.isEmpty() || brzina.isEmpty()) {
+            Toast.makeText(this, "Popuni sva polja!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            myDB.execSQL("INSERT INTO auto (marka, god_proizv, max_brzina) VALUES ('"
+                    + marka + "', " + godina + ", " + brzina + ");");
+
+            Toast.makeText(this, "Auto dodan!", Toast.LENGTH_SHORT).show();
+
+            // Osvježi listu
+            loadList();
+
+            // Očisti polja
+            e1.setText("");
+            e2.setText("");
+            e3.setText("");
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Greška: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // Učitavanje liste iz baze
+    private void loadList() {
+        ListView list = findViewById(R.id.list);
+        Cursor c = myDB.rawQuery("SELECT * FROM auto", null);
+
+        StringBuilder sb = new StringBuilder();
+
+        if (c.moveToFirst()) {
+            do {
+                sb.append(c.getInt(0)).append(" ")
+                        .append(c.getString(1)).append(" ")
+                        .append(c.getInt(2)).append(" ")
+                        .append(c.getInt(3)).append("\n");
+            } while (c.moveToNext());
+        }
+
+        String[] items = sb.toString().trim().isEmpty()
+                ? new String[]{"Nema podataka"}
+                : sb.toString().split("\n");
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+
+        list.setAdapter(adapter);
+
+        // Klik na stavku liste
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(
+                    this,
+                    "Odabrano: " + ((TextView) view).getText(),
+                    Toast.LENGTH_SHORT
+            ).show();
+        });
+    }
+}
+
+
+xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:background="#ffffff">
+
+
+    <TextView
+        android:background="#4CAF50"
+        android:id="@+id/textview1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_marginTop="50px"
+        />
+
+    <ListView android:id="@+id/list"
+
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        />
+
+        <TextView
+        android:background="#4CAF50"
+        android:id="@+id/textview1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Marka: "
+        android:layout_marginTop="50px"
+        />
+
+    <EditText android:id="@+id/edit_message1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:background="#4CAF50"
+        android:id="@+id/textview2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Godina proizvodnje: "
+        android:layout_marginTop="0px"
+        />
+
+    <EditText android:id="@+id/edit_message2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:background="#4CAF50"
+        android:id="@+id/textview3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Max. brzina:"
+        android:layout_marginTop="0px"
+        />
+
+    <EditText android:id="@+id/edit_message3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/gumb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#ffcc00"
+        android:onClick="clickButton"
+        android:text="U BAZU"/>
+
+    <Button
+        android:id="@+id/gumb2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#ffcc00"
+        android:onClick="promijeniButton"
+        android:text="PROMIJENI"/>
+
+    <Button
+        android:id="@+id/gumb3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#ffcc00"
+        android:onClick="obrisiButton"
+        android:text="OBRISI"/>
+
+
+</LinearLayout>
+
