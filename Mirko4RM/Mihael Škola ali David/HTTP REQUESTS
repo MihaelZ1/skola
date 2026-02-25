@@ -1,0 +1,47 @@
+using HtmlAgilityPack;
+using System.Net.Http;
+
+namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        private async void btnLoad_Click(object sender, EventArgs e)
+        {
+            string url = "https://tsck.hr/";
+
+            using (HttpClient client = new HttpClient())
+            {
+                var html = await client.GetStringAsync(url);
+
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+
+                var node = doc.DocumentNode
+                    .SelectSingleNode("//h5[@class='entry-title']/a") ??
+                           doc.DocumentNode.SelectSingleNode("//h2[@class='entry-title']/a");
+
+                if (node != null)
+                {
+                    lblTitle.Text = node.InnerText.Trim();
+                }
+                else
+                {
+                    lblTitle.Text = "Nije pronađen naslov.";
+                }
+            }
+        }
+    }
+}
+
+
+
+
