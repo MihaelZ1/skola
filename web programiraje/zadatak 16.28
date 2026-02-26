@@ -1,0 +1,21 @@
+script
+
+let tim;  
+
+function pokreniTimer() {
+    tim = setTimeout(klik2sec, 2000);
+}
+
+function klik2sec() {
+    alert("Prošlo 2 sekunde");
+}
+
+function ponistiTimer() {
+    clearTimeout(tim);
+}
+
+
+html
+
+<input type="button" value="pokreni timer" onclick="pokreniTimer()" />
+<input type="button" value="poništi timer" onclick="ponistiTimer()" />
