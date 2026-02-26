@@ -1,0 +1,43 @@
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stil.css">
+</head>
+<body>
+  <script>
+function promjena(id){
+    for(let i = 1; i<=10;i++){
+        if(i<=id){
+            document.getElementById(i).style.opacity="1";
+        }
+        else{
+            document.getElementById(i).style.opacity="0.4";
+        }
+    }
+    document.getElementById("broj").innerHTML=id;
+}
+
+</script>
+
+<div>
+<img id="1" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(1)">
+<img id="2" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(2)">
+<img id="3" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(3)">
+<img id="4" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(4)">
+<img id="5" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(5)">
+<img id="6" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(6)">
+<img id="7" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(7)">
+<img id="8" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(8)">
+<img id="9" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(9)">
+<img id="10" class="sli" src="iks.PNG" height="50px" width="50px" onmouseover="promjena(10)">
+</div>
+
+<p id="broj" style="width: 50px; height: 70px; background-color: yellow; border-style: solid; border-width: 2px; border-color: greenyellow; font-size: 20px; text-align: center;">0</p>
+
+</body>
+</html>
