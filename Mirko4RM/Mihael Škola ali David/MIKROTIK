@@ -186,6 +186,29 @@ Auth: Certificate
 
 
 
+/interface wireguard add name=wg-s2s listen-port=51820 private-key="A_PRIVATE_KEY"
+/ip address add address=10.10.10.1/24 interface=wg-s2s
+/interface wireguard peers add interface=wg-s2s \
+    public-key="B_PUBLIC_KEY" \
+    allowed-address=10.10.10.2/32,192.168.20.0/24 \
+    endpoint-address=2.2.2.2 \
+    endpoint-port=51820 \
+    persistent-keepalive=25
+/ip route add dst-address=192.168.20.0/24 gateway=10.10.10.2
+
+
+/interface wireguard add name=wg-s2s listen-port=51820 private-key="B_PRIVATE_KEY"
+/ip address add address=10.10.10.2/24 interface=wg-s2s
+/interface wireguard peers add interface=wg-s2s \
+    public-key="A_PUBLIC_KEY" \
+    allowed-address=10.10.10.1/32,192.168.10.0/24 \
+    endpoint-address=1.1.1.1 \
+    endpoint-port=51820 \
+    persistent-keepalive=25
+/ip route add dst-address=192.168.10.0/24 gateway=10.10.10.1
+
+/ip firewall filter add chain=input protocol=udp dst-port=51820 action=accept comment="Allow WireGuard"
+/ip firewall filter add chain=input in-interface=wg-s2s action=accept comment="Allow WG interface"
 
 
 
