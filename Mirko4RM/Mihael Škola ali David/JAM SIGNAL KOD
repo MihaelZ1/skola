@@ -1,0 +1,175 @@
+using System;
+using System.Data.SqlClient;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.IO;
+
+namespace JAM_SIGNAL_SERVERa
+{
+    internal class Program
+    {
+    }
+
+    class Server
+    {
+        const int Port = 5000;
+
+        static void Main()
+        {
+            TcpListener listener = new TcpListener(IPAddress.Any, Port);
+            listener.Start();
+            Console.WriteLine("Server pokrenut na portu " + Port);
+
+            while (true)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                Console.WriteLine("Klijent spojen.");
+
+                using (NetworkStream ns = client.GetStream())
+                using (StreamReader reader = new StreamReader(ns, Encoding.UTF8))
+                using (StreamWriter writer = new StreamWriter(ns, Encoding.UTF8) { AutoFlush = true })
+                {
+                    string command = reader.ReadLine();
+                    Console.WriteLine("Primljena komanda: " + command);
+
+                    if (command == "GET_USERS")
+                    {
+                        writer.WriteLine(GetUsers());
+                    }
+                    else
+                    {
+                        writer.WriteLine("UNKNOWN_COMMAND");
+                    }
+                }
+
+                client.Close();
+                Console.WriteLine("Klijent odspojen.");
+            }
+        }
+
+        static string GetUsers()
+        {
+            string connectionString = "Server=localhost\\sqlexpress; Database=TcpDemoDB;Trusted_Connection=True;TrustServerCertificate=True;"; string query = "SELECT Id, FullName, Email FROM Users";
+
+            StringBuilder sb = new StringBuilder();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                conn.Open();
+                using (SqlDataReader r = cmd.ExecuteReader())
+                {
+                    while (r.Read())
+                    {
+                        sb.AppendLine($"{r.GetInt32(0)};{r.GetString(1)};{r.GetString(2)}");
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+    }
+}
+
+
+
+using System;
+using System.Data;
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Windows.Forms;
+
+namespace JAM_SIGNAL_KOD
+{
+    public partial class Form1 : Form
+    {
+        const string Host = "127.0.0.1";
+        const int Port = 5000;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (TcpClient client = new TcpClient())
+                {
+                    client.Connect(Host, Port);
+
+                    using (NetworkStream ns = client.GetStream())
+                    using (StreamWriter writer = new StreamWriter(ns, Encoding.UTF8) { AutoFlush = true })
+                    using (StreamReader reader = new StreamReader(ns, Encoding.UTF8))
+                    {
+                        writer.WriteLine("GET_USERS");
+
+                        string response = reader.ReadToEnd();
+
+                        DataTable table = ParseCsv(response);
+                        dataGridView1.DataSource = table;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greška: " + ex.Message);
+            }
+        }
+        private DataTable ParseCsv(string csv)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("FullName");
+            dt.Columns.Add("Email");
+
+            using (StringReader sr = new StringReader(csv))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(';');
+                    if (parts.Length == 3)
+                    {
+                        dt.Rows.Add(parts[0], parts[1], parts[2]);
+                    }
+                }
+            }
+
+            return dt;
+        }
+    }
+}
+
+
+
+
+CREATE DATABASE TcpDemoDB;
+GO
+
+USE TcpDemoDB;
+GO
+
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL
+);
+GO
+
+INSERT INTO Users (FullName, Email) VALUES
+('Marko Horvat', 'marko.horvat@example.com'),
+('Ivana Kovač', 'ivana.kovac@example.com'),
+('Petar Novak', 'petar.novak@example.com');
+GO
+
+
+
+
+
