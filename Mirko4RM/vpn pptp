@@ -1,0 +1,58 @@
+1️⃣ VirtualBox Network Setup
+
+Each router needs 2 adapters:
+
+Adapter 1: NAT (internet, optional)
+
+Adapter 2: Internal Network for lab traffic
+
+If routers are on different internal networks (sw01 vs sw02):
+
+Either put both routers on the same Internal Network (simplest)
+
+Or use a third router between sw01 and sw02 to route traffic
+
+Example (same network):
+
+Router A (Server) ether2: 192.168.10.1/24
+Router B (Client) ether2: 192.168.10.2/24
+
+Ping to confirm:
+
+Router B → ping 192.168.10.1
+Router A → ping 192.168.10.2
+2️⃣ Configure PPTP Server (Router A)
+/interface pptp-server server set enabled=yes
+/ip pool add name=pptp_pool ranges=10.10.10.2-10.10.10.10
+/ppp profile add name=pptp_profile local-address=10.10.10.1 remote-address=pptp_pool
+/ppp secret add name=client password=123 service=pptp profile=pptp_profile
+3️⃣ Configure PPTP Client (Router B)
+/interface pptp-client add connect-to=192.168.10.1 user=client password=123 name=pptp-out1 disabled=no
+
+Check tunnel:
+
+/interface print
+ping 10.10.10.1
+
+Server IP: 10.10.10.1
+
+Client IP: 10.10.10.2
+
+4️⃣ Add Routes to Internal LANs
+
+Example LANs:
+
+Router	LAN Network
+Server	192.168.1.0/24
+Client	192.168.2.0/24
+On Server (Router A)
+/ip route add dst-address=192.168.2.0/24 gateway=10.10.10.2
+On Client (Router B)
+/ip route add dst-address=192.168.1.0/24 gateway=10.10.10.1
+
+Test connectivity:
+
+Router B → ping 192.168.1.1
+Router A → ping 192.168.2.1
+
+✅ Result:
