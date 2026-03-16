@@ -1,0 +1,73 @@
+1️⃣ Network Adapters
+Router	Adapter	Type	Network / IP	Notes
+Router A	Adapter 1	Internal network		
+Router A	Adapter 2	Host-Only	192.168.56.2/24	Shared network with Router B
+Router B	Adapter 1	Internal network		Optional, for internet on Router B
+Router B	Adapter 2	Host-Only	192.168.56.3/24	Shared network with Router A
+✅ Important: Both Host-Only adapters must be on the same subnet (192.168.56.0/24), otherwise WireGuard will fail.
+________________________________________
+2️⃣ Assign IPs on Routers
+Router A
+/ip address add address=192.168.56.2/24 interface=ether2
+Router B
+/ip address add address=192.168.56.3/24 interface=ether2
+Isto  I za internal network
+Or do it in WinBox: IP → Addresses → + → Set address and interface → OK
+________________________________________
+3️⃣ WireGuard Interface Setup
+Router A (server)
+/interface wireguard add name=wg0 listen-port=13231
+•	Router A generates Private & Public keys automatically.
+•	Copy Router A Public Key for Router B.
+Router B (client)
+/interface wireguard add name=wg0 listen-port=13231
+•	Router B generates Private & Public keys.
+•	Copy Router B Public Key for Router A.
+WinBox: WireGuard → Interfaces → + → Name / Listen Port → OK
+4️⃣ Assign WireGuard IPs
+Router A
+/ip address add address=10.10.10.1/24 interface=wg0
+Router B
+/ip address add address=10.10.10.2/24 interface=wg0
+WinBox: IP → Addresses → + → Interface wg0 → Address → OK
+________________________________________
+5️⃣ Configure Peers
+Router A (server peer)
+•	Interface: wg0
+•	Public Key: Router B Public Key
+•	Allowed Address: 10.10.10.2/32
+•	No Endpoint needed
+/interface wireguard peers add interface=wg0 public-key="ROUTER_B_PUBLIC_KEY" allowed-address=10.10.10.2/32
+Router B (client peer)
+•	Interface: wg0
+•	Public Key: Router A Public Key
+•	Allowed Address: 10.10.10.1/32
+•	Endpoint: 192.168.56.2:13231
+•	Persistent Keepalive: 25
+/interface wireguard peers add interface=wg0 public-key="ROUTER_A_PUBLIC_KEY" allowed-address=10.10.10.1/32 endpoint-address=192.168.56.2 endpoint-port=13231 persistent-keepalive=25
+WinBox: WireGuard → Peers → + → Fill fields → OK
+________________________________________
+6️⃣ Firewall (allow UDP port 13231)
+Router A
+/ip firewall filter add chain=input protocol=udp dst-port=13231 action=accept
+WinBox: IP → Firewall → Filter Rules → + → Chain=input, Protocol=UDP, Dst Port=13231, Action=accept → OK
+•	Move rule above any drop rules.
+Router B
+•	Not needed if only initiating.
+________________________________________
+7️⃣ Test the Tunnel
+Ping tunnel IPs
+•	Router A → Router B:
+ping 10.10.10.2
+•	Router B → Router A:
+ping 10.10.10.1
+Should show stable replies.
+
+8️⃣ Summary
+•	Bridged / Host-Only adapters: Same subnet /24
+•	Router A: server, no Endpoint, listens on UDP 13231
+•	Router B: client, Endpoint = Router A IP, Persistent Keepalive = 25
+•	WireGuard IPs: 10.10.10.1/24 (A), 10.10.10.2/24 (B)
+•	Firewall: allow UDP 13231 on Router A
+•	Ping test: use WG IPs first before adding LAN routes
+
