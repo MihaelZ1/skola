@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerička Analiza: Usporedba Metoda</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    </style>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="gradient-bg text-white min-h-screen p-8">
+
+    <div class="max-w-6xl mx-auto">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 text-blue-400">Newton vs. Bisekcija vs. Sekanta</h1>
+
+            <div class="bg-slate-800/50 p-4 rounded-lg inline-block border border-slate-700">
+                <p class="text-gray-300 text-lg mb-2">Vizualizacija brzine konvergencije za:</p>
+                <p class="text-2xl font-serif text-white italic">
+                    
+
+\[ f(x) = x^2 - 2 = 0 \implies x = \sqrt{2} \]
+
+
+                </p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+            <!-- Parametri -->
+            <div class="bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-700">
+                <h2 class="text-xl font-semibold mb-4 border-b border-slate-600 pb-2">Parametri</h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400">Početni interval [a, b]</label>
+                        <div class="flex gap-2">
+                            <input id="inp-a" type="number" value="1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
+                            <input id="inp-b" type="number" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400">Newton početna točka x0</label>
+                        <input id="inp-x0" type="number" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
+                    </div>
+
+                    <button onclick="izracunaj()" class="w-full bg-blue-600 hover:bg-blue-500 transition-colors py-3 rounded-lg font-bold">
+                        POKRENI SIMULACIJU
+                    </button>
+                </div>
+            </div>
+
+            <!-- Graf -->
+            <div class="lg:col-span-2 bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-700">
+                <canvas id="convergenceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tablica -->
+        <div class="bg-slate-800 rounded-xl shadow-xl border border-slate-700 overflow-hidden">
+            <div class="p-4 bg-slate-700 font-bold flex items-center gap-2">
+                Logaritamski prikaz pogreške:
+                <span class="text-blue-300 text-lg">
+                    \( |x_n - \sqrt{2}| \)
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-blue-300">
+                            <th class="p-4">Korak (\(n\))</th>
+                            <th class="p-4">Bisekcija (\(O(n)\))</th>
+                            <th class="p-4">Newton (\(O(n^2)\))</th>
+                            <th class="p-4">Sekanta (\(O(n^{1.618})\))</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const target = Math.sqrt(2);
+        let chart = null;
+
+        function f(x) { return x * x - 2; }
+        function df(x) { return 2 * x; }
+
+        function izracunaj() {
+            const a_init = parseFloat(document.getElementById('inp-a').value);
+            const b_init = parseFloat(document.getElementById('inp-b').value);
+            const x0_init = parseFloat(document.getElementById('inp-x0').value);
+
+            let bisekcija = [], newton = [], sekanta = [];
+            const max_steps = 10;
+
+            // BISEKCIJA
+            let a = a_init, b = b_init;
+            for (let i = 0; i < max_steps; i++) {
+                let c = (a + b) / 2;
+                bisekcija.push(Math.abs(c - target));
+                if (f(a) * f(c) < 0) b = c; else a = c;
+            }
+
+            // NEWTON
+            let xn = x0_init;
+            for (let i = 0; i < max_steps; i++) {
+                newton.push(Math.abs(xn - target));
+                xn = xn - f(xn) / df(xn);
+                if (!isFinite(xn)) break;
+            }
+
+            // SEKANTA
+            let x_prev = a_init, x_curr = b_init;
+            for (let i = 0; i < max_steps; i++) {
+                sekanta.push(Math.abs(x_curr - target));
+                if (f(x_curr) === f(x_prev)) break;
+                let x_next = x_curr - f(x_curr) * (x_curr - x_prev) / (f(x_curr) - f(x_prev));
+                x_prev = x_curr;
+                x_curr = x_next;
+            }
+
+            iscrtajTablicu(max_steps, bisekcija, newton, sekanta);
+            iscrtajGraf(max_steps, bisekcija, newton, sekanta);
+        }
+
+        function iscrtajTablicu(n, b, nw, sk) {
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                tbody.innerHTML += `
+                    <tr class="border-t border-slate-700 hover:bg-slate-750">
+                        <td class="p-4 text-gray-400">${i}</td>
+                        <td class="p-4 font-mono text-yellow-500">${b[i]?.toExponential(4) ?? "-"}</td>
+                        <td class="p-4 font-mono text-green-500">${nw[i]?.toExponential(4) ?? "-"}</td>
+                        <td class="p-4 font-mono text-blue-500">${sk[i]?.toExponential(4) ?? "-"}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function iscrtajGraf(n, b, nw, sk) {
+            const ctx = document.getElementById('convergenceChart').getContext('2d');
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: n}, (_, i) => i),
+                    datasets: [
+                        { label: 'Bisekcija', data: b, borderColor: '#eab308', tension: 0.1, pointRadius: 4 },
+                        { label: 'Newton', data: nw, borderColor: '#22c55e', tension: 0.1, pointRadius: 4 },
+                        { label: 'Sekanta', data: sk, borderColor: '#3b82f6', tension: 0.1, pointRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Pogreška (log skala)', color: '#fff' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: { ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff' } } }
+                }
+            });
+        }
+
+        izracunaj();
+    </script>
+
+</body>
+</html>
