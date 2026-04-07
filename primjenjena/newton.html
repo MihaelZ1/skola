@@ -1,189 +1,160 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numerička Analiza: Usporedba Metoda</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-    </style>
-
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Numerička Analiza</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:sans-serif;background:#0f172a;color:#e2e8f0;padding:1rem}
+    .grid{display:grid;grid-template-columns:1fr 2fr;gap:1rem;margin-bottom:1rem}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:1.1rem}
+    .slider-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .slider-row label{font-size:12px;color:#94a3b8;width:120px;flex-shrink:0}
+    .slider-row input{flex:1;accent-color:#3b82f6}
+    .val{font-size:12px;font-weight:600;min-width:32px;text-align:right;color:#f1f5f9}
+    .legend{display:flex;gap:14px;margin-top:12px;font-size:11px;color:#94a3b8}
+    .legend span{display:flex;align-items:center;gap:5px}
+    .dot{width:20px;height:3px;border-radius:2px;display:inline-block}
+    .chart-wrap{position:relative;height:220px}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#0f172a;padding:8px 12px;text-align:left;font-size:11px;color:#64748b;border-bottom:1px solid #334155}
+    td{padding:6px 12px;border-bottom:1px solid #1e293b;font-family:monospace;font-size:11px}
+    tr:last-child td{border-bottom:none}
+    .bis{color:#f59e0b}.nwt{color:#22c55e}.sek{color:#3b82f6}.step{color:#64748b}
+    h2{color:#60a5fa;font-size:14px;text-align:center;margin-bottom:12px;font-weight:500}
+  </style>
 </head>
+<body>
 
-<body class="gradient-bg text-white min-h-screen p-8">
+  <h2>Newton vs. Bisekcija vs. Sekanta — f(x) = x² − 2</h2>
 
-    <div class="max-w-6xl mx-auto">
-
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4 text-blue-400">Newton vs. Bisekcija vs. Sekanta</h1>
-
-            <div class="bg-slate-800/50 p-4 rounded-lg inline-block border border-slate-700">
-                <p class="text-gray-300 text-lg mb-2">Vizualizacija brzine konvergencije za:</p>
-                <p class="text-2xl font-serif text-white italic">
-                    
-
-\[ f(x) = x^2 - 2 = 0 \implies x = \sqrt{2} \]
-
-
-                </p>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-
-            <!-- Parametri -->
-            <div class="bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-700">
-                <h2 class="text-xl font-semibold mb-4 border-b border-slate-600 pb-2">Parametri</h2>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-gray-400">Početni interval [a, b]</label>
-                        <div class="flex gap-2">
-                            <input id="inp-a" type="number" value="1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
-                            <input id="inp-b" type="number" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm text-gray-400">Newton početna točka x0</label>
-                        <input id="inp-x0" type="number" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
-                    </div>
-
-                    <button onclick="izracunaj()" class="w-full bg-blue-600 hover:bg-blue-500 transition-colors py-3 rounded-lg font-bold">
-                        POKRENI SIMULACIJU
-                    </button>
-                </div>
-            </div>
-
-            <!-- Graf -->
-            <div class="lg:col-span-2 bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-700">
-                <canvas id="convergenceChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Tablica -->
-        <div class="bg-slate-800 rounded-xl shadow-xl border border-slate-700 overflow-hidden">
-            <div class="p-4 bg-slate-700 font-bold flex items-center gap-2">
-                Logaritamski prikaz pogreške:
-                <span class="text-blue-300 text-lg">
-                    \( |x_n - \sqrt{2}| \)
-                </span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-900 text-blue-300">
-                            <th class="p-4">Korak (\(n\))</th>
-                            <th class="p-4">Bisekcija (\(O(n)\))</th>
-                            <th class="p-4">Newton (\(O(n^2)\))</th>
-                            <th class="p-4">Sekanta (\(O(n^{1.618})\))</th>
-                        </tr>
-                    </thead>
-                    <tbody id="results-body"></tbody>
-                </table>
-            </div>
-        </div>
-
+  <div class="grid">
+    <div class="card">
+      <div class="slider-row"><label>Interval a</label><input type="range" id="sl-a" min="0.1" max="1.4" step="0.1" value="1"><span class="val" id="out-a">1.0</span></div>
+      <div class="slider-row"><label>Interval b</label><input type="range" id="sl-b" min="1.5" max="3.0" step="0.1" value="2"><span class="val" id="out-b">2.0</span></div>
+      <div class="slider-row"><label>Newton x₀</label><input type="range" id="sl-x0" min="1.0" max="4.0" step="0.1" value="2"><span class="val" id="out-x0">2.0</span></div>
+      <div class="slider-row"><label>Broj koraka</label><input type="range" id="sl-n" min="3" max="15" step="1" value="10"><span class="val" id="out-n">10</span></div>
+      <div class="legend">
+        <span><span class="dot" style="background:#f59e0b"></span>Bisekcija</span>
+        <span><span class="dot" style="background:#22c55e"></span>Newton</span>
+        <span><span class="dot" style="background:#3b82f6"></span>Sekanta</span>
+      </div>
     </div>
+    <div class="card"><div class="chart-wrap"><canvas id="chart"></canvas></div></div>
+  </div>
 
-    <script>
-        const target = Math.sqrt(2);
-        let chart = null;
+  <div class="card">
+    <table>
+      <thead><tr><th>n</th><th class="bis">Bisekcija O(n)</th><th class="nwt">Newton O(n²)</th><th class="sek">Sekanta O(n^1.618)</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
 
-        function f(x) { return x * x - 2; }
-        function df(x) { return 2 * x; }
+  <script>
+    const TARGET = Math.sqrt(2);
+    let ci = null;
+    const f  = x => x * x - 2;
+    const df = x => 2 * x;
 
-        function izracunaj() {
-            const a_init = parseFloat(document.getElementById('inp-a').value);
-            const b_init = parseFloat(document.getElementById('inp-b').value);
-            const x0_init = parseFloat(document.getElementById('inp-x0').value);
+    function bisection(a, b, N) {
+      const e = [];
+      for (let i = 0; i < N; i++) {
+        const c = (a + b) / 2;
+        e.push(Math.abs(c - TARGET));
+        if (f(a) * f(c) < 0) b = c; else a = c;
+      }
+      return e;
+    }
 
-            let bisekcija = [], newton = [], sekanta = [];
-            const max_steps = 10;
+    function newton(x, N) {
+      const e = [];
+      for (let i = 0; i < N; i++) {
+        e.push(Math.abs(x - TARGET));
+        const n = x - f(x) / df(x);
+        if (!isFinite(n)) { while (e.length < N) e.push(null); break; }
+        x = n;
+      }
+      return e;
+    }
 
-            // BISEKCIJA
-            let a = a_init, b = b_init;
-            for (let i = 0; i < max_steps; i++) {
-                let c = (a + b) / 2;
-                bisekcija.push(Math.abs(c - target));
-                if (f(a) * f(c) < 0) b = c; else a = c;
+    function secant(xp, xc, N) {
+      const e = [];
+      for (let i = 0; i < N; i++) {
+        e.push(Math.abs(xc - TARGET));
+        if (f(xc) === f(xp)) { while (e.length < N) e.push(null); break; }
+        const n = xc - f(xc) * (xc - xp) / (f(xc) - f(xp));
+        xp = xc; xc = n;
+        if (!isFinite(xc)) { while (e.length < N) e.push(null); break; }
+      }
+      return e;
+    }
+
+    function update() {
+      const a0 = parseFloat(document.getElementById('sl-a').value);
+      const b0 = parseFloat(document.getElementById('sl-b').value);
+      const x0 = parseFloat(document.getElementById('sl-x0').value);
+      const N  = parseInt(document.getElementById('sl-n').value);
+
+      document.getElementById('out-a').textContent  = a0.toFixed(1);
+      document.getElementById('out-b').textContent  = b0.toFixed(1);
+      document.getElementById('out-x0').textContent = x0.toFixed(1);
+      document.getElementById('out-n').textContent  = N;
+
+      const bis = bisection(a0, b0, N);
+      const nwt = newton(x0, N);
+      const sek = secant(a0, b0, N);
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      for (let i = 0; i < N; i++) {
+        tbody.innerHTML += `<tr>
+          <td class="step">${i}</td>
+          <td class="bis">${bis[i] != null ? bis[i].toExponential(4) : '—'}</td>
+          <td class="nwt">${nwt[i] != null ? nwt[i].toExponential(4) : '—'}</td>
+          <td class="sek">${sek[i] != null ? sek[i].toExponential(4) : '—'}</td>
+        </tr>`;
+      }
+
+      const ctx = document.getElementById('chart').getContext('2d');
+      if (ci) ci.destroy();
+      ci = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: N }, (_, i) => i),
+          datasets: [
+            { label: 'Bisekcija', data: bis, borderColor: '#f59e0b', backgroundColor: 'transparent', tension: 0.1, pointRadius: 3, spanGaps: false },
+            { label: 'Newton',    data: nwt, borderColor: '#22c55e', backgroundColor: 'transparent', tension: 0.1, pointRadius: 3, spanGaps: false },
+            { label: 'Sekanta',   data: sek, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.1, pointRadius: 3, spanGaps: false }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              type: 'logarithmic',
+              title: { display: true, text: 'Pogreška |xₙ − √2|', color: '#94a3b8' },
+              ticks: { color: '#64748b', callback: v => v.toExponential(0) },
+              grid:  { color: 'rgba(255,255,255,0.05)' }
+            },
+            x: {
+              ticks: { color: '#64748b' },
+              grid:  { color: 'rgba(255,255,255,0.05)' }
             }
-
-            // NEWTON
-            let xn = x0_init;
-            for (let i = 0; i < max_steps; i++) {
-                newton.push(Math.abs(xn - target));
-                xn = xn - f(xn) / df(xn);
-                if (!isFinite(xn)) break;
-            }
-
-            // SEKANTA
-            let x_prev = a_init, x_curr = b_init;
-            for (let i = 0; i < max_steps; i++) {
-                sekanta.push(Math.abs(x_curr - target));
-                if (f(x_curr) === f(x_prev)) break;
-                let x_next = x_curr - f(x_curr) * (x_curr - x_prev) / (f(x_curr) - f(x_prev));
-                x_prev = x_curr;
-                x_curr = x_next;
-            }
-
-            iscrtajTablicu(max_steps, bisekcija, newton, sekanta);
-            iscrtajGraf(max_steps, bisekcija, newton, sekanta);
+          },
+          plugins: { legend: { display: false } }
         }
+      });
+    }
 
-        function iscrtajTablicu(n, b, nw, sk) {
-            const tbody = document.getElementById('results-body');
-            tbody.innerHTML = '';
-            for (let i = 0; i < n; i++) {
-                tbody.innerHTML += `
-                    <tr class="border-t border-slate-700 hover:bg-slate-750">
-                        <td class="p-4 text-gray-400">${i}</td>
-                        <td class="p-4 font-mono text-yellow-500">${b[i]?.toExponential(4) ?? "-"}</td>
-                        <td class="p-4 font-mono text-green-500">${nw[i]?.toExponential(4) ?? "-"}</td>
-                        <td class="p-4 font-mono text-blue-500">${sk[i]?.toExponential(4) ?? "-"}</td>
-                    </tr>
-                `;
-            }
-        }
+    ['sl-a', 'sl-b', 'sl-x0', 'sl-n'].forEach(id =>
+      document.getElementById(id).addEventListener('input', update)
+    );
 
-        function iscrtajGraf(n, b, nw, sk) {
-            const ctx = document.getElementById('convergenceChart').getContext('2d');
-            if (chart) chart.destroy();
-
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: n}, (_, i) => i),
-                    datasets: [
-                        { label: 'Bisekcija', data: b, borderColor: '#eab308', tension: 0.1, pointRadius: 4 },
-                        { label: 'Newton', data: nw, borderColor: '#22c55e', tension: 0.1, pointRadius: 4 },
-                        { label: 'Sekanta', data: sk, borderColor: '#3b82f6', tension: 0.1, pointRadius: 4 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            type: 'logarithmic',
-                            title: { display: true, text: 'Pogreška (log skala)', color: '#fff' },
-                            ticks: { color: '#94a3b8' }
-                        },
-                        x: { ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { labels: { color: '#fff' } } }
-                }
-            });
-        }
-
-        izracunaj();
-    </script>
+    update();
+  </script>
 
 </body>
 </html>
