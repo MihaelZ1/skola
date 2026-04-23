@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>Murkjack Blackjack</title>
+
+<style>
+    body {
+        background: radial-gradient(circle, #063, #021);
+        color: #fff;
+        font-family: "Segoe UI", sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        margin-top: 20px;
+        font-size: 42px;
+        text-shadow: 0 0 10px #0f0;
+    }
+
+    #table {
+        margin: 20px auto;
+        width: 90%;
+        max-width: 900px;
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(0,0,0,0.4);
+        box-shadow: 0 0 20px #000 inset;
+    }
+
+    .hand {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 10px;
+    }
+
+    .card {
+        width: 60px;
+        height: 90px;
+        background: #fff;
+        color: #000;
+        border-radius: 8px;
+        font-size: 26px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 10px #000;
+    }
+
+    .chip-container {
+        margin: 15px;
+    }
+
+    .chip {
+        display: inline-block;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        line-height: 70px;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 5px;
+        cursor: pointer;
+        border: 3px solid #fff;
+        transition: 0.2s;
+    }
+
+    .chip:hover {
+        transform: scale(1.15);
+        box-shadow: 0 0 15px #fff;
+    }
+
+    .chip.red { background: #c00; }
+    .chip.blue { background: #06c; }
+    .chip.green { background: #0a0; }
+    .chip.gold { background: gold; color: #000; }
+
+    button {
+        padding: 12px 20px;
+        margin: 8px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background: #0a0;
+        color: #fff;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #0d0;
+        transform: scale(1.05);
+    }
+
+    #result {
+        font-size: 32px;
+        margin-top: 20px;
+        text-shadow: 0 0 10px #fff;
+    }
+
+    #restart {
+        display: none;
+        background: #c00;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Murkjack Blackjack</h1>
+<h2>Novac: <span id="money">10000</span> din</h2>
+
+<div id="table">
+
+    <h3>Odaberi ulog (klikni više puta):</h3>
+    <div class="chip-container">
+        <div class="chip red" onclick="addBet(100)">100</div>
+        <div class="chip blue" onclick="addBet(500)">500</div>
+        <div class="chip green" onclick="addBet(1000)">1000</div>
+        <div class="chip gold" onclick="addBet(5000)">5000</div>
+    </div>
+
+    <h3>Ulog: <span id="bet">0</span> din</h3>
+    <button onclick="resetBet()">Reset uloga</button>
+    <button onclick="startGame()">Start</button>
+
+    <h3>Dealer</h3>
+    <div id="dealer" class="hand"></div>
+    <div id="dealerValue" style="margin-bottom:20px; font-size:22px;"></div>
+
+    <h3>Igrač</h3>
+    <div id="player" class="hand"></div>
+    <div id="playerValue" style="margin-bottom:20px; font-size:22px;"></div>
+
+    <div>
+        <button onclick="hit()">Hit</button>
+        <button onclick="stand()">Stand</button>
+        <button onclick="doubleDown()">Double</button>
+        <button onclick="split()">Split</button>
+    </div>
+
+    <h2 id="result"></h2>
+
+    <button id="restart" onclick="restartGame()">Ponovo</button>
+
+</div>
+
+<script>
+let deck = [];
+let player = [];
+let dealer = [];
+let money = 10000;
+let bet = 0;
+let canSplit = false;
+let doubled = false;
+
+function createDeck() {
+    let suits = ["♠","♥","♦","♣"];
+    let values = [
+        {name:"A", val:11},{name:"2", val:2},{name:"3", val:3},{name:"4", val:4},
+        {name:"5", val:5},{name:"6", val:6},{name:"7", val:7},{name:"8", val:8},
+        {name:"9", val:9},{name:"10", val:10},{name:"J", val:10},
+        {name:"Q", val:10},{name:"K", val:10}
+    ];
+
+    deck = [];
+    for (let s of suits) {
+        for (let v of values) {
+            deck.push({name: v.name, suit: s, val: v.val});
+        }
+    }
+    deck.sort(() => Math.random() - 0.5);
+}
+
+function draw() { return deck.pop(); }
+
+function calculate(hand) {
+    let sum = 0, aces = 0;
+    for (let c of hand) {
+        sum += c.val;
+        if (c.val === 11) aces++;
+    }
+    while (sum > 21 && aces > 0) {
+        sum -= 10;
+        aces--;
+    }
+    return sum;
+}
+
+function renderHand(div, hand) {
+    div.innerHTML = "";
+    hand.forEach(c => {
+        let card = document.createElement("div");
+        card.className = "card";
+        card.innerText = c.name + c.suit;
+        div.appendChild(card);
+    });
+}
+
+function render() {
+    renderHand(document.getElementById("player"), player);
+    renderHand(document.getElementById("dealer"), dealer);
+
+    document.getElementById("playerValue").innerText =
+        "Vrijednost: " + calculate(player);
+
+    document.getElementById("dealerValue").innerText =
+        "Vrijednost: " + calculate(dealer);
+
+    document.getElementById("money").innerText = money;
+    document.getElementById("bet").innerText = bet;
+}
+
+function addBet(amount) {
+    bet += amount;
+    document.getElementById("bet").innerText = bet;
+}
+
+function resetBet() {
+    bet = 0;
+    document.getElementById("bet").innerText = 0;
+}
+
+function startGame() {
+    if (bet === 0) return alert("Izaberi ulog!");
+    if (bet > money) return alert("Nemaš dovoljno novca!");
+
+    money -= bet;
+    doubled = false;
+
+    createDeck();
+    player = [draw(), draw()];
+    dealer = [draw(), draw()];
+
+    canSplit = player[0].val === player[1].val;
+
+    document.getElementById("result").innerText = "";
+    document.getElementById("restart").style.display = "none";
+
+    render();
+}
+
+function hit() {
+    player.push(draw());
+    render();
+    if (calculate(player) > 21) endGame();
+}
+
+function stand() {
+    while (calculate(dealer) < 17) dealer.push(draw());
+    endGame();
+}
+
+function doubleDown() {
+    if (money < bet) return alert("Nema dovoljno za double!");
+    money -= bet;
+    bet *= 2;
+    doubled = true;
+
+    player.push(draw());
+    stand();
+}
+
+function split() {
+    if (!canSplit) return alert("Ne može split!");
+    alert("Split je pojednostavljen – igraš samo prvi hand.");
+}
+
+function endGame() {
+    let p = calculate(player);
+    let d = calculate(dealer);
+    let res = "";
+
+    if (p > 21) {
+        res = "Izgubio si!";
+    } else if (d > 21 || p > d) {
+        res = "Pobeda!";
+        money += bet * 2;
+    } else if (p === d) {
+        res = "Nerešeno!";
+        money += bet;
+    } else {
+        res = "Dealer pobeđuje!";
+    }
+
+    document.getElementById("result").innerText = res;
+    document.getElementById("restart").style.display = "inline-block";
+
+    render();
+}
+
+function restartGame() {
+    player = [];
+    dealer = [];
+    bet = 0;
+    document.getElementById("bet").innerText = "0";
+    document.getElementById("player").innerHTML = "";
+    document.getElementById("dealer").innerHTML = "";
+    document.getElementById("playerValue").innerText = "";
+    document.getElementById("dealerValue").innerText = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("restart").style.display = "none";
+}
+</script>
+
+</body>
+</html>
